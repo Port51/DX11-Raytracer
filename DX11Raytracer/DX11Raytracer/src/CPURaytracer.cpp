@@ -23,7 +23,7 @@ namespace gfx
         auto vFov = 65.0 * 3.1415 / 180.0;
         auto halfAngleY = std::tan(vFov * 0.5);
         auto halfAngleX = halfAngleY * AspectRatio;
-        vec3 frustumCornerVS = vec3(halfAngleX, -halfAngleY, 1.0);
+        vec3 frustumCornerVS = vec3(halfAngleX, halfAngleY, 1.0);
 
         auto cameraPositionWS = vec3(0, 0, 0);
 
@@ -42,7 +42,7 @@ namespace gfx
 
                 int localIdx = ly * TileSize + lx + tileOffset;
 
-                vec3 dir = Normalize(vec3(u * frustumCornerVS.x(), v * frustumCornerVS.y(), 1.0));
+                vec3 dir = Normalize(vec3(u * frustumCornerVS.x(), v * frustumCornerVS.y(), -1.0));
                 Ray r(cameraPositionWS, dir);
                 GetRayColor(r, &buffer[localIdx]);
             }
@@ -58,7 +58,7 @@ namespace gfx
         auto c = (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
 
         vec3 hitPt;
-        if (HitSphere(ray, hitPt))
+        /*if (HitSphere(ray, hitPt))
         {
             c[0] = 1;
             c[1] = 0;
@@ -66,6 +66,23 @@ namespace gfx
 
             // Normal
             vec3 n = Normalize(hitPt - vec3(0, 0, 1));
+            c[0] = n[0];
+            c[1] = n[1];
+            c[2] = n[2];
+
+            // Simple lambert lighting from light
+            auto v = -Dot(n, Normalize(vec3(0.0, -1.0, 0.0)));
+            v = std::max(v, 0.0);
+            c[0] = v;
+            c[1] = v;
+            c[2] = v;
+        }*/
+
+        t = hit_sphere(vec3(0, 0, -1), 0.5, ray);
+        if (t >= 0.0)
+        {
+            vec3 n = Normalize(ray.at(t) - vec3(0, 0, -1)) * 0.5 + vec3(0.5);
+
             c[0] = n[0];
             c[1] = n[1];
             c[2] = n[2];
@@ -111,5 +128,20 @@ namespace gfx
             }
         }
         return false;
+    }
+
+    const double CPURaytracer::hit_sphere(const vec3& center, double radius, const Ray& r) const
+    {
+        vec3 oc = r.origin() - center;
+        auto a = Dot(r.direction(), r.direction());
+        auto b = 2.0 * Dot(oc, r.direction());
+        auto c = Dot(oc, oc) - radius * radius;
+        auto discriminant = b * b - 4 * a * c;
+
+        if (std::abs(a) < 0.00001) a = 0.00001;
+
+        // Return distance, or -1
+        if (discriminant < 0.0) return -1.0;
+        else return (-b - std::sqrt(discriminant)) / (2.0 * a);
     }
 }
