@@ -26,7 +26,7 @@ namespace gfx
 		std::unique_ptr<Graphics> m_pGfx;
 		ComPtr<ID3D11Buffer> m_pImageBuffer;
 		ComPtr<ID3D11ShaderResourceView> m_pImageBufferSRV;
-		std::vector<RGBA> m_imageData;
+		std::vector<Color> m_imageData;
 		ComPtr<ID3D11ComputeShader> m_pComputeShader;
 		std::unique_ptr<FullScreenBlit> m_pFullScreenBlit;
 		std::unique_ptr<CPURaytracer> m_pCPURaytracer;

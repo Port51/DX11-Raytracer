@@ -1,4 +1,5 @@
 #pragma once
+#include "CommonHeader.h"
 #include <cmath>
 #include <iostream>
 
@@ -9,31 +10,26 @@ namespace gfx
     class vec3
     {
     public:
-        vec3() : e{ 0,0,0 } {}
-        vec3(double e0) : e{ e0, e0, e0 } {}
-        vec3(double e0, double e1, double e2) : e{ e0, e1, e2 } {}
+        vec3() : x(0), y(0), z(0) {}
+        vec3(const double value) : x(value), y(value), z(value) {}
+        vec3(const double x, const double y, const double z) : x(x), y(y), z(z) {}
 
-        double x() const { return e[0]; }
-        double y() const { return e[1]; }
-        double z() const { return e[2]; }
-
-        vec3 operator-() const { return vec3(-e[0], -e[1], -e[2]); }
-        double operator[](int i) const { return e[i]; }
-        double& operator[](int i) { return e[i]; }
+    public:
+        vec3 operator-() const { return vec3(-x, -y, -z); }
 
         vec3& operator+=(const vec3& v)
         {
-            e[0] += v.e[0];
-            e[1] += v.e[1];
-            e[2] += v.e[2];
+            x += v.x;
+            y += v.y;
+            z += v.z;
             return *this;
         }
 
         vec3& operator*=(const double t)
         {
-            e[0] *= t;
-            e[1] *= t;
-            e[2] *= t;
+            x *= t;
+            y *= t;
+            z *= t;
             return *this;
         }
 
@@ -42,45 +38,87 @@ namespace gfx
             return *this *= 1 / t;
         }
 
-        double length() const
+    public:
+        double Dot(const vec3& other) const
         {
-            return sqrt(length_squared());
+            return x * other.x
+                + y * other.y
+                + z * other.z;
         }
 
-        double length_squared() const
+        const bool IsNearlyZero() const
         {
-            return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
+            return Dot(*this) < 1e-5 * 1e-5;
+        }
+
+        double Length() const
+        {
+            return sqrt(LengthSqr());
+        }
+
+        double LengthSqr() const
+        {
+            return x * x + y * y + z * z;
+        }
+
+        static vec3 Random()
+        {
+            return vec3(random_double(), random_double(), random_double());
+        }
+
+        static vec3 Random(double min, double max)
+        {
+            return vec3(random_double(min, max), random_double(min, max), random_double(min, max));
+        }
+
+        static vec3 RandomInUnitSphere()
+        {
+            while (true)
+            {
+                auto p = vec3::Random(-1.0, 1.0);
+                if (p.LengthSqr() >= 1.0) continue;
+                return p;
+            }
+        }
+
+        static vec3 RandomInHemisphere(const vec3& normal)
+        {
+            vec3 result = RandomInUnitSphere();
+            if (result.Dot(normal) < 0.0) result *= -1.0; // turns sphere into hemisphere
+            return result;
         }
 
     public:
-        double e[3];
+        double x;
+        double y;
+        double z;
     };
 
     // vec3 Utility Functions
 
     inline std::ostream& operator<<(std::ostream& out, const vec3& v)
     {
-        return out << v.e[0] << ' ' << v.e[1] << ' ' << v.e[2];
+        return out << v.x << ' ' << v.y << ' ' << v.z;
     }
 
     inline vec3 operator+(const vec3& u, const vec3& v)
     {
-        return vec3(u.e[0] + v.e[0], u.e[1] + v.e[1], u.e[2] + v.e[2]);
+        return vec3(u.x + v.x, u.y + v.y, u.z + v.z);
     }
 
     inline vec3 operator-(const vec3& u, const vec3& v)
     {
-        return vec3(u.e[0] - v.e[0], u.e[1] - v.e[1], u.e[2] - v.e[2]);
+        return vec3(u.x - v.x, u.y - v.y, u.z - v.z);
     }
 
     inline vec3 operator*(const vec3& u, const vec3& v)
     {
-        return vec3(u.e[0] * v.e[0], u.e[1] * v.e[1], u.e[2] * v.e[2]);
+        return vec3(u.x * v.x, u.y * v.y, u.z * v.z);
     }
 
     inline vec3 operator*(double t, const vec3& v)
     {
-        return vec3(t * v.e[0], t * v.e[1], t * v.e[2]);
+        return vec3(t * v.x, t * v.y, t * v.z);
     }
 
     inline vec3 operator*(const vec3& v, double t)
@@ -95,20 +133,33 @@ namespace gfx
 
     inline double Dot(const vec3& u, const vec3& v)
     {
-        return u.e[0] * v.e[0]
-            + u.e[1] * v.e[1]
-            + u.e[2] * v.e[2];
+        return u.x * v.x
+            + u.y * v.y
+            + u.z * v.z;
     }
 
     inline vec3 Cross(const vec3& u, const vec3& v)
     {
-        return vec3(u.e[1] * v.e[2] - u.e[2] * v.e[1],
-            u.e[2] * v.e[0] - u.e[0] * v.e[2],
-            u.e[0] * v.e[1] - u.e[1] * v.e[0]);
+        return vec3(u.y * v.z - u.z * v.y,
+            u.z * v.x - u.x * v.z,
+            u.x * v.y - u.y * v.x);
+    }
+
+    inline vec3 Reflect(const vec3& v, const vec3& n)
+    {
+        return v - 2.0 * Dot(v, n) * n;
+    }
+
+    inline vec3 Refract(const vec3& uv, const vec3& n, double etai_over_etat)
+    {
+        auto cos_theta = fmin(Dot(-uv, n), 1.0);
+        vec3 r_out_perp = etai_over_etat * (uv + cos_theta * n);
+        vec3 r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.LengthSqr())) * n;
+        return r_out_perp + r_out_parallel;
     }
 
     inline vec3 Normalize(vec3 v)
     {
-        return v / v.length();
+        return v / v.Length();
     }
 }

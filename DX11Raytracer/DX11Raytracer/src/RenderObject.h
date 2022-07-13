@@ -4,14 +4,7 @@
 namespace gfx
 {
 	class Ray;
-
-	struct RayHitRecord
-	{
-		vec3 p;
-		vec3 normal;
-		double t;
-		bool isFrontFacing;
-	};
+	class Material;
 
 	class RenderObject
 	{
@@ -19,6 +12,6 @@ namespace gfx
 		RenderObject() {};
 		virtual ~RenderObject() = default;
 	public:
-		virtual bool Hit(const Ray& ray, double t_min, double t_max, RayHitRecord& rec) const = 0;
+		virtual bool Hit(const Ray& ray, const double t_min, const double t_max, RayHitRecord& rec) const = 0;
 	};
 }

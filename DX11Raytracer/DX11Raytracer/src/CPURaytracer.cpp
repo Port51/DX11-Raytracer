@@ -2,15 +2,24 @@
 #include "Ray.h"
 #include "RenderObject.h"
 #include "SphereObject.h"
+#include "Lambertian.h"
+#include "Metal.h"
+#include "Dielectric.h"
 
 namespace gfx
 {
 	CPURaytracer::CPURaytracer()
 	{
-        m_pRenderObjects.emplace_back(std::make_unique<SphereObject>(vec3(0, 0, -1), 0.5));
+        //m_pRenderObjects.emplace_back(std::make_unique<SphereObject>(vec3(0, 0, -1), 0.5, std::make_shared<Lambertian>(Color(1.0, 0.4, 0.4, 1.0))));
+        //m_pRenderObjects.emplace_back(std::make_unique<SphereObject>(vec3(1, 0, -1), 0.5, std::make_shared<Metal>(Color(1.0, 0.4, 0.4, 1.0), 0.0)));
+        //m_pRenderObjects.emplace_back(std::make_unique<SphereObject>(vec3(-1, 0, -1), 0.5, std::make_shared<Metal>(Color(1.0, 1.0, 1.0, 1.0), 0.5)));
+        m_pRenderObjects.emplace_back(std::make_unique<SphereObject>(vec3(-0.35, 0, -0.5), 0.27, std::make_shared<Dielectric>(1.5)));
+
+        // Ground
+        m_pRenderObjects.emplace_back(std::make_unique<SphereObject>(vec3(0, -100.5, -1), 100, std::make_shared<Lambertian>(Color(0.1, 0.8, 0.2, 1.0))));
     }
 
-	void CPURaytracer::RunTile(RGBA* const buffer, const uint tileX, const uint tileY) const
+	void CPURaytracer::RunTile(Color* const buffer, const uint tileX, const uint tileY) const
 	{
 		const int tileOffset = (tileY * TileDimensionX + tileX) * (TileSize * TileSize);
 
@@ -24,21 +33,19 @@ namespace gfx
         auto vertical = vec3(0, viewport_height, 0);
         auto lower_left_corner = cameraPositionWS - horizontal / 2 - vertical / 2 - vec3(0, 0, focal_length);*/
 
-        auto vFov = 65.0 * 3.1415 / 180.0;
+        auto vFov = 75.0 * 3.1415 / 180.0;
         auto halfAngleY = std::tan(vFov * 0.5);
         auto halfAngleX = halfAngleY * AspectRatio;
         vec3 frustumCornerVS = vec3(halfAngleX, halfAngleY, 1.0);
 
-        auto cameraPositionWS = vec3(0, 0, 0);
+        auto cameraPositionWS = vec3(0, 0, 0.5);
 
         // todo: transform this by view matrix
 
-        // todo: save elsewhere
-        // stored in order X0, Y0, X1, Y1, ...
-        const int AASamples = 16;
-        const float aaScale = 1.f / AASamples;
-        static double aaSamples[16]
-            = { 0.0588235, 0.419608, 0.298039, 0.180392, 0.180392, 0.819608, 0.419608, 0.698039, 0.580392, 0.298039, 0.941176, 0.0588235, 0.698039, 0.941176, 0.819608, 0.580392 };
+        const int MaxBounces = 10;
+        const int SamplesPerPixel = 11;
+        const float AAScale = 1.f / SamplesPerPixel;
+        //static double aaSamples[16] = { 0.0588235, 0.419608, 0.298039, 0.180392, 0.180392, 0.819608, 0.419608, 0.698039, 0.580392, 0.298039, 0.941176, 0.0588235, 0.698039, 0.941176, 0.819608, 0.580392 };
 
         for (int lx = 0; lx < TileSize; ++lx)
         {
@@ -48,64 +55,42 @@ namespace gfx
                 int y = TileSize * tileY + ly;
                 int localIdx = ly * TileSize + lx + tileOffset;
 
-                RGBA color;
+                Color color;
 
-                for (int a = 0; a < AASamples; ++a)
+                for (int a = 0; a < SamplesPerPixel; ++a)
                 {
                     // NDC coords
-                    double u = static_cast<double>(x + aaSamples[a * 2 + 0]) / (ScreenWidth - 1) * 2.0 - 1.0;
-                    double v = static_cast<double>(y + aaSamples[a * 2 + 1]) / (ScreenHeight - 1) * 2.0 - 1.0;
+                    double u = static_cast<double>(x + random_double()) / (ScreenWidth - 1) * 2.0 - 1.0;
+                    double v = static_cast<double>(y + random_double()) / (ScreenHeight - 1) * 2.0 - 1.0;
+                    //double u = static_cast<double>(x + aaSamples[a * 2 + 0]) / (ScreenWidth - 1) * 2.0 - 1.0;
+                    //double v = static_cast<double>(y + aaSamples[a * 2 + 1]) / (ScreenHeight - 1) * 2.0 - 1.0;
 
-                    vec3 dir = Normalize(vec3(u * frustumCornerVS.x(), v * frustumCornerVS.y(), -1.0));
+                    vec3 dir = Normalize(vec3(u * frustumCornerVS.x, v * frustumCornerVS.y, -1.0));
                     Ray r(cameraPositionWS, dir);
 
-                    color += GetRayColor(r);
+                    color += GetRayColor(r, MaxBounces);
                 }
 
-                buffer[localIdx].r = color.r * aaScale;
-                buffer[localIdx].g = color.g * aaScale;
-                buffer[localIdx].b = color.b * aaScale;
+                buffer[localIdx].r = sqrt(color.r * AAScale);
+                buffer[localIdx].g = sqrt(color.g * AAScale);
+                buffer[localIdx].b = sqrt(color.b * AAScale);
             }
         }
 
 	}
 
-    const RGBA CPURaytracer::GetRayColor(Ray& ray) const
+    const Color CPURaytracer::GetRayColor(Ray& ray, const int depth) const
     {
-        // Sky background
-        vec3 unit_direction = Normalize(ray.direction());
-        auto t = 0.5 * (unit_direction.y() + 1.0);
-        auto c = (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
-
-        vec3 hitPt;
-        /*if (HitSphere(ray, hitPt))
-        {
-            c[0] = 1;
-            c[1] = 0;
-            c[2] = 0;
-
-            // Normal
-            vec3 n = Normalize(hitPt - vec3(0, 0, 1));
-            c[0] = n[0];
-            c[1] = n[1];
-            c[2] = n[2];
-
-            // Simple lambert lighting from light
-            auto v = -Dot(n, Normalize(vec3(0.0, -1.0, 0.0)));
-            v = std::max(v, 0.0);
-            c[0] = v;
-            c[1] = v;
-            c[2] = v;
-        }*/
+        if (depth <= 0) return Color(0, 0, 0, 0);
 
         RayHitRecord rhr;
-        double closestHitT = 1000000.0;
+        double closestHitT = infinity;
         bool hasHit = false;
 
         for (const auto& obj : m_pRenderObjects)
         {
             RayHitRecord temp;
-            if (obj->Hit(ray, 0.0, closestHitT, temp))
+            if (obj->Hit(ray, 0.001, closestHitT, temp))
             {
                 rhr = temp;
                 closestHitT = temp.t;
@@ -115,21 +100,22 @@ namespace gfx
 
         if (hasHit)
         {
-            return RGBA(rhr.normal[0], rhr.normal[1], rhr.normal[2], 1.f);
+            // Do more bounces!
+            // Bounces and attenuation color are determined by the material we just hit
+            Color attenuationColor;
+            Ray bounceRay;
+            if (rhr.pMaterial->Scatter(ray, rhr, attenuationColor, bounceRay))
+            {
+                return attenuationColor * GetRayColor(bounceRay, depth - 1);
+            }
+            return Color(0, 0, 0, 0);
         }
-        
 
-        /*t = hit_sphere(vec3(0, 0, -1), 0.5, ray);
-        if (t >= 0.0)
-        {
-            vec3 n = Normalize(ray.at(t) - vec3(0, 0, -1)) * 0.5 + vec3(0.5);
-
-            c[0] = n[0];
-            c[1] = n[1];
-            c[2] = n[2];
-        }*/
-
-        return RGBA(c[0], c[1], c[2], 0.f);
+        // Sky background
+        vec3 unit_direction = Normalize(ray.GetDirection());
+        auto t = 0.5 * (unit_direction.y + 1.0);
+        auto c = (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
+        return Color(c.x, c.y, c.z, 0.f);
     }
 
     const bool CPURaytracer::HitSphere(const Ray& ray, vec3& hitPoint) const
@@ -139,16 +125,16 @@ namespace gfx
         double rad = 0.5;
 
         // Test if in sphere
-        vec3 displ = spherePos - ray.orig;
+        vec3 displ = spherePos - ray.GetOrigin();
         double dSqr = Dot(displ, displ);
         bool inSphere = (dSqr <= rad * rad);
 
-        double tPlane = Dot(displ, ray.dir); // projection of displ onto dir, note that |dir| == 1
+        double tPlane = Dot(displ, ray.GetDirection()); // projection of displ onto dir, note that |dir| == 1
 
         if (tPlane > 0)
         {
             // Find collision pt on plane and test against radius
-            vec3 planeCollisionPt = ray.orig + ray.dir * tPlane;
+            vec3 planeCollisionPt = ray.GetOrigin() + ray.GetDirection() * tPlane;
             vec3 collisionDispl = spherePos - planeCollisionPt;
             double cdSqr = Dot(collisionDispl, collisionDispl);
 
@@ -161,7 +147,7 @@ namespace gfx
                 double offset = std::sqrt(rad * rad - cdSqr);
                 double tSurface = tPlane + (inSphere) ? offset : -offset;
 
-                hitPoint = ray.orig + ray.dir * tSurface;
+                hitPoint = ray.GetOrigin() + ray.GetDirection() * tSurface;
                 return true;
             }
         }
@@ -170,9 +156,9 @@ namespace gfx
 
     const double CPURaytracer::hit_sphere(const vec3& center, double radius, const Ray& r) const
     {
-        vec3 oc = r.origin() - center;
-        auto a = Dot(r.direction(), r.direction());
-        auto half_b = Dot(oc, r.direction());
+        vec3 oc = r.GetOrigin() - center;
+        auto a = Dot(r.GetDirection(), r.GetDirection());
+        auto half_b = Dot(oc, r.GetDirection());
         auto c = Dot(oc, oc) - radius * radius;
         auto discriminant = half_b * half_b - a * c;
 

@@ -141,6 +141,12 @@
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Dielectric.h" />
+    <ClInclude Include="src\Metal.h" />
+    <ClInclude Include="src\Lambertian.h" />
+    <ClInclude Include="src\Material.h" />
+    <ClInclude Include="src\Randomization.h" />
+    <ClInclude Include="src\Color.h" />
     <ClInclude Include="src\SphereObject.h" />
     <ClInclude Include="src\RenderObject.h" />
     <ClInclude Include="src\Ray.h" />

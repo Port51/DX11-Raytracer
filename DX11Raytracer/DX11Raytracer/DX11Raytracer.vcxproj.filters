@@ -34,6 +34,9 @@
     <Filter Include="Source Files\Raytracing\Object">
       <UniqueIdentifier>{f0685259-28b2-41cf-bde8-ef6c5c0ca7e3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Raytracing\Materials">
+      <UniqueIdentifier>{04690a84-ced6-4a14-a55a-f1f2aa916ad5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -94,6 +97,24 @@
     </ClInclude>
     <ClInclude Include="src\SphereObject.h">
       <Filter>Header Files\Raytracing\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Color.h">
+      <Filter>Header Files\Raytracing</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Randomization.h">
+      <Filter>Header Files\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Material.h">
+      <Filter>Header Files\Raytracing\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lambertian.h">
+      <Filter>Header Files\Raytracing\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Metal.h">
+      <Filter>Header Files\Raytracing\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Dielectric.h">
+      <Filter>Header Files\Raytracing\Materials</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

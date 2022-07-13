@@ -15,8 +15,8 @@ namespace gfx
 	{
         D3D11_BUFFER_DESC ibd;
         ZERO_MEM(ibd);
-        ibd.ByteWidth = sizeof(RGBA) * screenWidth * screenHeight;
-        ibd.StructureByteStride = sizeof(RGBA);
+        ibd.ByteWidth = sizeof(Color) * screenWidth * screenHeight;
+        ibd.StructureByteStride = sizeof(Color);
         ibd.Usage = D3D11_USAGE_DYNAMIC;
         ibd.BindFlags = D3D11_BIND_SHADER_RESOURCE;
         ibd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;

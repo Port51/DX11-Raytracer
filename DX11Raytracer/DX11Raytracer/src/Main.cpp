@@ -8,7 +8,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	int returnCode = 0;
 	try
 	{
-		gfx::App app(ScreenWidth, ScreenHeight, "DX11Raytracer");
+		gfx::App app(gfx::ScreenWidth, gfx::ScreenHeight, "DX11Raytracer");
 		return app.Run();
 	}
 	catch (const std::exception& e)

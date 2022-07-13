@@ -17,6 +17,6 @@ float4 main(float4 uv : Texcoord) : SV_Target
 
     //return uv.y;
     //return uv.y < 0.5f ? 1 : 0;
-    return float4(pow(buffer[idx].rgb, 2.2), 1); // apply gamma correction
+    return float4(pow(buffer[idx].rgb, 2.0), 1); // apply gamma correction
     //return tex.Sample(splr, uv).rgba;
 }

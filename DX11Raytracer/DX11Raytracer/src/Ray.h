@@ -8,19 +8,19 @@ namespace gfx
     public:
         Ray() {}
         Ray(const vec3& origin, const vec3& direction)
-            : orig(origin), dir(direction)
+            : m_origin(origin), m_direction(direction)
         {}
 
-        vec3 origin() const { return orig; }
-        vec3 direction() const { return dir; }
-
-        vec3 at(double t) const
+    public:
+        vec3 GetOrigin() const { return m_origin; }
+        vec3 GetDirection() const { return m_direction; }
+        vec3 GetPositionAfterTime(const double t) const
         {
-            return orig + t * dir;
+            return m_origin + t * m_direction;
         }
 
-    public:
-        vec3 orig;
-        vec3 dir;
+    private:
+        vec3 m_origin;
+        vec3 m_direction;
     };
 }
