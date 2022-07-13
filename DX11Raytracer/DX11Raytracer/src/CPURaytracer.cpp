@@ -1,10 +1,14 @@
 #include "CPURaytracer.h"
 #include "Ray.h"
+#include "RenderObject.h"
+#include "SphereObject.h"
 
 namespace gfx
 {
 	CPURaytracer::CPURaytracer()
-	{}
+	{
+        m_pRenderObjects.emplace_back(std::make_unique<SphereObject>(vec3(0, 0, -1), 0.5));
+    }
 
 	void CPURaytracer::RunTile(RGBA* const buffer, const uint tileX, const uint tileY) const
 	{
@@ -29,28 +33,44 @@ namespace gfx
 
         // todo: transform this by view matrix
 
+        // todo: save elsewhere
+        // stored in order X0, Y0, X1, Y1, ...
+        const int AASamples = 16;
+        const float aaScale = 1.f / AASamples;
+        static double aaSamples[16]
+            = { 0.0588235, 0.419608, 0.298039, 0.180392, 0.180392, 0.819608, 0.419608, 0.698039, 0.580392, 0.298039, 0.941176, 0.0588235, 0.698039, 0.941176, 0.819608, 0.580392 };
+
         for (int lx = 0; lx < TileSize; ++lx)
         {
             for (int ly = 0; ly < TileSize; ++ly)
             {
                 int x = TileSize * tileX + lx;
                 int y = TileSize * tileY + ly;
-
-                // NDC coords
-                double u = static_cast<double>(x) / (ScreenWidth - 1) * 2.0 - 1.0;
-                double v = static_cast<double>(y) / (ScreenHeight - 1) * 2.0 - 1.0;
-
                 int localIdx = ly * TileSize + lx + tileOffset;
 
-                vec3 dir = Normalize(vec3(u * frustumCornerVS.x(), v * frustumCornerVS.y(), -1.0));
-                Ray r(cameraPositionWS, dir);
-                GetRayColor(r, &buffer[localIdx]);
+                RGBA color;
+
+                for (int a = 0; a < AASamples; ++a)
+                {
+                    // NDC coords
+                    double u = static_cast<double>(x + aaSamples[a * 2 + 0]) / (ScreenWidth - 1) * 2.0 - 1.0;
+                    double v = static_cast<double>(y + aaSamples[a * 2 + 1]) / (ScreenHeight - 1) * 2.0 - 1.0;
+
+                    vec3 dir = Normalize(vec3(u * frustumCornerVS.x(), v * frustumCornerVS.y(), -1.0));
+                    Ray r(cameraPositionWS, dir);
+
+                    color += GetRayColor(r);
+                }
+
+                buffer[localIdx].r = color.r * aaScale;
+                buffer[localIdx].g = color.g * aaScale;
+                buffer[localIdx].b = color.b * aaScale;
             }
         }
 
 	}
 
-    void CPURaytracer::GetRayColor(Ray& ray, RGBA* const bufferSegment) const
+    const RGBA CPURaytracer::GetRayColor(Ray& ray) const
     {
         // Sky background
         vec3 unit_direction = Normalize(ray.direction());
@@ -78,7 +98,28 @@ namespace gfx
             c[2] = v;
         }*/
 
-        t = hit_sphere(vec3(0, 0, -1), 0.5, ray);
+        RayHitRecord rhr;
+        double closestHitT = 1000000.0;
+        bool hasHit = false;
+
+        for (const auto& obj : m_pRenderObjects)
+        {
+            RayHitRecord temp;
+            if (obj->Hit(ray, 0.0, closestHitT, temp))
+            {
+                rhr = temp;
+                closestHitT = temp.t;
+                hasHit = true;
+            }
+        }
+
+        if (hasHit)
+        {
+            return RGBA(rhr.normal[0], rhr.normal[1], rhr.normal[2], 1.f);
+        }
+        
+
+        /*t = hit_sphere(vec3(0, 0, -1), 0.5, ray);
         if (t >= 0.0)
         {
             vec3 n = Normalize(ray.at(t) - vec3(0, 0, -1)) * 0.5 + vec3(0.5);
@@ -86,12 +127,9 @@ namespace gfx
             c[0] = n[0];
             c[1] = n[1];
             c[2] = n[2];
-        }
+        }*/
 
-        bufferSegment->r = c.x();
-        bufferSegment->g = c.y();
-        bufferSegment->b = c.z();
-        bufferSegment->a = 0;
+        return RGBA(c[0], c[1], c[2], 0.f);
     }
 
     const bool CPURaytracer::HitSphere(const Ray& ray, vec3& hitPoint) const
@@ -134,14 +172,14 @@ namespace gfx
     {
         vec3 oc = r.origin() - center;
         auto a = Dot(r.direction(), r.direction());
-        auto b = 2.0 * Dot(oc, r.direction());
+        auto half_b = Dot(oc, r.direction());
         auto c = Dot(oc, oc) - radius * radius;
-        auto discriminant = b * b - 4 * a * c;
+        auto discriminant = half_b * half_b - a * c;
 
         if (std::abs(a) < 0.00001) a = 0.00001;
 
         // Return distance, or -1
         if (discriminant < 0.0) return -1.0;
-        else return (-b - std::sqrt(discriminant)) / (2.0 * a);
+        else return (-half_b - std::sqrt(discriminant)) / a;
     }
 }

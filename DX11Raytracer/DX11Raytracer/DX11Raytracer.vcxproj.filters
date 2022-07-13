@@ -28,6 +28,12 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{f7885dbb-65e9-4c3a-8280-f2fd80b67271}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Raytracing\Objects">
+      <UniqueIdentifier>{8c3640d1-77b1-4872-850b-2ad638d2135f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Raytracing\Object">
+      <UniqueIdentifier>{f0685259-28b2-41cf-bde8-ef6c5c0ca7e3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -47,6 +53,12 @@
     </ClCompile>
     <ClCompile Include="src\CPURaytracer.cpp">
       <Filter>Source Files\Raytracing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderObject.cpp">
+      <Filter>Source Files\Raytracing\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SphereObject.cpp">
+      <Filter>Source Files\Raytracing\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -76,6 +88,12 @@
     </ClInclude>
     <ClInclude Include="src\Ray.h">
       <Filter>Header Files\Raytracing</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RenderObject.h">
+      <Filter>Header Files\Raytracing\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SphereObject.h">
+      <Filter>Header Files\Raytracing\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

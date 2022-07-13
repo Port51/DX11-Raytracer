@@ -7,12 +7,74 @@ const int TileSize = 16u;
 const int TileDimensionX = ScreenWidth / TileSize;
 const int TileDimensionY = ScreenHeight / TileSize;
 
+#include <cmath>
+#include <limits>
+
+// Constants
+
+const double infinity = std::numeric_limits<double>::infinity();
+const double pi = 3.1415926535897932385;
+
+// Utility Functions
+
+inline double degrees_to_radians(double degrees)
+{
+	return degrees * pi / 180.0;
+}
+
+#include <random>
+
+inline double random_double()
+{
+	static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+	static std::mt19937 generator;
+	return distribution(generator);
+}
+
+inline double clamp(double x, double min, double max)
+{
+	if (x < min) return min;
+	if (x > max) return max;
+	return x;
+}
+
 struct RGBA
 {
 	float r;
 	float g;
 	float b;
 	float a;
+
+	RGBA()
+		: r(0.f), g(0.f), b(0.f), a(0.f)
+	{}
+
+	RGBA(float r, float g, float b, float a)
+		: r(r), g(g), b(b), a(a)
+	{}
+
+	RGBA& operator+=(const RGBA& v)
+	{
+		r += v.r;
+		g += v.g;
+		b += v.b;
+		a += v.a;
+		return *this;
+	}
+
+	RGBA& operator*=(const double t)
+	{
+		r += t;
+		g += t;
+		b += t;
+		a += t;
+		return *this;
+	}
+
+	RGBA& operator/=(const double t)
+	{
+		return *this *= 1 / t;
+	}
 };
 
 #define ZERO_MEM(x) ZeroMemory(&x, sizeof(x))
@@ -44,3 +106,6 @@ namespace gfx
 
 #include <memory>
 #include "vec3.h"
+
+#include <wrl.h>
+using namespace Microsoft::WRL;

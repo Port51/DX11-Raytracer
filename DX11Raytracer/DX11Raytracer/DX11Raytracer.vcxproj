@@ -131,6 +131,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\SphereObject.cpp" />
+    <ClCompile Include="src\RenderObject.cpp" />
     <ClCompile Include="src\CPURaytracer.cpp" />
     <ClCompile Include="src\FullScreenBlit.cpp" />
     <ClCompile Include="src\ExceptionHandling.cpp" />
@@ -139,6 +141,8 @@
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\SphereObject.h" />
+    <ClInclude Include="src\RenderObject.h" />
     <ClInclude Include="src\Ray.h" />
     <ClInclude Include="src\CPURaytracer.h" />
     <ClInclude Include="src\CommonHeader.h" />

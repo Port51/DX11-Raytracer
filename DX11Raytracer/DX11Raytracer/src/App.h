@@ -24,12 +24,12 @@ namespace gfx
 		void MapImageBuffer();
 	private:
 		std::unique_ptr<Graphics> m_pGfx;
-		ID3D11Buffer* m_pImageBuffer;
-		ID3D11ShaderResourceView* m_pImageBufferSRV;
+		ComPtr<ID3D11Buffer> m_pImageBuffer;
+		ComPtr<ID3D11ShaderResourceView> m_pImageBufferSRV;
 		std::vector<RGBA> m_imageData;
-		ID3D11ComputeShader* m_pComputeShader;
-		FullScreenBlit* m_pFullScreenBlit;
-		CPURaytracer* m_pCPURaytracer;
+		ComPtr<ID3D11ComputeShader> m_pComputeShader;
+		std::unique_ptr<FullScreenBlit> m_pFullScreenBlit;
+		std::unique_ptr<CPURaytracer> m_pCPURaytracer;
 
 		const int m_screenWidth;
 		const int m_screenHeight;

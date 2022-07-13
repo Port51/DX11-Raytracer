@@ -14,12 +14,12 @@ namespace gfx
 		void ClearRenderTarget(const float r, const float g, const float b, const float a) const;
 		void SetViewport(const int x, const int y, const int width, const int height) const;
 	public:
-		ID3D11Device1* m_pDevice;
-		ID3D11DeviceContext1* m_pDeviceContext;
-		IDXGIFactory2* m_pDxgiFactory;
+		ComPtr<ID3D11Device1> m_pDevice;
+		ComPtr<ID3D11DeviceContext1> m_pDeviceContext;
+		ComPtr<IDXGIFactory2> m_pDxgiFactory;
+		ComPtr<IDXGISwapChain1> m_pSwapChain;
+		ComPtr<ID3D11Texture2D> m_pFrameBuffer;
+		ComPtr<ID3D11RenderTargetView> m_pFrameBufferView;
 		HWND m_pWindow;
-		IDXGISwapChain1* m_pSwapChain;
-		ID3D11Texture2D* m_pFrameBuffer;
-		ID3D11RenderTargetView* m_pFrameBufferView;
 	};
 }

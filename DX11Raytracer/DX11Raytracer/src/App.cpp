@@ -4,6 +4,7 @@
 #include "ExceptionHandling.h"
 #include "FullScreenBlit.h"
 #include "CPURaytracer.h"
+#include "RenderObject.h"
 
 namespace gfx
 {
@@ -22,7 +23,7 @@ namespace gfx
         ibd.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
         THROW_IF_FAILED(m_pGfx->m_pDevice->CreateBuffer(&ibd, nullptr, &m_pImageBuffer));
-        THROW_IF_FAILED(m_pGfx->m_pDevice->CreateShaderResourceView(m_pImageBuffer, nullptr, &m_pImageBufferSRV));
+        THROW_IF_FAILED(m_pGfx->m_pDevice->CreateShaderResourceView(m_pImageBuffer.Get(), nullptr, &m_pImageBufferSRV));
 
         m_imageData.resize(screenWidth * screenHeight);
 
@@ -64,8 +65,8 @@ namespace gfx
             &m_pComputeShader
         ));
 
-        m_pFullScreenBlit = new FullScreenBlit(*m_pGfx);
-        m_pCPURaytracer = new CPURaytracer();
+        m_pFullScreenBlit = std::make_unique<FullScreenBlit>(*m_pGfx);
+        m_pCPURaytracer = std::make_unique<CPURaytracer>();
     }
 
     App::~App()
@@ -117,7 +118,7 @@ namespace gfx
             }*/
 
             m_pGfx->SetViewport(0, 0, m_screenWidth, m_screenHeight);
-            m_pFullScreenBlit->Execute(*m_pGfx, m_pImageBufferSRV);
+            m_pFullScreenBlit->Execute(*m_pGfx, m_pImageBufferSRV.Get());
 
             // todo: don't clear
             //m_pGfx->ClearRenderTarget(0.1f, 0.9f, 0.1f, 1.0f);
@@ -138,11 +139,11 @@ namespace gfx
     void App::MapImageBuffer()
     {
         D3D11_MAPPED_SUBRESOURCE mappedSubresource;
-        m_pGfx->m_pDeviceContext->Map(m_pImageBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
+        m_pGfx->m_pDeviceContext->Map(m_pImageBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
 
         float* sd = reinterpret_cast<float*>(mappedSubresource.pData);
         memcpy(sd, m_imageData.data(), sizeof(m_imageData.at(0)) * m_imageData.size()); // todo: only map what's changed
 
-        m_pGfx->m_pDeviceContext->Unmap(m_pImageBuffer, 0);
+        m_pGfx->m_pDeviceContext->Unmap(m_pImageBuffer.Get(), 0);
     }
 }

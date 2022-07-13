@@ -42,9 +42,9 @@ namespace gfx
             ID3D11DeviceContext* baseDeviceContext;
             THROW_IF_FAILED(D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, creationFlags, featureLevels, ARRAYSIZE(featureLevels), D3D11_SDK_VERSION, &baseDevice, nullptr, &baseDeviceContext));
 
-            THROW_IF_FAILED(baseDevice->QueryInterface(__uuidof(ID3D11Device1), reinterpret_cast<void**>(&m_pDevice)));
+            THROW_IF_FAILED(baseDevice->QueryInterface(__uuidof(ID3D11Device1), reinterpret_cast<void**>(m_pDevice.GetAddressOf())));
 
-            THROW_IF_FAILED(baseDeviceContext->QueryInterface(__uuidof(ID3D11DeviceContext1), reinterpret_cast<void**>(&m_pDeviceContext)));
+            THROW_IF_FAILED(baseDeviceContext->QueryInterface(__uuidof(ID3D11DeviceContext1), reinterpret_cast<void**>(m_pDeviceContext.GetAddressOf())));
 
             IDXGIDevice1* dxgiDevice;
             THROW_IF_FAILED(m_pDevice->QueryInterface(__uuidof(IDXGIDevice1), reinterpret_cast<void**>(&dxgiDevice)));
@@ -52,7 +52,7 @@ namespace gfx
             IDXGIAdapter* dxgiAdapter;
             THROW_IF_FAILED(dxgiDevice->GetAdapter(&dxgiAdapter));
 
-            THROW_IF_FAILED(dxgiAdapter->GetParent(__uuidof(IDXGIFactory2), reinterpret_cast<void**>(&m_pDxgiFactory)));
+            THROW_IF_FAILED(dxgiAdapter->GetParent(__uuidof(IDXGIFactory2), reinterpret_cast<void**>(m_pDxgiFactory.GetAddressOf())));
         }
         
         // Setup swap chain
@@ -72,11 +72,11 @@ namespace gfx
             scd.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
             scd.Flags = 0u;
 
-            THROW_IF_FAILED(m_pDxgiFactory->CreateSwapChainForHwnd(m_pDevice, m_pWindow, &scd, nullptr, nullptr, &m_pSwapChain));
+            THROW_IF_FAILED(m_pDxgiFactory->CreateSwapChainForHwnd(m_pDevice.Get(), m_pWindow, &scd, nullptr, nullptr, m_pSwapChain.GetAddressOf()));
 
-            THROW_IF_FAILED(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&m_pFrameBuffer)));
+            THROW_IF_FAILED(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(m_pFrameBuffer.GetAddressOf())));
 
-            THROW_IF_FAILED(m_pDevice->CreateRenderTargetView(m_pFrameBuffer, nullptr, &m_pFrameBufferView));
+            THROW_IF_FAILED(m_pDevice->CreateRenderTargetView(m_pFrameBuffer.Get(), nullptr, m_pFrameBufferView.GetAddressOf()));
 
             //D3D11_VIEWPORT viewport = { 0.0f, 0.0f, static_cast<float>(screenWidth), static_cast<float>(screenHeight), 0.0f, 1.0f };
         }
@@ -94,7 +94,7 @@ namespace gfx
         colorArray[1] = g;
         colorArray[2] = b;
         colorArray[3] = a;
-        m_pDeviceContext->ClearRenderTargetView(m_pFrameBufferView, colorArray);
+        m_pDeviceContext->ClearRenderTargetView(m_pFrameBufferView.Get(), colorArray);
     }
 
     void Graphics::SetViewport(const int x, const int y, const int width, const int height) const
