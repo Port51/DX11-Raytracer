@@ -6,9 +6,14 @@ namespace gfx
 	Ray::Ray()
     {}
 
-    Ray::Ray(const vec3& origin, const vec3& direction)
-        : m_origin(origin), m_direction(direction)
+    Ray::Ray(const vec3& origin, const vec3& direction, const double time)
+        : m_origin(origin), m_direction(direction), m_time(time)
     {}
+
+    double Ray::GetTime() const
+    {
+        return m_time;
+    }
 
     vec3 Ray::GetOrigin() const
     {

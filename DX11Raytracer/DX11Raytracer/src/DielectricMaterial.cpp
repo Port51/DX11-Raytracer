@@ -34,7 +34,7 @@ namespace gfx
         else
             direction = Refract(rayDirNorm, rec.normal, refractionRatio);
 
-        scattered = Ray(rec.p, direction);
+        scattered = Ray(rec.p, direction, rayIn.GetTime());
         return true;
     }
 }

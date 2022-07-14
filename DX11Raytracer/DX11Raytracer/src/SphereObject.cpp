@@ -2,14 +2,15 @@
 
 namespace gfx
 {
-    SphereObject::SphereObject(vec3 cen, double r, std::shared_ptr<Material> pMaterial)
-        : m_center(cen), m_radius(r), m_pMaterial(std::move(pMaterial)), RenderObject()
+    SphereObject::SphereObject(const vec3 positionWS, const double radius, std::shared_ptr<Material> pMaterial)
+        : m_radius(radius), m_pMaterial(std::move(pMaterial)), RenderObject(positionWS)
     {
     }
 
     bool SphereObject::Hit(const Ray& r, const double tMin, const double tMax, RayHitRecord& rec) const
 	{
-        vec3 oc = r.GetOrigin() - m_center;
+        vec3 center = GetPositionAtTime(r.GetTime());
+        vec3 oc = r.GetOrigin() - center;
         auto a = Dot(r.GetDirection(), r.GetDirection());
         auto halfB = Dot(oc, r.GetDirection());
         auto c = Dot(oc, oc) - m_radius * m_radius;
@@ -31,7 +32,7 @@ namespace gfx
         rec.p = r.GetPositionAfterTime(rec.t);
         
         // Handle inward facing normals
-        vec3 normal = (rec.p - m_center) / m_radius;
+        vec3 normal = (rec.p - center) / m_radius;
         rec.isFrontFacing = Dot(r.GetDirection(), normal) < 0;
         rec.normal = rec.isFrontFacing ? normal : -normal;
         rec.pMaterial = m_pMaterial;

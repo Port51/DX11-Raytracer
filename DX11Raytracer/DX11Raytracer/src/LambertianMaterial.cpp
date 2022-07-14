@@ -16,7 +16,7 @@ namespace gfx
         if (scatterDirWS.IsNearlyZero())
             scatterDirWS = rec.normal;
 
-        scattered = Ray(rec.p, scatterDirWS);
+        scattered = Ray(rec.p, scatterDirWS, rayIn.GetTime());
         attenuation = m_albedo;
         return true;
     }
