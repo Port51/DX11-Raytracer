@@ -7,23 +7,23 @@ namespace gfx
     {
     }
 
-    bool SphereObject::Hit(const Ray& r, const double t_min, const double t_max, RayHitRecord& rec) const
+    bool SphereObject::Hit(const Ray& r, const double tMin, const double tMax, RayHitRecord& rec) const
 	{
         vec3 oc = r.GetOrigin() - m_center;
         auto a = Dot(r.GetDirection(), r.GetDirection());
-        auto half_b = Dot(oc, r.GetDirection());
+        auto halfB = Dot(oc, r.GetDirection());
         auto c = Dot(oc, oc) - m_radius * m_radius;
 
-        auto discriminant = half_b * half_b - a * c;
+        auto discriminant = halfB * halfB - a * c;
         if (discriminant < 0) return false;
         auto sqrtd = sqrt(discriminant);
 
         // Find the nearest root that lies in the acceptable range.
-        auto root = (-half_b - sqrtd) / a;
-        if (root < t_min || t_max < root)
+        auto root = (-halfB - sqrtd) / a;
+        if (root < tMin || tMax < root)
         {
-            root = (-half_b + sqrtd) / a;
-            if (root < t_min || t_max < root)
+            root = (-halfB + sqrtd) / a;
+            if (root < tMin || tMax < root)
                 return false;
         }
 

@@ -63,12 +63,12 @@ namespace gfx
 
         static vec3 Random()
         {
-            return vec3(random_double(), random_double(), random_double());
+            return vec3(Random::RandomDouble(), Random::RandomDouble(), Random::RandomDouble());
         }
 
         static vec3 Random(double min, double max)
         {
-            return vec3(random_double(min, max), random_double(min, max), random_double(min, max));
+            return vec3(Random::RandomDouble(min, max), Random::RandomDouble(min, max), Random::RandomDouble(min, max));
         }
 
         static vec3 RandomInUnitSphere()
@@ -86,6 +86,16 @@ namespace gfx
             vec3 result = RandomInUnitSphere();
             if (result.Dot(normal) < 0.0) result *= -1.0; // turns sphere into hemisphere
             return result;
+        }
+
+        static vec3 RandomInUnitDisk()
+        {
+            while (true)
+            {
+                auto p = vec3(Random::RandomDouble(-1.0, 1.0), Random::RandomDouble(-1.0, 1.0), 0.0);
+                if (p.LengthSqr() >= 1.0) continue;
+                return p;
+            }
         }
 
     public:

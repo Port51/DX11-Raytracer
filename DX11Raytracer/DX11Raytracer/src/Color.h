@@ -26,7 +26,7 @@ namespace gfx
 			return *this;
 		}
 
-		Color& operator*=(const double t)
+		Color& operator*=(const float t)
 		{
 			r += t;
 			g += t;
@@ -35,9 +35,19 @@ namespace gfx
 			return *this;
 		}
 
-		Color& operator/=(const double t)
+		Color& operator/=(const float t)
 		{
 			return *this *= 1 / t;
+		}
+
+		static Color Random()
+		{
+			return Color(Random::RandomFloat(), Random::RandomFloat(), Random::RandomFloat(), Random::RandomFloat());
+		}
+
+		static Color Random(float min, float max)
+		{
+			return Color(Random::RandomFloat(min, max), Random::RandomFloat(min, max), Random::RandomFloat(min, max), Random::RandomFloat(min, max));
 		}
 	};
 
@@ -61,17 +71,17 @@ namespace gfx
 		return Color(u.r * v.r, u.g * v.g, u.b * v.b, u.a * v.a);
 	}
 
-	inline Color operator*(double t, const Color& v)
+	inline Color operator*(float t, const Color& v)
 	{
 		return Color(t * v.r, t * v.g, t * v.b, t * v.a);
 	}
 
-	inline Color operator*(const Color& v, double t)
+	inline Color operator*(const Color& v, float t)
 	{
 		return t * v;
 	}
 
-	inline Color operator/(Color v, double t)
+	inline Color operator/(Color v, float t)
 	{
 		return (1 / t) * v;
 	}

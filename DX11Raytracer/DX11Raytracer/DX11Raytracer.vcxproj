@@ -131,6 +131,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\DielectricMaterial.cpp" />
+    <ClCompile Include="src\LambertianMaterial.cpp" />
+    <ClCompile Include="src\MetalMaterial.cpp" />
+    <ClCompile Include="src\Ray.cpp" />
+    <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\SphereObject.cpp" />
     <ClCompile Include="src\RenderObject.cpp" />
     <ClCompile Include="src\CPURaytracer.cpp" />
@@ -142,11 +147,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Camera.h" />
-    <ClInclude Include="src\Dielectric.h" />
-    <ClInclude Include="src\Metal.h" />
-    <ClInclude Include="src\Lambertian.h" />
+    <ClInclude Include="src\DielectricMaterial.h" />
+    <ClInclude Include="src\MetalMaterial.h" />
+    <ClInclude Include="src\LambertianMaterial.h" />
     <ClInclude Include="src\Material.h" />
-    <ClInclude Include="src\Randomization.h" />
+    <ClInclude Include="src\Random.h" />
     <ClInclude Include="src\Color.h" />
     <ClInclude Include="src\SphereObject.h" />
     <ClInclude Include="src\RenderObject.h" />

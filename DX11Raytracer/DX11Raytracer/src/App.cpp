@@ -68,7 +68,12 @@ namespace gfx
 
         m_pFullScreenBlit = std::make_unique<FullScreenBlit>(*m_pGfx);
         m_pCPURaytracer = std::make_unique<CPURaytracer>();
-        m_pCamera = std::make_unique<Camera>(vec3(-2, 2, 1), vec3(0, 0, -1), vec3(0, 1, 0), 20, AspectRatio);
+
+        vec3 camWS = vec3(13, 2, 3);
+        vec3 targetWS = vec3(0, 0, 0);
+        auto aperture = 0.1;
+        auto focusDist = (camWS - targetWS).Length();
+        m_pCamera = std::make_unique<Camera>(camWS, targetWS, vec3(0, 1, 0), 30, AspectRatio, aperture, focusDist);
     }
 
     App::~App()

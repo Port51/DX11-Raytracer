@@ -37,6 +37,9 @@
     <Filter Include="Header Files\Raytracing\Materials">
       <UniqueIdentifier>{04690a84-ced6-4a14-a55a-f1f2aa916ad5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Raytracing\Materials">
+      <UniqueIdentifier>{86539fb4-913e-4470-9941-7a94c73c240e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -62,6 +65,21 @@
     </ClCompile>
     <ClCompile Include="src\SphereObject.cpp">
       <Filter>Source Files\Raytracing\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Camera.cpp">
+      <Filter>Source Files\Raytracing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ray.cpp">
+      <Filter>Source Files\Raytracing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DielectricMaterial.cpp">
+      <Filter>Source Files\Raytracing\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LambertianMaterial.cpp">
+      <Filter>Source Files\Raytracing\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MetalMaterial.cpp">
+      <Filter>Source Files\Raytracing\Materials</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -101,19 +119,19 @@
     <ClInclude Include="src\Color.h">
       <Filter>Header Files\Raytracing</Filter>
     </ClInclude>
-    <ClInclude Include="src\Randomization.h">
+    <ClInclude Include="src\Random.h">
       <Filter>Header Files\Application</Filter>
     </ClInclude>
     <ClInclude Include="src\Material.h">
       <Filter>Header Files\Raytracing\Materials</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lambertian.h">
+    <ClInclude Include="src\LambertianMaterial.h">
       <Filter>Header Files\Raytracing\Materials</Filter>
     </ClInclude>
-    <ClInclude Include="src\Metal.h">
+    <ClInclude Include="src\MetalMaterial.h">
       <Filter>Header Files\Raytracing\Materials</Filter>
     </ClInclude>
-    <ClInclude Include="src\Dielectric.h">
+    <ClInclude Include="src\DielectricMaterial.h">
       <Filter>Header Files\Raytracing\Materials</Filter>
     </ClInclude>
     <ClInclude Include="src\Camera.h">

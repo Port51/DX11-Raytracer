@@ -17,10 +17,11 @@ namespace gfx
 	public:
 		void RunTile(const Camera& camera, Color* const buffer, const uint tileX, const uint tileY) const;
 	private:
+		void CreateRandomScene();
+		void AddRenderObject(std::unique_ptr<RenderObject> pRenderObject);
 		const Color GetRayColor(Ray& ray, const int depth) const;
 		const bool HitSphere(const Ray& ray, vec3& hitPoint) const;
-		const double hit_sphere(const vec3& center, double radius, const Ray& r) const;
-
+	private:
 		std::vector<std::unique_ptr<RenderObject>> m_pRenderObjects;
 	};
 }
