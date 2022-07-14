@@ -10,10 +10,11 @@ namespace gfx
 {
 	CPURaytracer::CPURaytracer()
 	{
-        //m_pRenderObjects.emplace_back(std::make_unique<SphereObject>(vec3(0, 0, -1), 0.5, std::make_shared<Lambertian>(Color(1.0, 0.4, 0.4, 1.0))));
-        //m_pRenderObjects.emplace_back(std::make_unique<SphereObject>(vec3(1, 0, -1), 0.5, std::make_shared<Metal>(Color(1.0, 0.4, 0.4, 1.0), 0.0)));
+        m_pRenderObjects.emplace_back(std::make_unique<SphereObject>(vec3(0, 0, -1), 0.5, std::make_shared<Lambertian>(Color(1.0, 0.4, 0.4, 1.0))));
+        m_pRenderObjects.emplace_back(std::make_unique<SphereObject>(vec3(1, 0, -1), 0.5, std::make_shared<Metal>(Color(1.0, 0.4, 0.4, 1.0), 0.0)));
         //m_pRenderObjects.emplace_back(std::make_unique<SphereObject>(vec3(-1, 0, -1), 0.5, std::make_shared<Metal>(Color(1.0, 1.0, 1.0, 1.0), 0.5)));
-        m_pRenderObjects.emplace_back(std::make_unique<SphereObject>(vec3(-0.35, 0, -0.5), 0.27, std::make_shared<Dielectric>(1.5)));
+        m_pRenderObjects.emplace_back(std::make_unique<SphereObject>(vec3(-1, 0, -1), -0.5, std::make_shared<Dielectric>(1.5)));
+        //m_pRenderObjects.emplace_back(std::make_unique<SphereObject>(vec3(-0.35, 0, -0.5), 0.27, std::make_shared<Dielectric>(1.5)));
 
         // Ground
         m_pRenderObjects.emplace_back(std::make_unique<SphereObject>(vec3(0, -100.5, -1), 100, std::make_shared<Lambertian>(Color(0.1, 0.8, 0.2, 1.0))));
@@ -42,7 +43,7 @@ namespace gfx
 
         // todo: transform this by view matrix
 
-        const int MaxBounces = 10;
+        const int MaxBounces = 20;
         const int SamplesPerPixel = 11;
         const float AAScale = 1.f / SamplesPerPixel;
         //static double aaSamples[16] = { 0.0588235, 0.419608, 0.298039, 0.180392, 0.180392, 0.819608, 0.419608, 0.698039, 0.580392, 0.298039, 0.941176, 0.0588235, 0.698039, 0.941176, 0.819608, 0.580392 };
