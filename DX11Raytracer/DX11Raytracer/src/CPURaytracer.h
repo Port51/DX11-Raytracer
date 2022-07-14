@@ -7,6 +7,7 @@ namespace gfx
 	class Ray;
 	class RenderObject;
 	class SphereObject;
+	class Camera;
 
 	class CPURaytracer
 	{
@@ -14,7 +15,7 @@ namespace gfx
 		CPURaytracer();
 		~CPURaytracer() = default;
 	public:
-		void RunTile(Color* const buffer, const uint tileX, const uint tileY) const;
+		void RunTile(const Camera& camera, Color* const buffer, const uint tileX, const uint tileY) const;
 	private:
 		const Color GetRayColor(Ray& ray, const int depth) const;
 		const bool HitSphere(const Ray& ray, vec3& hitPoint) const;

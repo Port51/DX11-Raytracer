@@ -5,6 +5,7 @@
 #include "Lambertian.h"
 #include "Metal.h"
 #include "Dielectric.h"
+#include "Camera.h"
 
 namespace gfx
 {
@@ -20,7 +21,7 @@ namespace gfx
         m_pRenderObjects.emplace_back(std::make_unique<SphereObject>(vec3(0, -100.5, -1), 100, std::make_shared<Lambertian>(Color(0.1, 0.8, 0.2, 1.0))));
     }
 
-	void CPURaytracer::RunTile(Color* const buffer, const uint tileX, const uint tileY) const
+	void CPURaytracer::RunTile(const Camera& camera, Color* const buffer, const uint tileX, const uint tileY) const
 	{
 		const int tileOffset = (tileY * TileDimensionX + tileX) * (TileSize * TileSize);
 
@@ -33,13 +34,6 @@ namespace gfx
         auto horizontal = vec3(viewport_width, 0, 0);
         auto vertical = vec3(0, viewport_height, 0);
         auto lower_left_corner = cameraPositionWS - horizontal / 2 - vertical / 2 - vec3(0, 0, focal_length);*/
-
-        auto vFov = 75.0 * 3.1415 / 180.0;
-        auto halfAngleY = std::tan(vFov * 0.5);
-        auto halfAngleX = halfAngleY * AspectRatio;
-        vec3 frustumCornerVS = vec3(halfAngleX, halfAngleY, 1.0);
-
-        auto cameraPositionWS = vec3(0, 0, 0.5);
 
         // todo: transform this by view matrix
 
@@ -61,14 +55,12 @@ namespace gfx
                 for (int a = 0; a < SamplesPerPixel; ++a)
                 {
                     // NDC coords
-                    double u = static_cast<double>(x + random_double()) / (ScreenWidth - 1) * 2.0 - 1.0;
-                    double v = static_cast<double>(y + random_double()) / (ScreenHeight - 1) * 2.0 - 1.0;
+                    double u = static_cast<double>(x + random_double()) / (ScreenWidth - 1);
+                    double v = static_cast<double>(y + random_double()) / (ScreenHeight - 1);
                     //double u = static_cast<double>(x + aaSamples[a * 2 + 0]) / (ScreenWidth - 1) * 2.0 - 1.0;
                     //double v = static_cast<double>(y + aaSamples[a * 2 + 1]) / (ScreenHeight - 1) * 2.0 - 1.0;
 
-                    vec3 dir = Normalize(vec3(u * frustumCornerVS.x, v * frustumCornerVS.y, -1.0));
-                    Ray r(cameraPositionWS, dir);
-
+                    Ray r = camera.GetRay(u, v);
                     color += GetRayColor(r, MaxBounces);
                 }
 

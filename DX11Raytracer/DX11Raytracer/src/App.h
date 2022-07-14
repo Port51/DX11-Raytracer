@@ -11,6 +11,7 @@ namespace gfx
 	class Graphics;
 	class FullScreenBlit;
 	class CPURaytracer;
+	class Camera;
 
 	class App
 	{
@@ -30,6 +31,7 @@ namespace gfx
 		ComPtr<ID3D11ComputeShader> m_pComputeShader;
 		std::unique_ptr<FullScreenBlit> m_pFullScreenBlit;
 		std::unique_ptr<CPURaytracer> m_pCPURaytracer;
+		std::unique_ptr<Camera> m_pCamera;
 
 		const int m_screenWidth;
 		const int m_screenHeight;

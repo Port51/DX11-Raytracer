@@ -5,6 +5,7 @@
 #include "FullScreenBlit.h"
 #include "CPURaytracer.h"
 #include "RenderObject.h"
+#include "Camera.h"
 
 namespace gfx
 {
@@ -67,6 +68,7 @@ namespace gfx
 
         m_pFullScreenBlit = std::make_unique<FullScreenBlit>(*m_pGfx);
         m_pCPURaytracer = std::make_unique<CPURaytracer>();
+        m_pCamera = std::make_unique<Camera>(vec3(-2, 2, 1), vec3(0, 0, -1), vec3(0, 1, 0), 20, AspectRatio);
     }
 
     App::~App()
@@ -132,7 +134,7 @@ namespace gfx
     {
         for (int tx = 0; tx < TileDimensionX; ++tx)
         {
-            m_pCPURaytracer->RunTile(m_imageData.data(), tx, rowIdx);
+            m_pCPURaytracer->RunTile(*m_pCamera.get(), m_imageData.data(), tx, rowIdx);
         }
     }
 
