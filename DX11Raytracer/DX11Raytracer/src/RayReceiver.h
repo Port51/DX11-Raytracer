@@ -13,7 +13,7 @@ namespace gfx
 		RayReceiver() {}
 		RayReceiver(const vec3 positionWS) : m_positionWS(positionWS)
 		{
-			m_prevFramePositionWS = m_positionWS + vec3(0, 0.1, 0); // testing motion blur...
+			m_prevFramePositionWS = m_positionWS + vec3(0, 0.001, 0); // testing motion blur...
 		};
 		virtual ~RayReceiver() = default;
 	public:

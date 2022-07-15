@@ -31,7 +31,7 @@ namespace gfx
         auto groundMaterial = std::make_shared<LambertianMaterial>(std::make_shared<CheckeredTexture>(Color(0.5, 0.5, 0.5, 0.5), Color(0.25, 0.25, 1.0, 0.5)));
         rendererList.Add(std::make_unique<SphereObject>(vec3(0, -1000, 0), 1000, groundMaterial));
 
-        /*for (int a = -11; a < 11; a++)
+        for (int a = -11; a < 11; a++)
         {
             for (int b = -11; b < 11; b++)
             {
@@ -63,7 +63,7 @@ namespace gfx
                     }
                 }
             }
-        }*/
+        }
 
         auto material1 = std::make_shared<DielectricMaterial>(1.5);
         rendererList.Add(std::make_unique<SphereObject>(vec3(0, 1, 0), 1.0, material1));
@@ -82,7 +82,7 @@ namespace gfx
 		const int tileOffset = (tileY * TileDimensionX + tileX) * (TileSize * TileSize);
 
         const int maxBounces = 10;
-        const int samplesPerPixel = 5;
+        const int samplesPerPixel = 100;
         const float multisampleScale = 1.f / samplesPerPixel;
 
         for (int lx = 0; lx < TileSize; ++lx)

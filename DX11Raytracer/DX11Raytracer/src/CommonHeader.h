@@ -17,6 +17,8 @@ namespace gfx
 	const int TileDimensionX = ScreenWidth / TileSize;
 	const int TileDimensionY = ScreenHeight / TileSize;
 
+	const bool UseThreading = true;
+
 	// todo: move this!
 	class Material;
 	struct RayHitRecord

@@ -6,6 +6,7 @@
 #include "CPURaytracer.h"
 #include "RayReceiver.h"
 #include "Camera.h"
+#include <thread>
 
 namespace gfx
 {
@@ -123,9 +124,28 @@ namespace gfx
 
     void App::ExecuteTileRow(const int rowIdx)
     {
-        for (int tx = 0; tx < TileDimensionX; ++tx)
+        if (UseThreading)
         {
-            m_pCPURaytracer->RunTile(*m_pCamera.get(), m_imageData.data(), tx, rowIdx);
+            std::vector<std::thread> renderThreads;
+            for (int tx = 0; tx < TileDimensionX; ++tx)
+            {
+                renderThreads.push_back(std::thread(&CPURaytracer::RunTile, m_pCPURaytracer.get(), *m_pCamera.get(), m_imageData.data(), tx, rowIdx));
+            }
+
+            for (int tx = 0; tx < TileDimensionX; ++tx)
+            {
+                if (renderThreads.at(tx).joinable())
+                {
+                    renderThreads.at(tx).join();
+                }
+            }
+        }
+        else
+        {
+            for (int tx = 0; tx < TileDimensionX; ++tx)
+            {
+                m_pCPURaytracer->RunTile(*m_pCamera.get(), m_imageData.data(), tx, rowIdx);
+            }
         }
     }
 

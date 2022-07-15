@@ -17,6 +17,7 @@ namespace gfx
 		CPURaytracer();
 		~CPURaytracer() = default;
 	public:
+		void Debug(int i) { }
 		void RunTile(const Camera& camera, Color* const buffer, const uint tileX, const uint tileY) const;
 	private:
 		void CreateRandomScene();
