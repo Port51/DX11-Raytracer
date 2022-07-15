@@ -24,6 +24,8 @@ namespace gfx
 		vec3 p;
 		vec3 normal;
 		double t;
+		double u; // UV coords of hit
+		double v;
 		bool isFrontFacing;
 		std::shared_ptr<Material> pMaterial;
 	};
@@ -45,6 +47,12 @@ namespace gfx
 		if (x < min) return min;
 		if (x > max) return max;
 		return x;
+	}
+
+	inline double Frac(const double x)
+	{
+		const auto whole = std::floor(x);
+		return x - whole;
 	}
 
 	#define ZERO_MEM(x) ZeroMemory(&x, sizeof(x))

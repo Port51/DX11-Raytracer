@@ -100,6 +100,7 @@ namespace gfx
     void Graphics::SetViewport(const int x, const int y, const int width, const int height) const
     {
         D3D11_VIEWPORT vp;
+        ZERO_MEM(vp);
         vp.Width = (FLOAT)width;
         vp.Height = (FLOAT)height;
         vp.MinDepth = 0;

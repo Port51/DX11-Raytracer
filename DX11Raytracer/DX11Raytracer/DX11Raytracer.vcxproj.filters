@@ -31,14 +31,23 @@
     <Filter Include="Header Files\Raytracing\Objects">
       <UniqueIdentifier>{8c3640d1-77b1-4872-850b-2ad638d2135f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Raytracing\Object">
-      <UniqueIdentifier>{f0685259-28b2-41cf-bde8-ef6c5c0ca7e3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Raytracing\Materials">
       <UniqueIdentifier>{04690a84-ced6-4a14-a55a-f1f2aa916ad5}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Raytracing\Materials">
       <UniqueIdentifier>{86539fb4-913e-4470-9941-7a94c73c240e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Raytracing\Objects\BVH">
+      <UniqueIdentifier>{47c5cf12-1515-4cbd-8d08-569e70ca9ba9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Raytracing\Objects">
+      <UniqueIdentifier>{f0685259-28b2-41cf-bde8-ef6c5c0ca7e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Raytracing\Objects\BVH">
+      <UniqueIdentifier>{1faf743a-12a8-42a5-a449-f79bbca8d579}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Raytracing\Textures">
+      <UniqueIdentifier>{8f817e7c-1305-406a-8759-7374e1d4070d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -60,11 +69,11 @@
     <ClCompile Include="src\CPURaytracer.cpp">
       <Filter>Source Files\Raytracing</Filter>
     </ClCompile>
-    <ClCompile Include="src\RenderObject.cpp">
-      <Filter>Source Files\Raytracing\Object</Filter>
+    <ClCompile Include="src\RayReceiver.cpp">
+      <Filter>Source Files\Raytracing\Objects</Filter>
     </ClCompile>
     <ClCompile Include="src\SphereObject.cpp">
-      <Filter>Source Files\Raytracing\Object</Filter>
+      <Filter>Source Files\Raytracing\Objects</Filter>
     </ClCompile>
     <ClCompile Include="src\Camera.cpp">
       <Filter>Source Files\Raytracing</Filter>
@@ -80,6 +89,15 @@
     </ClCompile>
     <ClCompile Include="src\MetalMaterial.cpp">
       <Filter>Source Files\Raytracing\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RendererList.cpp">
+      <Filter>Source Files\Raytracing\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AABB.cpp">
+      <Filter>Source Files\Raytracing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BVHNode.cpp">
+      <Filter>Source Files\Raytracing\Objects\BVH</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -110,7 +128,7 @@
     <ClInclude Include="src\Ray.h">
       <Filter>Header Files\Raytracing</Filter>
     </ClInclude>
-    <ClInclude Include="src\RenderObject.h">
+    <ClInclude Include="src\RayReceiver.h">
       <Filter>Header Files\Raytracing\Objects</Filter>
     </ClInclude>
     <ClInclude Include="src\SphereObject.h">
@@ -136,6 +154,24 @@
     </ClInclude>
     <ClInclude Include="src\Camera.h">
       <Filter>Header Files\Raytracing</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AABB.h">
+      <Filter>Header Files\Raytracing</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BVHNode.h">
+      <Filter>Header Files\Raytracing\Objects\BVH</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RendererList.h">
+      <Filter>Header Files\Raytracing\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Texture.h">
+      <Filter>Header Files\Raytracing\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CheckeredTexture.h">
+      <Filter>Header Files\Raytracing\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SolidColorTexture.h">
+      <Filter>Header Files\Raytracing\Textures</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

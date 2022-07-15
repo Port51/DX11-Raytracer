@@ -39,7 +39,7 @@ namespace gfx
         }
 
     public:
-        double Dot(const vec3& other) const
+        const double Dot(const vec3& other) const
         {
             return x * other.x
                 + y * other.y
@@ -51,27 +51,27 @@ namespace gfx
             return Dot(*this) < 1e-5 * 1e-5;
         }
 
-        double Length() const
+        const double Length() const
         {
             return sqrt(LengthSqr());
         }
 
-        double LengthSqr() const
+        const double LengthSqr() const
         {
             return x * x + y * y + z * z;
         }
 
-        static vec3 Random()
+        static const vec3 Random()
         {
             return vec3(Random::RandomDouble(), Random::RandomDouble(), Random::RandomDouble());
         }
 
-        static vec3 Random(double min, double max)
+        static const vec3 Random(double min, double max)
         {
             return vec3(Random::RandomDouble(min, max), Random::RandomDouble(min, max), Random::RandomDouble(min, max));
         }
 
-        static vec3 RandomInUnitSphere()
+        static const vec3 RandomInUnitSphere()
         {
             while (true)
             {
@@ -81,14 +81,14 @@ namespace gfx
             }
         }
 
-        static vec3 RandomInHemisphere(const vec3& normal)
+        static const vec3 RandomInHemisphere(const vec3& normal)
         {
             vec3 result = RandomInUnitSphere();
             if (result.Dot(normal) < 0.0) result *= -1.0; // turns sphere into hemisphere
             return result;
         }
 
-        static vec3 RandomInUnitDisk()
+        static const vec3 RandomInUnitDisk()
         {
             while (true)
             {

@@ -10,10 +10,10 @@ namespace gfx
         Ray(const vec3& origin, const vec3& direction, const double time = 0.0);
 
     public:
-        double GetTime() const;
-        vec3 GetOrigin() const;
-        vec3 GetDirection() const;
-        vec3 GetPositionAfterTime(const double t) const;
+        const double GetTime() const;
+        const vec3 GetOrigin() const;
+        const vec3 GetDirection() const;
+        const vec3 GetPositionAfterTime(const double t) const;
 
     private:
         double m_time;

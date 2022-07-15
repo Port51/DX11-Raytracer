@@ -10,14 +10,14 @@ namespace gfx
 	class GfxException : public std::exception
 	{
 	public:
-		GfxException(size_t line, const char* file, HRESULT hr);
-		GfxException(size_t line, const char* file, std::string msg = "");
-		GfxException(size_t line, const char* file, const char* msg = "");
+		GfxException(const size_t line, const char* file, const HRESULT hr);
+		GfxException(const size_t line, const char* file, const std::string msg = "");
+		GfxException(const size_t line, const char* file, const char* msg = "");
 		const char* what() const override;
 	private:
-		std::string HrToMessageString(HRESULT hr);
-		std::string HrToStringCode(HRESULT hr);
-		std::string GetExceptionString(int line, const char* file, HRESULT hr);
+		std::string HrToMessageString(const HRESULT hr);
+		std::string HrToStringCode(const HRESULT hr);
+		std::string GetExceptionString(const int line, const char* file, const HRESULT hr);
 	private:
 		const size_t m_line;
 		const char* m_file;

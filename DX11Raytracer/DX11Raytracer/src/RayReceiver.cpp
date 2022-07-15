@@ -1,4 +1,4 @@
-#include "RenderObject.h"
+#include "RayReceiver.h"
 #include "Ray.h"
 #include "Material.h"
 

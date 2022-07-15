@@ -1,11 +1,12 @@
 #include "CPURaytracer.h"
 #include "Ray.h"
-#include "RenderObject.h"
+#include "RayReceiver.h"
 #include "SphereObject.h"
 #include "LambertianMaterial.h"
 #include "MetalMaterial.h"
 #include "DielectricMaterial.h"
 #include "Camera.h"
+#include "CheckeredTexture.h"
 
 namespace gfx
 {
@@ -25,8 +26,10 @@ namespace gfx
 
     void CPURaytracer::CreateRandomScene()
     {
-        auto groundMaterial = std::make_shared<LambertianMaterial>(Color(0.5f, 0.5f, 0.5f, 1.0f));
-        AddRenderObject(std::make_unique<SphereObject>(vec3(0, -1000, 0), 1000, groundMaterial));
+        RendererList rendererList;
+
+        auto groundMaterial = std::make_shared<LambertianMaterial>(std::make_shared<CheckeredTexture>(Color(0.5, 0.5, 0.5, 0.5), Color(0.25, 0.25, 1.0, 0.5)));
+        rendererList.Add(std::make_unique<SphereObject>(vec3(0, -1000, 0), 1000, groundMaterial));
 
         /*for (int a = -11; a < 11; a++)
         {
@@ -42,7 +45,7 @@ namespace gfx
                         // diffuse
                         auto albedo = Color::Random() * Color::Random();
                         auto material = std::make_shared<LambertianMaterial>(albedo);
-                        AddRenderObject(std::make_unique<SphereObject>(center, 0.2, material));
+                        rendererList.Add(std::make_unique<SphereObject>(center, 0.2, material));
                     }
                     else if (choice < 0.95)
                     {
@@ -50,31 +53,28 @@ namespace gfx
                         auto albedo = Color::Random(0.5, 1);
                         auto fuzz = Random::RandomDouble(0, 0.5);
                         auto material = std::make_shared<MetalMaterial>(albedo, fuzz);
-                        AddRenderObject(std::make_unique<SphereObject>(center, 0.2, material));
+                        rendererList.Add(std::make_unique<SphereObject>(center, 0.2, material));
                     }
                     else
                     {
                         // glass
                         auto material = std::make_shared<DielectricMaterial>(1.5);
-                        AddRenderObject(std::make_unique<SphereObject>(center, 0.2, material));
+                        rendererList.Add(std::make_unique<SphereObject>(center, 0.2, material));
                     }
                 }
             }
         }*/
 
         auto material1 = std::make_shared<DielectricMaterial>(1.5);
-        AddRenderObject(std::make_unique<SphereObject>(vec3(0, 1, 0), 1.0, material1));
+        rendererList.Add(std::make_unique<SphereObject>(vec3(0, 1, 0), 1.0, material1));
 
         auto material2 = std::make_shared<LambertianMaterial>(Color(0.4f, 0.2f, 0.1f, 1.0f));
-        AddRenderObject(std::make_unique<SphereObject>(vec3(-4, 1, 0), 1.0, material2));
+        rendererList.Add(std::make_unique<SphereObject>(vec3(-4, 1, 0), 1.0, material2));
 
         auto material3 = std::make_shared<MetalMaterial>(Color(0.7f, 0.6f, 0.5f, 1.0f), 0.0);
-        AddRenderObject(std::make_unique<SphereObject>(vec3(4, 1, 0), 1.0, material3));
-    }
+        rendererList.Add(std::make_unique<SphereObject>(vec3(4, 1, 0), 1.0, material3));
 
-    void CPURaytracer::AddRenderObject(std::unique_ptr<RenderObject> pRenderObject)
-    {
-        m_pRenderObjects.emplace_back(std::move(pRenderObject));
+        m_pRendererList = std::make_unique<BVHNode>(rendererList);
     }
 
 	void CPURaytracer::RunTile(const Camera& camera, Color* const buffer, const uint tileX, const uint tileY) const
@@ -119,21 +119,7 @@ namespace gfx
         if (depth <= 0) return Color(0, 0, 0, 0);
 
         RayHitRecord rhr;
-        double closestHitT = Infinity;
-        bool hasHit = false;
-
-        for (const auto& obj : m_pRenderObjects)
-        {
-            RayHitRecord temp;
-            if (obj->Hit(ray, 0.001, closestHitT, temp))
-            {
-                rhr = temp;
-                closestHitT = temp.t;
-                hasHit = true;
-            }
-        }
-
-        if (hasHit)
+        if (m_pRendererList->Hit(ray, 0.001, Infinity, rhr))
         {
             // Do more bounces!
             // Bounces and attenuation color are determined by the material we just hit
@@ -153,7 +139,7 @@ namespace gfx
         return Color((float)skyColor.x, (float)skyColor.y, (float)skyColor.z, 0.f);
     }
 
-    const bool CPURaytracer::HitSphere(const Ray& ray, vec3& hitPoint) const
+    /*const bool CPURaytracer::HitSphere(const Ray& ray, vec3& hitPoint) const
     {
         // todo: move this
         vec3 spherePos = vec3(0, 0, 1);
@@ -187,5 +173,5 @@ namespace gfx
             }
         }
         return false;
-    }
+    }*/
 }

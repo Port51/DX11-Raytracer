@@ -1,11 +1,13 @@
 #pragma once
 #include "CommonHeader.h"
+#include "RendererList.h"
+#include "BVHNode.h"
 #include <vector>
 
 namespace gfx
 {
 	class Ray;
-	class RenderObject;
+	class RayReceiver;
 	class SphereObject;
 	class Camera;
 
@@ -18,10 +20,10 @@ namespace gfx
 		void RunTile(const Camera& camera, Color* const buffer, const uint tileX, const uint tileY) const;
 	private:
 		void CreateRandomScene();
-		void AddRenderObject(std::unique_ptr<RenderObject> pRenderObject);
 		const Color GetRayColor(Ray& ray, const int depth) const;
-		const bool HitSphere(const Ray& ray, vec3& hitPoint) const;
+		//const bool HitSphere(const Ray& ray, vec3& hitPoint) const;
 	private:
-		std::vector<std::unique_ptr<RenderObject>> m_pRenderObjects;
+		//std::unique_ptr<RendererList> m_pRendererList;
+		std::unique_ptr<BVHNode> m_pRendererList;
 	};
 }

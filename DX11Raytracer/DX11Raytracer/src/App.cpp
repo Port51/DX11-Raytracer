@@ -4,7 +4,7 @@
 #include "ExceptionHandling.h"
 #include "FullScreenBlit.h"
 #include "CPURaytracer.h"
-#include "RenderObject.h"
+#include "RayReceiver.h"
 #include "Camera.h"
 
 namespace gfx
@@ -113,22 +113,8 @@ namespace gfx
 
             MapImageBuffer();
 
-            // Copy to framebuffer
-            /*{
-                // todo: call these only once?
-                m_pGfx->m_pDeviceContext->CSSetShader(m_pComputeShader, nullptr, 0u);
-                m_pGfx->m_pDeviceContext->CSSetShaderResources(0u, 1u, &m_pImageBufferSRV);
-                m_pGfx->m_pDeviceContext->CSSetUnorderedAccessViews(0u, 1u, &m_pGfx->m_pFrameBufferUAV, nullptr);
-
-                // Assume thread groups of 16x16x1
-                m_pGfx->m_pDeviceContext->Dispatch(m_screenWidth >> 4u, m_screenHeight >> 4u, 1u);
-            }*/
-
             m_pGfx->SetViewport(0, 0, m_screenWidth, m_screenHeight);
             m_pFullScreenBlit->Execute(*m_pGfx, m_pImageBufferSRV.Get());
-
-            // todo: don't clear
-            //m_pGfx->ClearRenderTarget(0.1f, 0.9f, 0.1f, 1.0f);
 
             THROW_IF_FAILED(m_pGfx->m_pSwapChain->Present(1, 0));
         }

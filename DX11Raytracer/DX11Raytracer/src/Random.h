@@ -28,4 +28,9 @@ public:
 	{
 		return RandomFloat() * (max - min) + min;
 	}
+	
+	static int RandomInt(const int min, const int max)
+	{
+		return static_cast<int>(RandomDouble(min, max + 1));
+	}
 };

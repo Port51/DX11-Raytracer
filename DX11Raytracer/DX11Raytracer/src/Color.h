@@ -4,6 +4,7 @@ namespace gfx
 {
 	struct Color
 	{
+	public:
 		float r;
 		float g;
 		float b;
