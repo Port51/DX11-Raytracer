@@ -2,13 +2,14 @@
 #include <windows.h>
 #include "App.h"
 #include "ExceptionHandling.h"
+#include <thread>
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
 	int returnCode = 0;
 	try
 	{
-		gfx::App app(gfx::ScreenWidth, gfx::ScreenHeight, "DX11Raytracer");
+		gfx::App app(gfx::ScreenWidth, gfx::ScreenHeight, "DX11Raytracer", std::thread::hardware_concurrency() - 1u);
 		return app.Run();
 	}
 	catch (const std::exception& e)

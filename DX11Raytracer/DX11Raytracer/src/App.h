@@ -16,12 +16,12 @@ namespace gfx
 	class App
 	{
 	public:
-		App(const int screenWidth, const int screenHeight, const char* windowTitle);
+		App(const int screenWidth, const int screenHeight, const char* windowTitle, const uint maxThreadCount);
 		~App();
 	public:
 		int Run();
 	private:
-		void ExecuteTileRow(const int rowIdx);
+		void ExecuteTiles(const int startIdx, const int tileCount);
 		void MapImageBuffer();
 	private:
 		std::unique_ptr<Graphics> m_pGfx;
@@ -33,6 +33,7 @@ namespace gfx
 		std::unique_ptr<CPURaytracer> m_pCPURaytracer;
 		std::unique_ptr<Camera> m_pCamera;
 
+		const uint m_maxThreadCount;
 		const int m_screenWidth;
 		const int m_screenHeight;
 	};

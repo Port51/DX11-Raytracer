@@ -13,9 +13,10 @@ namespace gfx
 	const int ScreenWidth = 256;
 	const int ScreenHeight = 256;
 	const float AspectRatio = (float)ScreenWidth / ScreenHeight;
-	const int TileSize = 16u;
-	const int TileDimensionX = ScreenWidth / TileSize;
-	const int TileDimensionY = ScreenHeight / TileSize;
+	const unsigned int TileSize = 16u;
+	const unsigned int TileDimensionX = ScreenWidth / TileSize;
+	const unsigned int TileDimensionY = ScreenHeight / TileSize;
+	const unsigned int TileCount = TileDimensionX * TileDimensionY;
 
 	const bool UseThreading = true;
 

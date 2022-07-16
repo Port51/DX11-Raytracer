@@ -10,10 +10,11 @@
 
 namespace gfx
 {
-	App::App(const int screenWidth, const int screenHeight, const char* windowTitle)
+	App::App(const int screenWidth, const int screenHeight, const char* windowTitle, const uint maxThreadCount)
 		: m_pGfx(std::make_unique<Graphics>(screenWidth, screenHeight, windowTitle)),
         m_screenWidth(screenWidth),
-        m_screenHeight(screenHeight)
+        m_screenHeight(screenHeight),
+        m_maxThreadCount(maxThreadCount)
 	{
         D3D11_BUFFER_DESC ibd;
         ZERO_MEM(ibd);
@@ -82,8 +83,7 @@ namespace gfx
 
 	int App::Run()
 	{
-        int tx = 0;
-        int ty = 0;
+        uint nextTileIndex = 0u;
 
         // Render loop
         while (true)
@@ -109,8 +109,8 @@ namespace gfx
                 gfx.m_deviceContext->Unmap(constantBuffer, 0);
             }*/
 
-            ExecuteTileRow(ty);
-            ty = (ty + 1) % TileDimensionY;
+            ExecuteTiles(nextTileIndex, m_maxThreadCount);
+            nextTileIndex = (nextTileIndex + m_maxThreadCount) % TileCount;
 
             MapImageBuffer();
 
@@ -122,29 +122,37 @@ namespace gfx
         return 0;
 	}
 
-    void App::ExecuteTileRow(const int rowIdx)
+    void App::ExecuteTiles(const int startIdx, const int tileCount)
     {
         if (UseThreading)
         {
             std::vector<std::thread> renderThreads;
-            for (int tx = 0; tx < TileDimensionX; ++tx)
+            for (int i = 0; i < tileCount; ++i)
             {
-                renderThreads.push_back(std::thread(&CPURaytracer::RunTile, m_pCPURaytracer.get(), *m_pCamera.get(), m_imageData.data(), tx, rowIdx));
+                const uint idx = (startIdx + i) % TileCount;
+                const uint tx = idx % TileDimensionX;
+                const uint ty = idx / TileDimensionX;
+
+                renderThreads.push_back(std::thread(&CPURaytracer::RunTile, m_pCPURaytracer.get(), *m_pCamera.get(), m_imageData.data(), tx, ty));
             }
 
-            for (int tx = 0; tx < TileDimensionX; ++tx)
+            for (int i = 0; i < tileCount; ++i)
             {
-                if (renderThreads.at(tx).joinable())
+                if (renderThreads.at(i).joinable())
                 {
-                    renderThreads.at(tx).join();
+                    renderThreads.at(i).join();
                 }
             }
         }
         else
         {
-            for (int tx = 0; tx < TileDimensionX; ++tx)
+            for (int i = 0; i < tileCount; ++i)
             {
-                m_pCPURaytracer->RunTile(*m_pCamera.get(), m_imageData.data(), tx, rowIdx);
+                const uint idx = (startIdx + i) % TileCount;
+                const uint tx = idx % TileDimensionX;
+                const uint ty = idx / TileDimensionX;
+
+                m_pCPURaytracer->RunTile(*m_pCamera.get(), m_imageData.data(), tx, ty);
             }
         }
     }
