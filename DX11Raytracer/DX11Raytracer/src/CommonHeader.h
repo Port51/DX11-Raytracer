@@ -19,13 +19,12 @@ namespace gfx
 
 	const bool UseThreading = true;
 
-	// todo: move this!
 	class Material;
 	struct RayHitRecord
 	{
-		vec3 p;
-		vec3 normal;
-		double t;
+		vec3 positionWS;
+		vec3 normalWS;
+		double time;
 		double u; // UV coords of hit
 		double v;
 		bool isFrontFacing;
@@ -44,11 +43,9 @@ namespace gfx
 		return degrees * PI / 180.0;
 	}
 
-	inline double Clamp(const double x, const double min, const double max)
+	inline double Clamp(const double x, const double _min, const double _max)
 	{
-		if (x < min) return min;
-		if (x > max) return max;
-		return x;
+		return max(min(x, _max), _min);
 	}
 
 	inline double Frac(const double x)

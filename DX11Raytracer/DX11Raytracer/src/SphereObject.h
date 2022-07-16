@@ -13,12 +13,9 @@ namespace gfx
         virtual const bool Hit(const Ray& r, const double t_min, const double t_max, RayHitRecord& rec) const override;
         virtual const bool GetAABB(AABB& aabb) const override
         {
-            AABB box0(
-                m_prevFramePositionWS - vec3(m_radius, m_radius, m_radius),
-                m_prevFramePositionWS + vec3(m_radius, m_radius, m_radius));
-            AABB box1(
-                m_positionWS - vec3(m_radius, m_radius, m_radius),
-                m_positionWS + vec3(m_radius, m_radius, m_radius));
+            const auto radiusVec = vec3(m_radius, m_radius, m_radius);
+            AABB box0(m_prevFramePositionWS - radiusVec, m_prevFramePositionWS + radiusVec);
+            AABB box1(m_positionWS - radiusVec, m_positionWS + radiusVec);
             aabb = AABB::GetCombinedAABB(box0, box1);
             return true;
         }

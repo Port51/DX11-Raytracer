@@ -69,7 +69,7 @@ namespace gfx
             return false;
 
         bool hit_left = m_left->Hit(r, t_min, t_max, rec);
-        bool hit_right = m_right->Hit(r, t_min, hit_left ? rec.t : t_max, rec);
+        bool hit_right = m_right->Hit(r, t_min, hit_left ? rec.time : t_max, rec);
 
         return hit_left || hit_right;
     }

@@ -82,19 +82,18 @@ namespace gfx
 		const int tileOffset = (tileY * TileDimensionX + tileX) * (TileSize * TileSize);
 
         const int maxBounces = 10;
-        const int samplesPerPixel = 100;
+        const int samplesPerPixel = 25;
         const float multisampleScale = 1.f / samplesPerPixel;
 
         for (int lx = 0; lx < TileSize; ++lx)
         {
             for (int ly = 0; ly < TileSize; ++ly)
             {
-                int x = TileSize * tileX + lx;
-                int y = TileSize * tileY + ly;
-                int localIdx = ly * TileSize + lx + tileOffset;
+                const int x = TileSize * tileX + lx;
+                const int y = TileSize * tileY + ly;
+                const int localIdx = ly * TileSize + lx + tileOffset;
 
                 Color color;
-
                 for (int a = 0; a < samplesPerPixel; ++a)
                 {
                     // NDC coords
@@ -133,8 +132,8 @@ namespace gfx
         }
 
         // Sky background
-        const vec3 unit_direction = Normalize(ray.GetDirection());
-        const auto vertical = unit_direction.y * 0.5 + 0.5;
+        const vec3 rayDirNorm = Normalize(ray.GetDirection());
+        const auto vertical = rayDirNorm.y * 0.5 + 0.5;
         const auto skyColor = (1.0 - vertical) * vec3(1.0, 1.0, 1.0) + vertical * vec3(0.5, 0.7, 1.0);
         return Color((float)skyColor.x, (float)skyColor.y, (float)skyColor.z, 0.f);
     }

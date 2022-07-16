@@ -49,6 +49,9 @@
     <Filter Include="Header Files\Raytracing\Textures">
       <UniqueIdentifier>{8f817e7c-1305-406a-8759-7374e1d4070d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Raytracing\Texture">
+      <UniqueIdentifier>{629d1223-f5e7-4d5b-9d95-9a8894327843}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -98,6 +101,12 @@
     </ClCompile>
     <ClCompile Include="src\BVHNode.cpp">
       <Filter>Source Files\Raytracing\Objects\BVH</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CheckeredTexture.cpp">
+      <Filter>Source Files\Raytracing\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SolidColorTexture.cpp">
+      <Filter>Source Files\Raytracing\Texture</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

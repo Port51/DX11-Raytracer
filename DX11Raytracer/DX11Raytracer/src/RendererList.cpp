@@ -32,7 +32,7 @@ namespace gfx
             if (renderer->Hit(r, t_min, closestSoFar, temp))
             {
                 hitAnything = true;
-                closestSoFar = temp.t;
+                closestSoFar = temp.time;
                 rec = temp;
             }
         }

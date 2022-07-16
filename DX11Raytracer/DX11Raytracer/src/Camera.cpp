@@ -29,7 +29,7 @@ namespace gfx
 
         // Time represents open/closed shutter times
         // In this case 0.0 = previous frame and 1.0 = current frame
-        vec3 dir = Normalize(m_lowerLeftCorner + u * m_horizontalBasis + v * m_verticalBasis - m_positionWS - offset);
+        vec3 dir = (m_lowerLeftCorner + u * m_horizontalBasis + v * m_verticalBasis - m_positionWS - offset);
         return Ray(m_positionWS + offset, dir, Random::RandomDouble());
     }
 }

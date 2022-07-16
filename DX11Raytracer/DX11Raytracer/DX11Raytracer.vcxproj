@@ -131,6 +131,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\CheckeredTexture.cpp" />
+    <ClCompile Include="src\SolidColorTexture.cpp" />
     <ClCompile Include="src\BVHNode.cpp" />
     <ClCompile Include="src\AABB.cpp" />
     <ClCompile Include="src\RendererList.cpp" />

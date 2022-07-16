@@ -21,7 +21,7 @@ namespace gfx
 
         const vec3 rayDirNorm = Normalize(rayIn.GetDirection());
 
-        const double cosTheta = fmin(Dot(-rayDirNorm, rec.normal), 1.0);
+        const double cosTheta = fmin(Dot(-rayDirNorm, rec.normalWS), 1.0);
         const double sinTheta = sqrt(1.0 - cosTheta * cosTheta);
 
         const bool totalInternalReflection = refractionRatio * sinTheta > 1.0;
@@ -30,11 +30,11 @@ namespace gfx
         // Either reflect or refract
         vec3 direction;
         if (totalInternalReflection || fresnelReflection)
-            direction = Reflect(rayDirNorm, rec.normal);
+            direction = Reflect(rayDirNorm, rec.normalWS);
         else
-            direction = Refract(rayDirNorm, rec.normal, refractionRatio);
+            direction = Refract(rayDirNorm, rec.normalWS, refractionRatio);
 
-        scattered = Ray(rec.p, direction, rayIn.GetTime());
+        scattered = Ray(rec.positionWS, direction, rayIn.GetTime());
         return true;
     }
 }

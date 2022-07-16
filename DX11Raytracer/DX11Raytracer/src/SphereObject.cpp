@@ -28,13 +28,13 @@ namespace gfx
                 return false;
         }
 
-        rec.t = root;
-        rec.p = r.GetPositionAfterTime(rec.t);
+        rec.time = root;
+        rec.positionWS = r.GetPositionAfterTime(rec.time);
         
         // Handle inward facing normals
-        vec3 normal = (rec.p - center) / m_radius;
+        vec3 normal = (rec.positionWS - center) / m_radius;
         rec.isFrontFacing = Dot(r.GetDirection(), normal) < 0;
-        rec.normal = rec.isFrontFacing ? normal : -normal;
+        rec.normalWS = rec.isFrontFacing ? normal : -normal;
         rec.pMaterial = m_pMaterial;
         GetHitUV(normal, rec.u, rec.v);
 

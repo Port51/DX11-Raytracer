@@ -10,25 +10,27 @@ namespace gfx
 
 	const vec3 AABB::GetMaximum() const { return m_maximum; }
 
-    const bool AABB::Hit(const Ray& r, double t_min, double t_max) const
+    const bool AABB::Hit(const Ray& r, const double t_min, const double t_max) const
     {
-        vec3 invD = vec3(1.0f / r.GetDirection().x, 1.0f / r.GetDirection().y, 1.0f / r.GetDirection().z);
-        double tx1 = (m_minimum.x - r.GetOrigin().x) * invD.x;
-        double tx2 = (m_maximum.x - r.GetOrigin().x) * invD.x;
+        const vec3& rayOrigin = r.GetOrigin();
+        const vec3& rayRcpDir = r.GetRcpDirection();
+
+        const double tx1 = (m_minimum.x - rayOrigin.x) * rayRcpDir.x;
+        const double tx2 = (m_maximum.x - rayOrigin.x) * rayRcpDir.x;
         double tmin = min(tx1, tx2);
         double tmax = max(tx1, tx2);
 
-        double ty1 = (m_minimum.y - r.GetOrigin().y) * invD.y;
-        double ty2 = (m_maximum.y - r.GetOrigin().y) * invD.y;
+        const double ty1 = (m_minimum.y - rayOrigin.y) * rayRcpDir.y;
+        const double ty2 = (m_maximum.y - rayOrigin.y) * rayRcpDir.y;
         tmin = max(tmin, min(ty1, ty2));
         tmax = min(tmax, max(ty1, ty2));
 
-        double tz1 = (m_minimum.z - r.GetOrigin().z) * invD.z;
-        double tz2 = (m_maximum.z - r.GetOrigin().z) * invD.z;
+        const double tz1 = (m_minimum.z - rayOrigin.z) * rayRcpDir.z;
+        const double tz2 = (m_maximum.z - rayOrigin.z) * rayRcpDir.z;
         tmin = max(tmin, min(tz1, tz2));
         tmax = min(tmax, max(tz1, tz2));
 
-        return tmax >= tmin;
+        return (tmax >= tmin);
     }
 
     AABB AABB::GetCombinedAABB(const AABB& box0, const AABB& box1)
