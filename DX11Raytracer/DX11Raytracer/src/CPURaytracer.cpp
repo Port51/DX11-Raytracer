@@ -28,6 +28,11 @@ namespace gfx
     {
         RendererList rendererList;
 
+        auto groundMaterial0 = std::make_shared<LambertianMaterial>(std::make_shared<CheckeredTexture>(Color(0.5, 0.5, 0.5, 0.5), Color(0.25, 0.25, 1.0, 0.5)));
+        rendererList.Add(std::make_unique<SphereObject>(vec3(0, 0, 0), 1, groundMaterial0));
+        m_pRendererList = std::make_unique<BVHNode>(rendererList);
+        return;
+
         auto groundMaterial = std::make_shared<LambertianMaterial>(std::make_shared<CheckeredTexture>(Color(0.5, 0.5, 0.5, 0.5), Color(0.25, 0.25, 1.0, 0.5)));
         rendererList.Add(std::make_unique<SphereObject>(vec3(0, -1000, 0), 1000, groundMaterial));
 
@@ -98,8 +103,8 @@ namespace gfx
                 {
                     // NDC coords
                     // Randomness creates AA
-                    double u = static_cast<double>(x + Random::RandomDouble(-0.5, 0.5)) / (ScreenWidth - 1);
-                    double v = static_cast<double>(y + Random::RandomDouble(-0.5, 0.5)) / (ScreenHeight - 1);
+                    const double u = static_cast<double>(x + Random::RandomDouble(-0.5, 0.5)) / (ScreenWidth - 1);
+                    const double v = static_cast<double>(y + Random::RandomDouble(-0.5, 0.5)) / (ScreenHeight - 1);
 
                     Ray r = camera.GetRay(u, v);
                     color += GetRayColor(r, maxBounces);

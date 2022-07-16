@@ -4,6 +4,7 @@
 
 namespace gfx
 {
+
 	Graphics::Graphics(const int screenWidth, const int screenHeight, const char* windowTitle)
 	{
         // Create window
@@ -108,5 +109,10 @@ namespace gfx
         vp.TopLeftX = (FLOAT)x;
         vp.TopLeftY = (FLOAT)y;
         m_pDeviceContext->RSSetViewports(1u, &vp);
+    }
+
+    ID3D11DeviceContext1& Graphics::GetContext() const
+    {
+        return *m_pDeviceContext.Get();
     }
 }

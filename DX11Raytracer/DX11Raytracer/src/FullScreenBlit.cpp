@@ -88,7 +88,7 @@ namespace gfx
         THROW_IF_FAILED(gfx.m_pDevice->CreateDepthStencilState(&dsd, &m_pDepthStencilState));
 	}
 
-    void FullScreenBlit::Execute(Graphics& gfx, ID3D11ShaderResourceView* const bufferSRV) const
+    void FullScreenBlit::Execute(Graphics& gfx, ID3D11ShaderResourceView* const bufferSRV, ID3D11Buffer* const pConstantBuffer) const
     {
         gfx.m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
         gfx.m_pDeviceContext->IASetInputLayout(m_pInputLayout.Get());
@@ -98,6 +98,7 @@ namespace gfx
         gfx.m_pDeviceContext->PSSetShader(m_pPixelShader.Get(), nullptr, 0u);
         gfx.m_pDeviceContext->PSSetSamplers(0, 1u, m_pSamplerState.GetAddressOf());
         gfx.m_pDeviceContext->PSSetShaderResources(0u, 1u, &bufferSRV);
+        gfx.m_pDeviceContext->PSSetConstantBuffers(0u, 1u, &pConstantBuffer);
         gfx.m_pDeviceContext->OMSetDepthStencilState(m_pDepthStencilState.Get(), 0u);
         gfx.m_pDeviceContext->OMSetRenderTargets(1u, gfx.m_pFrameBufferView.GetAddressOf(), nullptr);
         gfx.m_pDeviceContext->Draw(3u, 0u);

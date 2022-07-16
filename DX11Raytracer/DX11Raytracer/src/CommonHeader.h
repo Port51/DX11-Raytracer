@@ -10,7 +10,7 @@ using namespace Microsoft::WRL;
 
 namespace gfx
 {
-	const int ScreenWidth = 256;
+	const int ScreenWidth = 512;
 	const int ScreenHeight = 256;
 	const float AspectRatio = (float)ScreenWidth / ScreenHeight;
 	const unsigned int TileSize = 16u;

@@ -20,7 +20,7 @@ namespace gfx
 	public:
 		FullScreenBlit(Graphics& gfx);
 	public:
-		void Execute(Graphics& gfx, ID3D11ShaderResourceView* const bufferSRV) const;
+		void Execute(Graphics& gfx, ID3D11ShaderResourceView* const bufferSRV, ID3D11Buffer* const pConstantBuffer) const;
 	private:
 		ComPtr<ID3D11InputLayout> m_pInputLayout;
 		ComPtr<ID3D11Buffer> m_pVertexBuffer;

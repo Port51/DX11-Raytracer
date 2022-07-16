@@ -57,6 +57,23 @@ namespace gfx
             }
         }
 
+        D3D11_BUFFER_DESC cbd;
+        ZERO_MEM(cbd);
+        cbd.ByteWidth = sizeof(BufferCB);
+        cbd.StructureByteStride = sizeof(BufferCB);
+        cbd.Usage = D3D11_USAGE_IMMUTABLE;
+        cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+        cbd.CPUAccessFlags = 0u;
+        cbd.MiscFlags = 0u;
+
+        // Initial data for CB
+        BufferCB constantBuffer = { TileSize, TileSize, TileDimensionX, TileDimensionY };
+        D3D11_SUBRESOURCE_DATA sd;
+        ZERO_MEM(sd);
+        sd.pSysMem = (void*)&constantBuffer;
+
+        THROW_IF_FAILED(m_pGfx->m_pDevice->CreateBuffer(&cbd, &sd, &m_pConstantBuffer));
+
         // Read pre-compiled compute shader
         ID3DBlob* csBlob;
         THROW_IF_FAILED(D3DReadFileToBlob(L"Assets/UpdateFrameBuffer.cso", &csBlob));
@@ -73,6 +90,10 @@ namespace gfx
 
         vec3 camWS = vec3(13, 2, 3);
         vec3 targetWS = vec3(0, 0, 0);
+
+        camWS = vec3(0, 0, -5);
+        targetWS = vec3(0, 0, 0);
+
         auto aperture = 0.1;
         auto focusDist = (camWS - targetWS).Length();
         m_pCamera = std::make_unique<Camera>(camWS, targetWS, vec3(0, 1, 0), 30, AspectRatio, aperture, focusDist);
@@ -96,18 +117,7 @@ namespace gfx
                     || msg.message == WM_CLOSE
                     || msg.message == WM_DESTROY) return 0;
                 DispatchMessageA(&msg);
-            }
-
-            // Update CB
-            /*{
-                D3D11_MAPPED_SUBRESOURCE mappedSubresource;
-                gfx.m_deviceContext->Map(constantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
-
-                Constants* constants = reinterpret_cast<Constants*>(mappedSubresource.pData);
-                // Update constants here...
-
-                gfx.m_deviceContext->Unmap(constantBuffer, 0);
-            }*/
+            }   
 
             ExecuteTiles(nextTileIndex, m_maxThreadCount);
             nextTileIndex = (nextTileIndex + m_maxThreadCount) % TileCount;
@@ -115,7 +125,7 @@ namespace gfx
             MapImageBuffer();
 
             m_pGfx->SetViewport(0, 0, m_screenWidth, m_screenHeight);
-            m_pFullScreenBlit->Execute(*m_pGfx, m_pImageBufferSRV.Get());
+            m_pFullScreenBlit->Execute(*m_pGfx, m_pImageBufferSRV.Get(), m_pConstantBuffer.Get());
 
             THROW_IF_FAILED(m_pGfx->m_pSwapChain->Present(1, 0));
         }

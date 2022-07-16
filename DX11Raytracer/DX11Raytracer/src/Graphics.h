@@ -5,6 +5,7 @@
 
 namespace gfx
 {
+
 	class Graphics
 	{
 	public:
@@ -13,6 +14,7 @@ namespace gfx
 	public:
 		void ClearRenderTarget(const float r, const float g, const float b, const float a) const;
 		void SetViewport(const int x, const int y, const int width, const int height) const;
+		ID3D11DeviceContext1& GetContext() const;
 	public:
 		ComPtr<ID3D11Device1> m_pDevice;
 		ComPtr<ID3D11DeviceContext1> m_pDeviceContext;
