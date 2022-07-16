@@ -25,7 +25,7 @@ namespace gfx
         const double sinTheta = sqrt(1.0 - cosTheta * cosTheta);
 
         const bool totalInternalReflection = refractionRatio * sinTheta > 1.0;
-        const bool fresnelReflection = SchlickApprox(cosTheta, refractionRatio) > Random::RandomDouble();
+        const bool fresnelReflection = SchlickApprox(cosTheta, refractionRatio) > rayIn.GetRandomSeed();
 
         // Either reflect or refract
         vec3 direction;
@@ -34,7 +34,7 @@ namespace gfx
         else
             direction = Refract(rayDirNorm, rec.normalWS, refractionRatio);
 
-        scattered = Ray(rec.positionWS, direction, rayIn.GetTime());
+        scattered = Ray(rec.positionWS, direction, rayIn.GetTime(), rayIn.GetRandomSeed());
         return true;
     }
 }

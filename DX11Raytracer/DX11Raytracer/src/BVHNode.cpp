@@ -14,32 +14,33 @@ namespace gfx
     {
         auto objects = src; // Create a copy
 
-        const int axis = Random::RandomInt(0, 2);
-        auto comparator = (axis == 0) ? CompareAABB_X
-            : (axis == 1) ? CompareAABB_Y
-            : CompareAABB_Z;
-
         const size_t receiverCt = end - start;
-
         if (receiverCt == 1)
         {
             m_left = m_right = objects[start];
         }
         else if (receiverCt == 2)
         {
-            if (comparator(objects[start], objects[start + 1]))
-            {
-                m_left = objects[start];
-                m_right = objects[start + 1];
-            }
-            else
-            {
-                m_left = objects[start + 1];
-                m_right = objects[start];
-            }
+            m_left = objects[start];
+            m_right = objects[start + 1];
         }
         else
         {
+            // Find extents of centers, which will be used as an estimate for where to create a split
+            vec3 minPosition = objects.at(start)->GetCurrentPosition();
+            vec3 maxPosition = minPosition;
+            for (int i = 1, ct = objects.size(); i < ct; ++i)
+            {
+                minPosition = MinVec3(minPosition, objects.at(i)->GetCurrentPosition());
+                maxPosition = MinVec3(maxPosition, objects.at(i)->GetCurrentPosition());
+            }
+            vec3 range = maxPosition - minPosition;
+
+            // Choose split most likely to be evenly divided
+            auto comparator = (range.x > range.y && range.x > range.z) ? CompareAABB_X
+                : (range.y > range.z) ? CompareAABB_Y
+                : CompareAABB_Z;
+
             std::sort(objects.begin() + start, objects.begin() + end, comparator);
 
             auto midPt = start + receiverCt / 2;
@@ -68,8 +69,8 @@ namespace gfx
         if (!m_aabb.Hit(r, t_min, t_max))
             return false;
 
-        bool hit_left = m_left->Hit(r, t_min, t_max, rec);
-        bool hit_right = m_right->Hit(r, t_min, hit_left ? rec.time : t_max, rec);
+        const bool hit_left = m_left->Hit(r, t_min, t_max, rec);
+        const bool hit_right = m_right->Hit(r, t_min, hit_left ? rec.time : t_max, rec);
 
         return hit_left || hit_right;
     }

@@ -6,13 +6,18 @@ namespace gfx
 	Ray::Ray()
     {}
 
-    Ray::Ray(const vec3& origin, const vec3& direction, const double time)
-        : m_origin(origin), m_direction(direction), m_rcpDirection(vec3(1.0 / direction.x, 1.0 / direction.y, 1.0 / direction.z)), m_time(time)
+    Ray::Ray(const vec3& origin, const vec3& direction, const double time, const double randomSeed)
+        : m_origin(origin), m_direction(direction), m_rcpDirection(vec3(1.0 / direction.x, 1.0 / direction.y, 1.0 / direction.z)), m_time(time), m_randomSeed(randomSeed)
     {}
 
     const double Ray::GetTime() const
     {
         return m_time;
+    }
+
+    const double Ray::GetRandomSeed() const
+    {
+        return m_randomSeed;
     }
 
     const vec3& Ray::GetOrigin() const

@@ -7,10 +7,11 @@ namespace gfx
     {
     public:
         Ray();
-        Ray(const vec3& origin, const vec3& direction, const double time = 0.0);
+        Ray(const vec3& origin, const vec3& direction, const double time, const double randomSeed);
 
     public:
         const double GetTime() const;
+        const double GetRandomSeed() const;
         const vec3& GetOrigin() const;
         const vec3& GetDirection() const;
         const vec3& GetRcpDirection() const;
@@ -18,6 +19,7 @@ namespace gfx
 
     private:
         double m_time;
+        double m_randomSeed;
         vec3 m_origin;
         vec3 m_direction;
         vec3 m_rcpDirection;

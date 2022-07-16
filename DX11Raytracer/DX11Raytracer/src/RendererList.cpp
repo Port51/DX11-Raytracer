@@ -21,7 +21,7 @@ namespace gfx
         return m_renderers;
     }
 
-    const bool RendererList::Hit(const Ray& r, double t_min, double t_max, RayHitRecord& rec) const
+    const bool RendererList::Hit(const Ray& r, const double t_min, const double t_max, RayHitRecord& rec) const
     {
         RayHitRecord temp;
         auto hitAnything = false;

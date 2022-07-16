@@ -15,7 +15,7 @@ namespace gfx
     bool MetalMaterial::Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Ray& scattered) const
     {
         vec3 reflected = Reflect(Normalize(rayIn.GetDirection()), rec.normalWS);
-        scattered = Ray(rec.positionWS, reflected + m_roughness * vec3::RandomInUnitSphere(), rayIn.GetTime());
+        scattered = Ray(rec.positionWS, reflected + m_roughness * vec3::RandomInUnitSphere(), rayIn.GetTime(), rayIn.GetRandomSeed());
         attenuation = m_albedoTexture->GetColor(rec.u, rec.v, rec.positionWS);
         return (Dot(scattered.GetDirection(), rec.normalWS) > 0);
     }
