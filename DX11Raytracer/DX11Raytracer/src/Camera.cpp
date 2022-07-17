@@ -14,34 +14,26 @@ namespace gfx
         m_forwardBasis = Normalize(lookAtWS - positionWS);
         m_horizontalBasis = Normalize(Cross(upVec, m_forwardBasis)); // viewportWidth * u * focusDist;
         m_verticalBasis = Cross(m_forwardBasis, m_horizontalBasis); // viewportHeight * v * focusDist;
-        m_lowerLeftCorner = positionWS - m_horizontalBasis * (m_viewportWidth * 0.5) - m_verticalBasis * (m_viewportHeight * 0.5) + focusDist * m_forwardBasis;
         m_focusDist = focusDist;
 
         m_lensRadius = aperture * 0.5;
     }
 
-    Ray Camera::GetRay(double u, double v) const
+    Ray Camera::GetRay(const double u, const double v) const
     {
-        if (true)
+        if (UseDepthOfField)
         {
-            const vec3 rd = m_lensRadius * vec3::RandomInUnitDisk();
-            const vec3 rayOffset = m_horizontalBasis * rd.x + m_verticalBasis * rd.y;
+            // Offset rays by disc
+            const vec3 discOffset = m_lensRadius * vec3::RandomInUnitDisk();
+            const vec3 rayOffset = m_horizontalBasis * discOffset.x + m_verticalBasis * discOffset.y;
             const vec3 rayDir = (m_forwardBasis + m_horizontalBasis * (m_viewportWidth * u) + m_verticalBasis * (m_viewportHeight * v)) * m_focusDist - rayOffset;
             return Ray(m_positionWS + rayOffset, rayDir, Random::RandomDouble(), Random::RandomDouble());
         }
         else
         {
-            // Normal view with no DOF
+            // Normal ray with no DOF
             const vec3 rayDir = m_forwardBasis + m_horizontalBasis * (m_viewportWidth * u) + m_verticalBasis * (m_viewportHeight * v);
             return Ray(m_positionWS, rayDir, Random::RandomDouble(), Random::RandomDouble());
         }
-
-        // Use offset to simulate lens at initial position, with ray still pointing to focus point
-        vec3 rd = m_lensRadius * vec3::RandomInUnitDisk();
-        vec3 offset = u * rd.x + v * rd.y;
-
-        // Time represents open/closed shutter times
-        // In this case 0.0 = previous frame and 1.0 = current frame
-        vec3 dir = (m_lowerLeftCorner + u * m_horizontalBasis + v * m_verticalBasis - m_positionWS - offset);
     }
 }

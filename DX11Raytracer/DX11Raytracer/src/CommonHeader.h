@@ -19,6 +19,7 @@ namespace gfx
 	const unsigned int TileCount = TileDimensionX * TileDimensionY;
 
 	const bool UseThreading = true;
+	const bool UseDepthOfField = true;
 
 	class Material;
 	struct RayHitRecord
