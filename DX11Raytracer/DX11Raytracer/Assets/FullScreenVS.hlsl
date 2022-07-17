@@ -4,6 +4,14 @@ struct v2f
     float4 pos : SV_Position;
 };
 
+cbuffer Buffer_CB : register(b0)
+{
+    uint _TileSizeX;
+    uint _TileSizeY;
+    uint _TileCountX;
+    uint _TileCountY;
+};
+
 v2f main(uint index : INDEX)
 {
     v2f o;
@@ -18,11 +26,12 @@ v2f main(uint index : INDEX)
     //o.uv.y = (index <= 1) ? 0.f : 2.f;
 
     // This version maps to pixel coords
-    o.uv.x = (index == 1) ? 256.f * 2.f : 0.f;
-    o.uv.y = (index <= 1) ? 0.f : 256.f * 2.f;
+    uint2 resolution = uint2(_TileSizeX * _TileCountX, _TileSizeY * _TileCountY);
+    o.uv.x = (index == 1) ? resolution.x * 2.f : 0.f;
+    o.uv.y = (index <= 1) ? 0.f : resolution.y * 2.f;
 
-    o.uv.z = (index == 1) ? (256.f / 16) * 2.f : 0.f;
-    o.uv.w = (index <= 1) ? 0.f : (256.f / 16) * 2.f;
+    o.uv.z = (index == 1) ? (resolution.x >> 4u) * 2.f : 0.f;
+    o.uv.w = (index <= 1) ? 0.f : (resolution.y >> 4u) * 2.f;
 
     return o;
 }

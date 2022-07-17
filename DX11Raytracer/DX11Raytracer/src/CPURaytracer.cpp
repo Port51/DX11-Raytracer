@@ -29,7 +29,8 @@ namespace gfx
         RendererList rendererList;
 
         auto groundMaterial0 = std::make_shared<LambertianMaterial>(std::make_shared<CheckeredTexture>(Color(0.5, 0.5, 0.5, 0.5), Color(0.25, 0.25, 1.0, 0.5)));
-        rendererList.Add(std::make_unique<SphereObject>(vec3(0, 0, 0), 1, groundMaterial0));
+        rendererList.Add(std::make_unique<SphereObject>(vec3(0, 0, 0), 1.0, groundMaterial0));
+        rendererList.Add(std::make_unique<SphereObject>(vec3(0, -1001, 0), 1000, groundMaterial0));
         m_pRendererList = std::make_unique<BVHNode>(rendererList);
         return;
 
@@ -87,7 +88,7 @@ namespace gfx
 		const int tileOffset = (tileY * TileDimensionX + tileX) * (TileSize * TileSize);
 
         const int maxBounces = 10;
-        const int samplesPerPixel = 25;
+        const int samplesPerPixel = 51;
         const float multisampleScale = 1.f / samplesPerPixel;
 
         for (int lx = 0; lx < TileSize; ++lx)
@@ -103,8 +104,13 @@ namespace gfx
                 {
                     // NDC coords
                     // Randomness creates AA
-                    const double u = static_cast<double>(x + Random::RandomDouble(-0.5, 0.5)) / (ScreenWidth - 1);
-                    const double v = static_cast<double>(y + Random::RandomDouble(-0.5, 0.5)) / (ScreenHeight - 1);
+                    const double u = static_cast<double>(x + Random::RandomDouble(-0.5, 0.5)) / (ScreenWidth - 1) * 2.0 - 1.0;
+                    const double v = static_cast<double>(y + Random::RandomDouble(-0.5, 0.5)) / (ScreenHeight - 1) * 2.0 - 1.0;
+
+                    if (tileX > 17)
+                    {
+                        auto a = 0;
+                    }
 
                     Ray r = camera.GetRay(u, v);
                     color += GetRayColor(r, maxBounces);
@@ -139,7 +145,8 @@ namespace gfx
         // Sky background
         const vec3 rayDirNorm = Normalize(ray.GetDirection());
         const auto vertical = rayDirNorm.y * 0.5 + 0.5;
-        const auto skyColor = (1.0 - vertical) * vec3(1.0, 1.0, 1.0) + vertical * vec3(0.5, 0.7, 1.0);
+        auto skyColor = (1.0 - vertical) * vec3(1.0, 1.0, 1.0) + vertical * vec3(0.5, 0.7, 1.0);
+        //skyColor = vec3(ray.GetDirection().y * 0.5 + 0.5);
         return Color((float)skyColor.x, (float)skyColor.y, (float)skyColor.z, 0.f);
     }
 

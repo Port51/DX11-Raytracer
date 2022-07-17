@@ -15,7 +15,10 @@ namespace gfx
         vec3 m_horizontalBasis;
         vec3 m_verticalBasis;
         vec3 m_lowerLeftCorner;
-        vec3 w, u, v;
+        vec3 m_forwardBasis;
+        double m_viewportWidth;
+        double m_viewportHeight;
         double m_lensRadius;
+        double m_focusDist;
     };
 }

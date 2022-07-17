@@ -94,6 +94,7 @@ namespace gfx
         gfx.m_pDeviceContext->IASetInputLayout(m_pInputLayout.Get());
         gfx.m_pDeviceContext->IASetVertexBuffers(0, 1u, m_pVertexBuffer.GetAddressOf(), m_VertexBufferStrides.data(), m_VertexBufferOffsets.data());
         gfx.m_pDeviceContext->VSSetShader(m_pVertexShader.Get(), nullptr, 0u);
+        gfx.m_pDeviceContext->VSSetConstantBuffers(0u, 1u, &pConstantBuffer);
         gfx.m_pDeviceContext->RSSetState(m_pRasterizerState.Get());
         gfx.m_pDeviceContext->PSSetShader(m_pPixelShader.Get(), nullptr, 0u);
         gfx.m_pDeviceContext->PSSetSamplers(0, 1u, m_pSamplerState.GetAddressOf());
