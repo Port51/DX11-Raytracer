@@ -14,7 +14,7 @@ namespace gfx
 			: r(0.f), g(0.f), b(0.f), a(0.f)
 		{}
 
-		Color(float r, float g, float b, float a)
+		Color(const float r, const float g, const float b, const float a)
 			: r(r), g(g), b(b), a(a)
 		{}
 
@@ -46,7 +46,7 @@ namespace gfx
 			return Color(Random::RandomFloat(), Random::RandomFloat(), Random::RandomFloat(), Random::RandomFloat());
 		}
 
-		static Color Random(float min, float max)
+		static Color Random(const float min, const float max)
 		{
 			return Color(Random::RandomFloat(min, max), Random::RandomFloat(min, max), Random::RandomFloat(min, max), Random::RandomFloat(min, max));
 		}

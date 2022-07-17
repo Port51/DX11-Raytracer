@@ -105,13 +105,8 @@ namespace gfx
                 {
                     // NDC coords
                     // Randomness creates AA
-                    const double u = static_cast<double>(x + 0 * Random::RandomDouble(-0.5, 0.5)) / (ScreenWidth - 1) * 2.0 - 1.0;
-                    const double v = static_cast<double>(y + 0 * Random::RandomDouble(-0.5, 0.5)) / (ScreenHeight - 1) * 2.0 - 1.0;
-
-                    if (tileX > 17)
-                    {
-                        auto a = 0;
-                    }
+                    const double u = static_cast<double>(x + Random::RandomDouble(-0.5, 0.5)) / (ScreenWidth - 1) * 2.0 - 1.0;
+                    const double v = static_cast<double>(y + Random::RandomDouble(-0.5, 0.5)) / (ScreenHeight - 1) * 2.0 - 1.0;
 
                     Ray r = camera.GetRay(u, v);
                     color += GetRayColor(r, maxBounces);
@@ -146,8 +141,7 @@ namespace gfx
         // Sky background
         const vec3 rayDirNorm = Normalize(ray.GetDirection());
         const auto vertical = rayDirNorm.y * 0.5 + 0.5;
-        auto skyColor = (1.0 - vertical) * vec3(1.0, 1.0, 1.0) + vertical * vec3(0.5, 0.7, 1.0);
-        //skyColor = vec3(ray.GetDirection().y * 0.5 + 0.5);
+        const auto skyColor = (1.0 - vertical) * vec3(1.0, 1.0, 1.0) + vertical * vec3(0.5, 0.7, 1.0);
         return Color((float)skyColor.x, (float)skyColor.y, (float)skyColor.z, 0.f);
     }
 
