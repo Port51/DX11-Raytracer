@@ -12,40 +12,38 @@ namespace gfx
 
     BVHNode::BVHNode(std::vector<std::shared_ptr<RayReceiver>>& src, const size_t start, const size_t end)
     {
-        auto objects = src; // Create a copy
-
         const size_t receiverCt = end - start;
         if (receiverCt == 1)
         {
-            m_left = m_right = objects[start];
+            m_left = m_right = src[start];
         }
         else if (receiverCt == 2)
         {
-            m_left = objects[start];
-            m_right = objects[start + 1];
+            m_left = src[start];
+            m_right = src[start + 1];
         }
         else
         {
             // Find extents of centers, which will be used as an estimate for where to create a split
-            vec3 minPosition = objects.at(start)->GetCurrentPosition();
+            vec3 minPosition = src.at(start)->GetCurrentPosition();
             vec3 maxPosition = minPosition;
-            for (int i = 1, ct = objects.size(); i < ct; ++i)
+            for (size_t i = 1, ct = src.size(); i < ct; ++i)
             {
-                minPosition = MinVec3(minPosition, objects.at(i)->GetCurrentPosition());
-                maxPosition = MinVec3(maxPosition, objects.at(i)->GetCurrentPosition());
+                minPosition = MinVec3(minPosition, src.at(i)->GetCurrentPosition());
+                maxPosition = MinVec3(maxPosition, src.at(i)->GetCurrentPosition());
             }
-            vec3 range = maxPosition - minPosition;
+            const vec3 range = maxPosition - minPosition;
 
             // Choose split most likely to be evenly divided
-            auto comparator = (range.x > range.y && range.x > range.z) ? CompareAABB_X
+            const auto comparator = (range.x > range.y && range.x > range.z) ? CompareAABB_X
                 : (range.y > range.z) ? CompareAABB_Y
                 : CompareAABB_Z;
 
-            std::sort(objects.begin() + start, objects.begin() + end, comparator);
+            std::sort(src.begin() + start, src.begin() + end, comparator);
 
-            auto midPt = start + receiverCt / 2;
-            m_left = std::make_shared<BVHNode>(objects, start, midPt);
-            m_right = std::make_shared<BVHNode>(objects, midPt, end);
+            const auto midPt = start + receiverCt / 2;
+            m_left = std::make_shared<BVHNode>(src, start, midPt);
+            m_right = std::make_shared<BVHNode>(src, midPt, end);
         }
 
         AABB box_left, box_right;

@@ -28,14 +28,15 @@ namespace gfx
     {
         RendererList rendererList;
 
-        auto groundMaterial0 = std::make_shared<LambertianMaterial>(std::make_shared<CheckeredTexture>(Color(0.5, 0.5, 0.5, 0.5), Color(0.25, 0.25, 1.0, 0.5)));
+        /*auto groundMaterial0 = std::make_shared<LambertianMaterial>(std::make_shared<CheckeredTexture>(Color(0.5, 0.5, 0.5, 0.5), Color(0.25, 0.25, 1.0, 0.5)));
         rendererList.Add(std::make_unique<SphereObject>(vec3(0, 0, 0), 1.0, groundMaterial0));
         rendererList.Add(std::make_unique<SphereObject>(vec3(0, -1001, 0), 1000, groundMaterial0));
         m_pRendererList = std::make_unique<BVHNode>(rendererList);
-        return;
+        return;*/
 
         auto groundMaterial = std::make_shared<LambertianMaterial>(std::make_shared<CheckeredTexture>(Color(0.5, 0.5, 0.5, 0.5), Color(0.25, 0.25, 1.0, 0.5)));
-        rendererList.Add(std::make_unique<SphereObject>(vec3(0, -1000, 0), 1000, groundMaterial));
+        auto grassMaterial = std::make_shared<LambertianMaterial>(Color(0.2, 0.8, 0.2, 1.0));
+        rendererList.Add(std::make_unique<SphereObject>(vec3(0, -1000, 0), 1000, grassMaterial));
 
         for (int a = -11; a < 11; a++)
         {
@@ -87,7 +88,7 @@ namespace gfx
 	{
 		const int tileOffset = (tileY * TileDimensionX + tileX) * (TileSize * TileSize);
 
-        const int maxBounces = 10;
+        const int maxBounces = 20;
         const int samplesPerPixel = 51;
         const float multisampleScale = 1.f / samplesPerPixel;
 
@@ -104,8 +105,8 @@ namespace gfx
                 {
                     // NDC coords
                     // Randomness creates AA
-                    const double u = static_cast<double>(x + Random::RandomDouble(-0.5, 0.5)) / (ScreenWidth - 1) * 2.0 - 1.0;
-                    const double v = static_cast<double>(y + Random::RandomDouble(-0.5, 0.5)) / (ScreenHeight - 1) * 2.0 - 1.0;
+                    const double u = static_cast<double>(x + 0 * Random::RandomDouble(-0.5, 0.5)) / (ScreenWidth - 1) * 2.0 - 1.0;
+                    const double v = static_cast<double>(y + 0 * Random::RandomDouble(-0.5, 0.5)) / (ScreenHeight - 1) * 2.0 - 1.0;
 
                     if (tileX > 17)
                     {

@@ -88,12 +88,12 @@ namespace gfx
         m_pFullScreenBlit = std::make_unique<FullScreenBlit>(*m_pGfx);
         m_pCPURaytracer = std::make_unique<CPURaytracer>();
 
-        vec3 camWS = vec3(13, 2, 3);
+        vec3 camWS = vec3(9, 2, 2.5);
         vec3 targetWS = vec3(0, 0, 0);
 
-        camWS = vec3(-2, 2, 1);
-        camWS = vec3(0, 0, -2);
-        targetWS = vec3(0, 0, 0);
+        //camWS = vec3(-2, 2, 1);
+        //camWS = vec3(0, 0, -2);
+        //targetWS = vec3(0, 0, 0);
 
         auto aperture = 0.1;
         auto focusDist = (camWS - targetWS).Length();
