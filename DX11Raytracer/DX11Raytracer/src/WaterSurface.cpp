@@ -102,12 +102,13 @@ namespace gfx
 	
 	double WaterSurface::GetRayHeightAboveOcean(const vec3 p)
 	{
-		return p.y - (std::sin(p.x * 10.0) * 0.1 + 0.1);
+		return p.y - (std::sin(p.x * 7.0) * 0.1 + 0.1);
 	}
 
 	vec3 WaterSurface::GetOceanNormal(const vec3 p)
 	{
-		return vec3(std::cos(p.x * 10.0), std::sin(p.x * 10.0), 0.0);
+		auto c = std::cos(p.x * 7.0) * 0.1;
+		return -vec3(c, std::sqrt(1.0 - c * c), 0.0);
 	}
 
 	const bool WaterSurface::GetRayPlaneHit(double& t) const

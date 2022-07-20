@@ -150,12 +150,13 @@ namespace gfx
 
         // Sky background
         const vec3 upColor = vec3(0.2, 0.7, 0.95);
-        const vec3 horizonColor = vec3(1.0, 0.4, 0.2);
+        const vec3 horizonColor = vec3(1.0, 0.3, 0.11);
         const vec3 deepColor = vec3(0.01, 0.03, 0.09);
 
         const vec3 rayDirNorm = Normalize(ray.GetDirection());
         const auto vertical = std::abs(rayDirNorm.y);
-        const auto skyColor = (1.0 - vertical) * horizonColor + vertical * upColor;
+        const auto skyLerp = std::pow(vertical, 0.25);
+        const auto skyColor = (1.0 - skyLerp) * horizonColor + skyLerp * upColor;
 
         const auto deepWaterLerp = std::pow(vertical, 0.09);
         const vec3 deepWaterColor = (1.0 - deepWaterLerp) * horizonColor + deepWaterLerp * deepColor;
