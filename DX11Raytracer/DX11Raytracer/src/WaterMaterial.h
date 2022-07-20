@@ -4,18 +4,19 @@
 
 namespace gfx
 {
-    class DielectricMaterial : public Material
+    // todo: inherit from dielectric?
+    class WaterMaterial : public Material
     {
     public:
-        DielectricMaterial(const double indexOfRefraction);
+        WaterMaterial();
 
     public:
         virtual const bool Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Ray& scattered) const override;
+        virtual const Color GetEmission(const RayHitRecord& rec) const override;
 
     private:
         static double SchlickApprox(const double cosine, const double reflectiveIdx);
 
     private:
-        double m_indexOfRefraction;
     };
 }

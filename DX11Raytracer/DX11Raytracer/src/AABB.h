@@ -10,6 +10,7 @@ namespace gfx
         AABB();
         AABB(const vec3& a, const vec3& b);
     public:
+        void Set(const vec3& a, const vec3& b);
         const vec3 GetMinimum() const;
         const vec3 GetMaximum() const;
         const bool Hit(const Ray& r, const double t_min, const double t_max) const;

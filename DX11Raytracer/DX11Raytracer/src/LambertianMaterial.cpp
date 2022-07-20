@@ -13,7 +13,7 @@ namespace gfx
         : m_albedoTexture(std::move(texture))
     {}
 
-    bool LambertianMaterial::Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Ray& scattered) const
+    const bool LambertianMaterial::Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Ray& scattered) const
     {
         //vec3 scatterDirWS = rec.normalWS + Normalize(vec3::RandomInUnitSphere()); // normalize to use Lambertian distribution
         vec3 scatterDirWS = vec3::RandomInHemisphere(rec.normalWS); // normalize to use Lambertian distribution

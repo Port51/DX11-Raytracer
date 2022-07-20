@@ -6,7 +6,7 @@ namespace gfx
         : m_indexOfRefraction(indexOfRefraction)
     {}
 
-    bool DielectricMaterial::Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Ray& scattered) const
+    const bool DielectricMaterial::Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Ray& scattered) const
     {
         // Snell's law:
         // n0 * sin(theta0) = n1 * sin(theta1)

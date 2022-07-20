@@ -1,6 +1,7 @@
 #pragma once
 #include "CommonHeader.h"
 #include "Ray.h"
+#include "Color.h"
 
 namespace gfx
 {
@@ -9,6 +10,7 @@ namespace gfx
     class Material
     {
     public:
-        virtual bool Scatter(const Ray& r_in, const RayHitRecord& rec, Color& attenuation, Ray& scattered) const = 0;
+        virtual const bool Scatter(const Ray& r_in, const RayHitRecord& rec, Color& attenuation, Ray& scattered) const = 0;
+        virtual const Color GetEmission(const RayHitRecord& rec) const;
     };
 }

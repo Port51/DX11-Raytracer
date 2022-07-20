@@ -2,9 +2,11 @@
 #include "Ray.h"
 #include "RayReceiver.h"
 #include "SphereObject.h"
+#include "WaterSurface.h"
 #include "LambertianMaterial.h"
 #include "MetalMaterial.h"
 #include "DielectricMaterial.h"
+#include "WaterMaterial.h"
 #include "Camera.h"
 #include "CheckeredTexture.h"
 
@@ -36,7 +38,7 @@ namespace gfx
 
         auto groundMaterial = std::make_shared<LambertianMaterial>(std::make_shared<CheckeredTexture>(Color(0.5, 0.5, 0.5, 0.5), Color(0.25, 0.25, 1.0, 0.5)));
         auto grassMaterial = std::make_shared<LambertianMaterial>(Color(0.2, 0.8, 0.2, 1.0));
-        rendererList.Add(std::make_unique<SphereObject>(vec3(0, -1000, 0), 1000, grassMaterial));
+        //rendererList.Add(std::make_unique<SphereObject>(vec3(0, -1000, 0), 1000, grassMaterial));
 
         for (int a = -11; a < 11; a++)
         {
@@ -80,6 +82,9 @@ namespace gfx
 
         auto material3 = std::make_shared<MetalMaterial>(Color(0.7f, 0.6f, 0.5f, 1.0f), 0.0);
         rendererList.Add(std::make_unique<SphereObject>(vec3(4, 1, 0), 1.0, material3));
+
+        auto waterMaterial = std::make_shared<WaterMaterial>();
+        rendererList.Add(std::make_unique<WaterSurface>(vec3(0, 0.1, 0), waterMaterial));
 
         m_pRendererList = std::make_unique<BVHNode>(rendererList);
     }
@@ -130,22 +135,34 @@ namespace gfx
         RayHitRecord rhr;
         if (m_pRendererList->Hit(ray, 0.001, Infinity, rhr))
         {
+            Color emittedColor = rhr.pMaterial->GetEmission(rhr);
+
             // Do more bounces!
             // Bounces and attenuation color are determined by the material we just hit
             Color attenuationColor;
             Ray bounceRay;
             if (rhr.pMaterial->Scatter(ray, rhr, attenuationColor, bounceRay))
             {
-                return attenuationColor * GetRayColor(bounceRay, depth - 1);
+                return emittedColor + attenuationColor * GetRayColor(bounceRay, depth - 1);
             }
-            return Color(0, 0, 0, 0);
+            return emittedColor;
         }
 
         // Sky background
+        const vec3 upColor = vec3(0.2, 0.7, 0.95);
+        const vec3 horizonColor = vec3(1.0, 0.4, 0.2);
+        const vec3 deepColor = vec3(0.01, 0.03, 0.09);
+
         const vec3 rayDirNorm = Normalize(ray.GetDirection());
-        const auto vertical = rayDirNorm.y * 0.5 + 0.5;
-        const auto skyColor = (1.0 - vertical) * vec3(1.0, 1.0, 1.0) + vertical * vec3(0.5, 0.7, 1.0);
-        return Color((float)skyColor.x, (float)skyColor.y, (float)skyColor.z, 0.f);
+        const auto vertical = std::abs(rayDirNorm.y);
+        const auto skyColor = (1.0 - vertical) * horizonColor + vertical * upColor;
+
+        const auto deepWaterLerp = std::pow(vertical, 0.09);
+        const vec3 deepWaterColor = (1.0 - deepWaterLerp) * horizonColor + deepWaterLerp * deepColor;
+
+        const vec3 backgroundColor = (rayDirNorm.y > 0.0) ? skyColor : deepWaterColor;
+
+        return Color((float)backgroundColor.x, (float)backgroundColor.y, (float)backgroundColor.z, 0.f);
     }
 
     /*const bool CPURaytracer::HitSphere(const Ray& ray, vec3& hitPoint) const

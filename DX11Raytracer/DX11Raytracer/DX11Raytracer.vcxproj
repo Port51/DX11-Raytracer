@@ -135,6 +135,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\CheckeredTexture.cpp" />
+    <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\SolidColorTexture.cpp" />
     <ClCompile Include="src\BVHNode.cpp" />
     <ClCompile Include="src\AABB.cpp" />
@@ -152,6 +153,8 @@
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\Graphics.cpp" />
     <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\WaterSurface.cpp" />
+    <ClCompile Include="src\WaterMaterial.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\SolidColorTexture.h" />
@@ -178,6 +181,8 @@
     <ClInclude Include="src\Graphics.h" />
     <ClInclude Include="src\vec3.h" />
     <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="src\WaterSurface.h" />
+    <ClInclude Include="src\WaterMaterial.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\UpdateFrameBuffer.hlsl">

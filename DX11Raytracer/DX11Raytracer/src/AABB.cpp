@@ -6,7 +6,13 @@ namespace gfx
 
 	AABB::AABB(const vec3& a, const vec3& b) : m_minimum(a), m_maximum(b) {}
 
-	const vec3 AABB::GetMinimum() const { return m_minimum; }
+    void AABB::Set(const vec3& a, const vec3& b)
+    {
+        m_minimum = a;
+        m_maximum = b;
+    }
+
+    const vec3 AABB::GetMinimum() const { return m_minimum; }
 
 	const vec3 AABB::GetMaximum() const { return m_maximum; }
 

@@ -108,6 +108,15 @@
     <ClCompile Include="src\SolidColorTexture.cpp">
       <Filter>Source Files\Raytracing\Texture</Filter>
     </ClCompile>
+    <ClCompile Include="src\WaterSurface.cpp">
+      <Filter>Source Files\Raytracing\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WaterMaterial.cpp">
+      <Filter>Source Files\Raytracing\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DX11Include.h">
@@ -181,6 +190,12 @@
     </ClInclude>
     <ClInclude Include="src\SolidColorTexture.h">
       <Filter>Header Files\Raytracing\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WaterSurface.h">
+      <Filter>Header Files\Raytracing\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WaterMaterial.h">
+      <Filter>Header Files\Raytracing\Materials</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
