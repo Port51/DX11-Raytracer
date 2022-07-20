@@ -108,10 +108,10 @@
     <ClCompile Include="src\SolidColorTexture.cpp">
       <Filter>Source Files\Raytracing\Texture</Filter>
     </ClCompile>
-    <ClCompile Include="src\WaterSurface.cpp">
+    <ClCompile Include="src\IceSurface.cpp">
       <Filter>Source Files\Raytracing\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="src\WaterMaterial.cpp">
+    <ClCompile Include="src\IceMaterial.cpp">
       <Filter>Source Files\Raytracing\Materials</Filter>
     </ClCompile>
     <ClCompile Include="src\Material.cpp">
@@ -191,10 +191,10 @@
     <ClInclude Include="src\SolidColorTexture.h">
       <Filter>Header Files\Raytracing\Textures</Filter>
     </ClInclude>
-    <ClInclude Include="src\WaterSurface.h">
+    <ClInclude Include="src\IceSurface.h">
       <Filter>Header Files\Raytracing\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="src\WaterMaterial.h">
+    <ClInclude Include="src\IceMaterial.h">
       <Filter>Header Files\Raytracing\Materials</Filter>
     </ClInclude>
   </ItemGroup>

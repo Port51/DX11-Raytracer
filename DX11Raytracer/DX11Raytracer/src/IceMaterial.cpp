@@ -1,13 +1,13 @@
-#include "WaterMaterial.h"
+#include "IceMaterial.h"
 #include "SolidColorTexture.h"
 #include "Texture.h"
 
 namespace gfx
 {
-	WaterMaterial::WaterMaterial()
+	IceMaterial::IceMaterial()
 	{}
 
-	const bool WaterMaterial::Scatter(const Ray & rayIn, const RayHitRecord & rec, Color & attenuation, Ray & scattered) const
+	const bool IceMaterial::Scatter(const Ray & rayIn, const RayHitRecord & rec, Color & attenuation, Ray & scattered) const
 	{
 		// Use for debugging
 		//return false;
@@ -42,7 +42,7 @@ namespace gfx
 		return true;
 	}
 
-	const Color WaterMaterial::GetEmission(const RayHitRecord& rec) const
+	const Color IceMaterial::GetEmission(const RayHitRecord& rec) const
 	{
 		// Use for debugging
 		//auto debugVal = rec.positionWS.y / 0.2;
@@ -52,7 +52,7 @@ namespace gfx
 		return Color(0.0, 0.0, 0.0, 0.0);
 	}
 
-	double WaterMaterial::SchlickApprox(const double cosine, const double reflectiveIdx)
+	double IceMaterial::SchlickApprox(const double cosine, const double reflectiveIdx)
 	{
 		return 0.0;
 	}

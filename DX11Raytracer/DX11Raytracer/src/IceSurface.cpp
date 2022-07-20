@@ -1,15 +1,15 @@
-#include "WaterSurface.h"
+#include "IceSurface.h"
 
 namespace gfx
 {
-	WaterSurface::WaterSurface(const vec3 positionWS, std::shared_ptr<Material> pMaterial)
+	IceSurface::IceSurface(const vec3 positionWS, std::shared_ptr<Material> pMaterial)
 		: m_pMaterial(std::move(pMaterial)), RayReceiver(positionWS)
 	{}
 
-	const bool WaterSurface::Hit(const Ray & r, const double t_min, const double t_max, RayHitRecord & rec) const
+	const bool IceSurface::Hit(const Ray & r, const double t_min, const double t_max, RayHitRecord & rec) const
 	{
 		// Setup initial test pts to only allow possible water heights
-		const double limit = 0.2;
+		const double limit = 0.1;
 		auto t0 = t_min;
 		if (r.GetPositionAfterTime(t0).y > limit)
 		{
@@ -17,9 +17,9 @@ namespace gfx
 		}
 
 		auto t1 = min(1000.0, t_max);
-		if (r.GetPositionAfterTime(t1).y < 0.0)
+		if (r.GetPositionAfterTime(t1).y < -0.1)
 		{
-			t1 = (0.0 - r.GetOrigin().y) / r.GetDirection().y;
+			t1 = (-0.1 - r.GetOrigin().y) / r.GetDirection().y;
 		}
 
 		auto h0 = GetRayHeightAboveOcean(r.GetPositionAfterTime(t0));
@@ -92,7 +92,7 @@ namespace gfx
 		*/
 	}
 
-	const bool WaterSurface::GetAABB(AABB& aabb) const
+	const bool IceSurface::GetAABB(AABB& aabb) const
 	{
 		const double size = 100.0;
 		const double depth = 0.1;
@@ -100,18 +100,18 @@ namespace gfx
 		return true;
 	}
 	
-	double WaterSurface::GetRayHeightAboveOcean(const vec3 p)
+	double IceSurface::GetRayHeightAboveOcean(const vec3 p)
 	{
-		return p.y - (std::sin(p.x * 7.0) * 0.1 + 0.1);
+		return p.y - (std::sin(p.x * 7.0) * 0.02);
 	}
 
-	vec3 WaterSurface::GetOceanNormal(const vec3 p)
+	vec3 IceSurface::GetOceanNormal(const vec3 p)
 	{
-		auto c = std::cos(p.x * 7.0) * 0.1;
+		auto c = std::cos(p.x * 7.0) * 0.02;
 		return -vec3(c, std::sqrt(1.0 - c * c), 0.0);
 	}
 
-	const bool WaterSurface::GetRayPlaneHit(double& t) const
+	const bool IceSurface::GetRayPlaneHit(double& t) const
 	{
 		return false;
 	}

@@ -153,8 +153,8 @@
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\Graphics.cpp" />
     <ClCompile Include="src\Main.cpp" />
-    <ClCompile Include="src\WaterSurface.cpp" />
-    <ClCompile Include="src\WaterMaterial.cpp" />
+    <ClCompile Include="src\IceSurface.cpp" />
+    <ClCompile Include="src\IceMaterial.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\SolidColorTexture.h" />
@@ -181,8 +181,8 @@
     <ClInclude Include="src\Graphics.h" />
     <ClInclude Include="src\vec3.h" />
     <ClInclude Include="src\Texture.h" />
-    <ClInclude Include="src\WaterSurface.h" />
-    <ClInclude Include="src\WaterMaterial.h" />
+    <ClInclude Include="src\IceSurface.h" />
+    <ClInclude Include="src\IceMaterial.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\UpdateFrameBuffer.hlsl">

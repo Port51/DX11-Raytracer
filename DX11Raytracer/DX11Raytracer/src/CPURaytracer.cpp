@@ -2,11 +2,11 @@
 #include "Ray.h"
 #include "RayReceiver.h"
 #include "SphereObject.h"
-#include "WaterSurface.h"
+#include "IceSurface.h"
 #include "LambertianMaterial.h"
 #include "MetalMaterial.h"
 #include "DielectricMaterial.h"
-#include "WaterMaterial.h"
+#include "IceMaterial.h"
 #include "Camera.h"
 #include "CheckeredTexture.h"
 
@@ -83,8 +83,8 @@ namespace gfx
         auto material3 = std::make_shared<MetalMaterial>(Color(0.7f, 0.6f, 0.5f, 1.0f), 0.0);
         rendererList.Add(std::make_unique<SphereObject>(vec3(4, 1, 0), 1.0, material3));
 
-        auto waterMaterial = std::make_shared<WaterMaterial>();
-        rendererList.Add(std::make_unique<WaterSurface>(vec3(0, 0.1, 0), waterMaterial));
+        auto iceMaterial = std::make_shared<IceMaterial>();
+        rendererList.Add(std::make_unique<IceSurface>(vec3(0, 0, 0), iceMaterial));
 
         m_pRendererList = std::make_unique<BVHNode>(rendererList);
     }

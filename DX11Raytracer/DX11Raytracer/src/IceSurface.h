@@ -5,10 +5,10 @@
 
 namespace gfx
 {
-    class WaterSurface : public RayReceiver
+    class IceSurface : public RayReceiver
     {
     public:
-        WaterSurface(const vec3 positionWS, std::shared_ptr<Material> pMaterial);
+        IceSurface(const vec3 positionWS, std::shared_ptr<Material> pMaterial);
     public:
         virtual const bool Hit(const Ray& r, const double t_min, const double t_max, RayHitRecord& rec) const override;
         virtual const bool GetAABB(AABB& aabb) const override;

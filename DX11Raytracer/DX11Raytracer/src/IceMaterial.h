@@ -5,10 +5,10 @@
 namespace gfx
 {
     // todo: inherit from dielectric?
-    class WaterMaterial : public Material
+    class IceMaterial : public Material
     {
     public:
-        WaterMaterial();
+        IceMaterial();
 
     public:
         virtual const bool Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Ray& scattered) const override;
