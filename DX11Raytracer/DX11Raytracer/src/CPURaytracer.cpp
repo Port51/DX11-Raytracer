@@ -84,13 +84,16 @@ namespace gfx
         m_pRendererList = std::make_unique<BVHNode>(rendererList);
     }
 
-	void CPURaytracer::RunTile(const Camera& camera, Color* const buffer, const uint tileX, const uint tileY) const
+	void CPURaytracer::RunTile(const Camera& camera, Color* const buffer, const uint tileX, const uint tileY, const uint iteration) const
 	{
 		const int tileOffset = (tileY * TileDimensionX + tileX) * (TileSize * TileSize);
 
         const int maxBounces = 20;
-        const int samplesPerPixel = 51;
-        const float multisampleScale = 1.f / samplesPerPixel;
+        const int samplesPerPixel = 5;
+        const double sampleScale = 1.0 / samplesPerPixel;
+
+        const double multisampleScale0 = iteration;
+        const double multisampleScale1 = 1.0 / (iteration + 1);
 
         for (int lx = 0; lx < TileSize; ++lx)
         {
@@ -109,12 +112,12 @@ namespace gfx
                     const double v = static_cast<double>(y + Random::RandomDouble(-0.5, 0.5)) / (ScreenHeight - 1) * 2.0 - 1.0;
 
                     Ray r = camera.GetRay(u, v);
-                    color += GetRayColor(r, maxBounces);
+                    color += (GetRayColor(r, maxBounces) * sampleScale);
                 }
 
-                buffer[localIdx].r = sqrt(color.r * multisampleScale);
-                buffer[localIdx].g = sqrt(color.g * multisampleScale);
-                buffer[localIdx].b = sqrt(color.b * multisampleScale);
+                buffer[localIdx].r = (buffer[localIdx].r * multisampleScale0 + color.r) * multisampleScale1;
+                buffer[localIdx].g = (buffer[localIdx].g * multisampleScale0 + color.g) * multisampleScale1;
+                buffer[localIdx].b = (buffer[localIdx].b * multisampleScale0 + color.b) * multisampleScale1;
             }
         }
 

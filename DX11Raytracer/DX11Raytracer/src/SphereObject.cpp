@@ -40,4 +40,22 @@ namespace gfx
 
         return true;
 	}
+
+    const bool SphereObject::GetAABB(AABB& aabb) const
+    {
+        const auto radiusVec = vec3(m_radius, m_radius, m_radius);
+        AABB box0(m_prevFramePositionWS - radiusVec, m_prevFramePositionWS + radiusVec);
+        AABB box1(m_positionWS - radiusVec, m_positionWS + radiusVec);
+        aabb = AABB::GetCombinedAABB(box0, box1);
+        return true;
+    }
+
+    void SphereObject::GetHitUV(const vec3& p, double& u, double& v)
+    {
+        const auto theta = std::acos(-p.y);
+        const auto phi = std::atan2(-p.z, p.x) + PI;
+
+        u = phi / (2.0 * PI);
+        v = theta / PI;
+    }
 }

@@ -6,11 +6,11 @@ namespace gfx
 {
 
 	LambertianMaterial::LambertianMaterial(const Color& a) 
-        : m_albedoTexture(std::make_shared<SolidColorTexture>(a))
+        : m_albedoTexture(std::move(std::make_shared<SolidColorTexture>(a)))
     {}
 
     LambertianMaterial::LambertianMaterial(std::shared_ptr<Texture> texture)
-        : m_albedoTexture(texture)
+        : m_albedoTexture(std::move(texture))
     {}
 
     bool LambertianMaterial::Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Ray& scattered) const

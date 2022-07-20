@@ -101,6 +101,7 @@ namespace gfx
 	int App::Run()
 	{
         uint nextTileIndex = 0u;
+        uint iterationIndex = 0u;
 
         // Render loop
         while (true)
@@ -115,8 +116,13 @@ namespace gfx
                 DispatchMessageA(&msg);
             }   
 
-            ExecuteTiles(nextTileIndex, m_maxThreadCount);
-            nextTileIndex = (nextTileIndex + m_maxThreadCount) % TileCount;
+            ExecuteTiles(nextTileIndex, m_maxThreadCount, iterationIndex);
+            nextTileIndex = (nextTileIndex + m_maxThreadCount);
+            if (nextTileIndex >= TileCount)
+            {
+                nextTileIndex -= TileCount;
+                iterationIndex++;
+            }
 
             MapImageBuffer();
 
@@ -128,18 +134,24 @@ namespace gfx
         return 0;
 	}
 
-    void App::ExecuteTiles(const int startIdx, const int tileCount)
+    void App::ExecuteTiles(const int startIdx, const int tileCount, const uint iterationIndex)
     {
         if (UseThreading)
         {
             std::vector<std::thread> renderThreads;
             for (int i = 0; i < tileCount; ++i)
             {
-                const uint idx = (startIdx + i) % TileCount;
+                uint tileIteration = iterationIndex;
+                uint idx = (startIdx + i) % TileCount;
+                if (idx > TileCount)
+                {
+                    idx -= TileCount;
+                    tileIteration++;
+                }
                 const uint tx = idx % TileDimensionX;
                 const uint ty = idx / TileDimensionX;
 
-                renderThreads.push_back(std::thread(&CPURaytracer::RunTile, m_pCPURaytracer.get(), *m_pCamera.get(), m_imageData.data(), tx, ty));
+                renderThreads.push_back(std::thread(&CPURaytracer::RunTile, m_pCPURaytracer.get(), *m_pCamera.get(), m_imageData.data(), tx, ty, tileIteration));
             }
 
             for (int i = 0; i < tileCount; ++i)
@@ -154,11 +166,17 @@ namespace gfx
         {
             for (int i = 0; i < tileCount; ++i)
             {
-                const uint idx = (startIdx + i) % TileCount;
+                uint tileIteration = iterationIndex;
+                uint idx = (startIdx + i) % TileCount;
+                if (idx > TileCount)
+                {
+                    idx -= TileCount;
+                    tileIteration++;
+                }
                 const uint tx = idx % TileDimensionX;
                 const uint ty = idx / TileDimensionX;
 
-                m_pCPURaytracer->RunTile(*m_pCamera.get(), m_imageData.data(), tx, ty);
+                m_pCPURaytracer->RunTile(*m_pCamera.get(), m_imageData.data(), tx, ty, iterationIndex);
             }
         }
     }

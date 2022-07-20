@@ -30,7 +30,7 @@ namespace gfx
 		bd.ByteWidth = 3u * sizeof(uint16_t);
 		bd.StructureByteStride = sizeof(uint16_t);
 
-		uint16_t vertexData[3] = { 0u, 1u, 2u };
+		uint16_t vertexData[3] = { 0u, 1u, 2u }; // vertex indices
 
 		D3D11_SUBRESOURCE_DATA sd;
 		ZERO_MEM(sd);
@@ -93,15 +93,20 @@ namespace gfx
         gfx.m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
         gfx.m_pDeviceContext->IASetInputLayout(m_pInputLayout.Get());
         gfx.m_pDeviceContext->IASetVertexBuffers(0, 1u, m_pVertexBuffer.GetAddressOf(), m_VertexBufferStrides.data(), m_VertexBufferOffsets.data());
+
         gfx.m_pDeviceContext->VSSetShader(m_pVertexShader.Get(), nullptr, 0u);
         gfx.m_pDeviceContext->VSSetConstantBuffers(0u, 1u, &pConstantBuffer);
+
         gfx.m_pDeviceContext->RSSetState(m_pRasterizerState.Get());
+
         gfx.m_pDeviceContext->PSSetShader(m_pPixelShader.Get(), nullptr, 0u);
         gfx.m_pDeviceContext->PSSetSamplers(0, 1u, m_pSamplerState.GetAddressOf());
         gfx.m_pDeviceContext->PSSetShaderResources(0u, 1u, &bufferSRV);
         gfx.m_pDeviceContext->PSSetConstantBuffers(0u, 1u, &pConstantBuffer);
+
         gfx.m_pDeviceContext->OMSetDepthStencilState(m_pDepthStencilState.Get(), 0u);
         gfx.m_pDeviceContext->OMSetRenderTargets(1u, gfx.m_pFrameBufferView.GetAddressOf(), nullptr);
+
         gfx.m_pDeviceContext->Draw(3u, 0u);
     }
 }

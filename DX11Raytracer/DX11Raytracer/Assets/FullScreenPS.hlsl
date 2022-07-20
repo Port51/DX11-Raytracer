@@ -19,5 +19,6 @@ float4 main(float4 uv : Texcoord) : SV_Target
     //uint idx = (tuv.y * 16u + tuv.x) * 256u + (luv.y * 16u + luv.x);
     uint idx = (tuv.y * _TileCountX + tuv.x) * (_TileSizeX * _TileSizeY) + (luv.y * _TileSizeX + luv.x);
 
-    return float4(pow(buffer[idx].rgb, 2.0), 1); // apply gamma correction
+    return float4(buffer[idx].rgb, 1); // apply gamma correction
+    //return float4(pow(buffer[idx].rgb, 2.0), 1); // apply gamma correction
 }

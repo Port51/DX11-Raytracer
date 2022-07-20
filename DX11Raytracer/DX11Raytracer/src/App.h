@@ -29,7 +29,7 @@ namespace gfx
 	public:
 		int Run();
 	private:
-		void ExecuteTiles(const int startIdx, const int tileCount);
+		void ExecuteTiles(const int startIdx, const int tileCount, const uint iterationIndex);
 		void MapImageBuffer();
 	private:
 		std::unique_ptr<Graphics> m_pGfx;

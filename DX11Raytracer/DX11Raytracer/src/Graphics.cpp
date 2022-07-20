@@ -24,7 +24,6 @@ namespace gfx
                 throw std::runtime_error("Failed to adjust window rect");
             }
 
-            //m_pWindow = CreateWindowExA(0, windowTitle, windowTitle, WS_POPUP | WS_MAXIMIZE | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr, nullptr, nullptr);
             m_pWindow = CreateWindowExA(0, windowTitle, windowTitle, WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, nullptr, nullptr, nullptr, nullptr);
         }
         
@@ -78,8 +77,6 @@ namespace gfx
             THROW_IF_FAILED(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(m_pFrameBuffer.GetAddressOf())));
 
             THROW_IF_FAILED(m_pDevice->CreateRenderTargetView(m_pFrameBuffer.Get(), nullptr, m_pFrameBufferView.GetAddressOf()));
-
-            //D3D11_VIEWPORT viewport = { 0.0f, 0.0f, static_cast<float>(screenWidth), static_cast<float>(screenHeight), 0.0f, 1.0f };
         }
 	}
 	
@@ -100,7 +97,7 @@ namespace gfx
 
     void Graphics::SetViewport(const int x, const int y, const int width, const int height) const
     {
-        D3D11_VIEWPORT vp;
+        static D3D11_VIEWPORT vp;
         ZERO_MEM(vp);
         vp.Width = (FLOAT)width;
         vp.Height = (FLOAT)height;
