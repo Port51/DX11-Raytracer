@@ -17,6 +17,7 @@ namespace gfx
 
     private:
         static double SchlickApprox(const double cosine, const double reflectiveIdx);
+        const double GetIceSample(const vec3& position) const;
 
     private:
         PerlinNoise m_noise;

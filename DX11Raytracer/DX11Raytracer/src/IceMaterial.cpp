@@ -18,7 +18,7 @@ namespace gfx
 		// n0 and n1 are refractive indices of materials
 		// angles are relative to normals
 
-		attenuation = Color(1.0, 1.0, 1.0, 1.0) * m_noise.Noise(rec.positionWS, 2u);
+		attenuation = Color(1.0, 1.0, 1.0, 1.0) * m_noise.GetNoise3D(rec.positionWS, 2u);
 
 		// This assumes the other medium is air - need to update if adding more complicated situations
 		const double refractionRatio = rec.isFrontFacing ? (1.0 / 1.33) : 1.33;
@@ -44,9 +44,10 @@ namespace gfx
 
 	const Color IceMaterial::GetEmission(const RayHitRecord& rec) const
 	{
+
 		// Use for debugging
 		//auto debugVal = rec.positionWS.y / 0.2;
-		auto debugVal = m_noise.Noise(rec.positionWS * 10.0, 8u);
+		auto debugVal = GetIceSample(rec.positionWS);
 		return Color(debugVal, debugVal, debugVal, debugVal);
 
 		// Normal output
@@ -56,5 +57,18 @@ namespace gfx
 	double IceMaterial::SchlickApprox(const double cosine, const double reflectiveIdx)
 	{
 		return 0.0;
+	}
+
+	const double IceMaterial::GetIceSample(const vec3& position) const
+	{
+		const auto ScaleXY = 55.0;
+		const auto ScaleZ  = 20.0;
+		const auto n0 = m_noise.GetNoise3D(position * vec3(ScaleXY, ScaleXY, ScaleZ), 8u);
+		const auto n1 = m_noise.GetNoise3D(position * vec3(ScaleXY, ScaleXY, ScaleZ) + vec3(21309.90, 3289.32, 93432.032), 8u);
+
+		const auto cracks = std::pow(min(1.0, (1.0 - abs(n0 - n1)) * 1.115 - 0.1), 7.0);
+		const auto clouds = n0 * n0 * 0.125 * (1.0 - cracks);
+
+		return cracks + clouds;
 	}
 }

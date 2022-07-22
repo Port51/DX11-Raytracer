@@ -141,6 +141,11 @@ namespace gfx
         return (1 / t) * v;
     }
 
+    inline vec3 operator/(vec3 u, vec3 v)
+    {
+        return vec3(u.x / v.x, u.y / v.y, u.z / v.z);
+    }
+
     inline double Dot(const vec3& u, const vec3& v)
     {
         return u.x * v.x
@@ -181,5 +186,10 @@ namespace gfx
     inline vec3 MaxVec3(const vec3& a, const vec3& b)
     {
         return vec3(std::max(a.x, b.x), std::max(a.y, b.y), std::max(a.z, b.z));
+    }
+
+    inline vec3 SCurve(const vec3& v)
+    {
+        return v * v * (3.0 - 2.0 * v);
     }
 }

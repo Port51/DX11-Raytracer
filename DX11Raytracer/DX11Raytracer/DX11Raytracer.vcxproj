@@ -157,6 +157,7 @@
     <ClCompile Include="src\IceMaterial.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ivec3.h" />
     <ClInclude Include="src\PerlinNoise.h" />
     <ClInclude Include="src\SolidColorTexture.h" />
     <ClInclude Include="src\CheckeredTexture.h" />
@@ -184,6 +185,7 @@
     <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\IceSurface.h" />
     <ClInclude Include="src\IceMaterial.h" />
+    <ClInclude Include="src\uvec3.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\UpdateFrameBuffer.hlsl">

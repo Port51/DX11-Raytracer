@@ -203,6 +203,12 @@
     <ClInclude Include="src\PerlinNoise.h">
       <Filter>Header Files\Raytracing\Math</Filter>
     </ClInclude>
+    <ClInclude Include="src\uvec3.h">
+      <Filter>Header Files\Raytracing</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ivec3.h">
+      <Filter>Header Files\Raytracing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\FullScreenPS.hlsl">

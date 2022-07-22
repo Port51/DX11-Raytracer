@@ -1,6 +1,9 @@
 #pragma once
 #include "Random.h"
 #include "vec3.h"
+#include "uvec3.h"
+#include "ivec3.h"
+#include "uvec3.h"
 #include "Color.h"
 #include <cmath>
 #include <limits>
@@ -59,6 +62,11 @@ namespace gfx
 	inline double Lerp(const double a, const double b, const double lerp)
 	{
 		return a * (1.0 - lerp) + b * lerp;
+	}
+	
+	inline double SCurve(const double v)
+	{
+		return v * v * (3.0 - 2.0 * v);
 	}
 
 	#define ZERO_MEM(x) ZeroMemory(&x, sizeof(x))
