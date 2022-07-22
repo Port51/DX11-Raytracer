@@ -10,7 +10,7 @@ namespace gfx
 	const bool IceMaterial::Scatter(const Ray & rayIn, const RayHitRecord & rec, Color & attenuation, Ray & scattered) const
 	{
 		// Use for debugging
-		//return false;
+		return false;
 
 		// Snell's law:
 		// n0 * sin(theta0) = n1 * sin(theta1)
@@ -18,7 +18,7 @@ namespace gfx
 		// n0 and n1 are refractive indices of materials
 		// angles are relative to normals
 
-		attenuation = Color(1.0, 1.0, 1.0, 1.0);
+		attenuation = Color(1.0, 1.0, 1.0, 1.0) * m_noise.Noise(rec.positionWS, 2u);
 
 		// This assumes the other medium is air - need to update if adding more complicated situations
 		const double refractionRatio = rec.isFrontFacing ? (1.0 / 1.33) : 1.33;
@@ -46,10 +46,11 @@ namespace gfx
 	{
 		// Use for debugging
 		//auto debugVal = rec.positionWS.y / 0.2;
-		//return Color(debugVal, debugVal, debugVal, debugVal);
+		auto debugVal = m_noise.Noise(rec.positionWS * 10.0, 8u);
+		return Color(debugVal, debugVal, debugVal, debugVal);
 
 		// Normal output
-		return Color(0.0, 0.0, 0.0, 0.0);
+		//return Color(0.0, 0.0, 0.0, 0.0);
 	}
 
 	double IceMaterial::SchlickApprox(const double cosine, const double reflectiveIdx)

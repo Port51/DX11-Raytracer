@@ -1,6 +1,7 @@
 #pragma once
 #include "Material.h"
 #include "CommonHeader.h"
+#include "PerlinNoise.h"
 
 namespace gfx
 {
@@ -18,5 +19,6 @@ namespace gfx
         static double SchlickApprox(const double cosine, const double reflectiveIdx);
 
     private:
+        PerlinNoise m_noise;
     };
 }

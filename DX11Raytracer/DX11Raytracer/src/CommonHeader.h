@@ -56,6 +56,11 @@ namespace gfx
 		return x - whole;
 	}
 
+	inline double Lerp(const double a, const double b, const double lerp)
+	{
+		return a * (1.0 - lerp) + b * lerp;
+	}
+
 	#define ZERO_MEM(x) ZeroMemory(&x, sizeof(x))
 
 	// Support fixed width types

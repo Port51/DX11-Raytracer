@@ -52,6 +52,9 @@
     <Filter Include="Source Files\Raytracing\Texture">
       <UniqueIdentifier>{629d1223-f5e7-4d5b-9d95-9a8894327843}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Raytracing\Math">
+      <UniqueIdentifier>{464c4353-4162-4502-acf0-510a0a4e6ac7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -196,6 +199,9 @@
     </ClInclude>
     <ClInclude Include="src\IceMaterial.h">
       <Filter>Header Files\Raytracing\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PerlinNoise.h">
+      <Filter>Header Files\Raytracing\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
