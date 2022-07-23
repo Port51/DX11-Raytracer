@@ -17,7 +17,7 @@ namespace gfx
             auto v = 0.0;
             auto scale = 1.0;
             uint pitch = 64u;
-            for (int i = 0; i < 7; ++i)
+            for (int i = 0; i < octaveCt; ++i)
             {
                 const uvec3 u2 = u - (u % uvec3(pitch));
                 const vec3 lerp = SCurve((p - vec3(u2.x, u2.y, u2.z)) / vec3(pitch));

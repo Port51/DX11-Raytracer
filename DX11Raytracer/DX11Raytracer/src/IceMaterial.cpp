@@ -14,11 +14,11 @@ namespace gfx
 		if (gBufferIdx == 1u)
 		{
 			// Raymarch pass
-			emission = GetIceRaymarch(rayIn, rec, 50u, 9u, true, passIteration);
+			emission = GetIceRaymarch(rayIn, rec, 50u, 7u, false, passIteration);
 			return false;
 		}
 
-		const auto n0 = PerlinNoise::GetNoise3D(rec.positionWS * vec3(25.0, 25.0, 1.0), 8u);
+		const auto n0 = PerlinNoise::GetNoise3D(rec.positionWS * vec3(25.0, 25.0, 1.0), 7u);
 		const auto roughness = std::pow(SCurve(n0), 10.0);
 
 		attenuation = Color(1.0, 1.0, 1.0, 1.0) * PerlinNoise::GetNoise3D(rec.positionWS, 2u);
@@ -64,7 +64,7 @@ namespace gfx
 			{
 				// This happens when a ray bounces outside the view frustum
 				// In this case, do a low quality raymarch
-				emission = GetIceRaymarch(rayIn, rec, 5u, 3u, false, passIteration);
+				emission = GetIceRaymarch(rayIn, rec, 5u, 5u, false, passIteration);
 			}
 			return false;
 		}
@@ -92,12 +92,12 @@ namespace gfx
 
 		const auto maxDistance = 8.0;
 		const auto stepLength = maxDistance / maxRaySteps;
-		const auto offset = static_cast<double>(passIteration) / static_cast<double>(RaymarchPassCt) * stepLength;
+		const auto offset = static_cast<double>(passIteration % RaymarchPassCt) / static_cast<double>(RaymarchPassCt) * stepLength;
 
 		for (size_t i = 0u; i < maxRaySteps; ++i)
 		{
 			auto t = i * stepLength + offset;
-			auto ice = GetIceSample(rec.positionWS + direction * t, highQuality);
+			auto ice = GetIceSample(rec.positionWS + direction * t, octaves, highQuality);
 
 			ice *= visibility;
 			auto iceVisible = ice * visibility;
@@ -110,12 +110,12 @@ namespace gfx
 		return result;
 	}
 
-	const double IceMaterial::GetIceSample(const vec3& position, const bool highQuality) const
+	const double IceMaterial::GetIceSample(const vec3& position, const uint octaves, const bool highQuality) const
 	{
 		const auto ScaleXZ = 11.0;
 		const auto ScaleY  = 5.5;
-		const auto n0 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ), 9u);
-		const auto n1 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) + vec3(21309.90, 3289.32, 93432.032), 9u);
+		const auto n0 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ), octaves);
+		const auto n1 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) + vec3(21309.90, 3289.32, 93432.032), octaves);
 
 		const auto differenceNoise = Saturate((1.0 - abs(n0 - n1)) * 1.8 - 0.8);
 		const auto cracks =
@@ -124,7 +124,7 @@ namespace gfx
 
 		if (highQuality)
 		{
-			const auto n2 = PerlinNoise::GetNoise3D(position * vec3(31.0) + vec3(109.90, 289.32, 3432.032), 9u);
+			const auto n2 = PerlinNoise::GetNoise3D(position * vec3(31.0) + vec3(109.90, 289.32, 3432.032), octaves);
 			const auto clouds = std::pow(n2, 6.0);
 			return Saturate(cracks + clouds * 0.00035);
 		}
