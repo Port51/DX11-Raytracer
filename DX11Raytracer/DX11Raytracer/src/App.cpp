@@ -100,7 +100,7 @@ namespace gfx
                 if (iterationIndex == RaymarchPassCt) nextTileIndex = 0u; // reset when switch passes
             }
 
-            if (iterationIndex == 0u)
+            if (iterationIndex < RaymarchPassCt)
             {
                 // Render ice buffer while creating it
                 MapImageBuffer(m_pGBuffer->IceRaymarchCache);

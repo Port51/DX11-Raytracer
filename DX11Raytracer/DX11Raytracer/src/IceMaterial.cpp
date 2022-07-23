@@ -9,7 +9,7 @@ namespace gfx
 	IceMaterial::IceMaterial()
 	{}
 
-	const bool IceMaterial::Scatter(const Ray & rayIn, const RayHitRecord & rec, Color& attenuation, Color& emission, Ray& scattered, const GBuffer& gBuffer, const uint gBufferIdx) const
+	const bool IceMaterial::Scatter(const Ray & rayIn, const RayHitRecord & rec, Color& attenuation, Color& emission, Ray& scattered, const GBuffer& gBuffer, const uint gBufferIdx, const uint passIteration) const
 	{
 		if (gBufferIdx == 1u)
 		{
@@ -19,20 +19,21 @@ namespace gfx
 			emission = Color(0.0, 0.0, 0.0, 0.0);
 			auto visibility = 1.0;
 
-			const uint maxRaySteps = 100u;
-			const auto maxDistance = 7.0;
+			const uint maxRaySteps = 50u;
+			const auto maxDistance = 8.0;
 			const auto stepLength = maxDistance / maxRaySteps;
+			const auto offset = static_cast<double>(passIteration) / static_cast<double>(RaymarchPassCt) * stepLength;
 
 			for (size_t i = 0u; i < maxRaySteps; ++i)
 			{
-				auto t = i * stepLength;
+				auto t = i * stepLength + offset;
 				auto ice = GetIceSample(rec.positionWS + direction * t);
 
 				ice *= visibility;
 				auto iceVisible = ice * visibility;
 
 				// Exponential decay for light bounces
-				emission += Color(iceVisible * std::exp(t * -2.0), iceVisible * std::exp(t * -1.2), iceVisible * std::exp(t * -0.7), iceVisible);
+				emission += Color(iceVisible * std::exp(t * -1.8), iceVisible * std::exp(t * -1.05), iceVisible * std::exp(t * -0.6), iceVisible);
 				visibility *= (1.0 - ice);
 			}
 
@@ -106,14 +107,18 @@ namespace gfx
 	const double IceMaterial::GetIceSample(const vec3& position) const
 	{
 		const auto ScaleXZ = 11.0;
-		const auto ScaleY  = 0.5;
+		const auto ScaleY  = 5.5;
 		const auto n0 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ), 9u);
 		const auto n1 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) + vec3(21309.90, 3289.32, 93432.032), 9u);
-		const auto n2 = PerlinNoise::GetNoise3D(position * vec3(51.0) + vec3(209.90, 289.32, 3432.032), 9u);
+		const auto n2 = PerlinNoise::GetNoise3D(position * vec3(31.0) + vec3(109.90, 289.32, 3432.032), 9u);
 
-		const auto cracks = std::pow(Saturate((1.0 - abs(n0 - n1)) * 1.8 - 0.8), 71.0);
-		const auto clouds = std::pow(n2, 7.0);
+		const auto differenceNoise = Saturate((1.0 - abs(n0 - n1)) * 1.8 - 0.8);
+		const auto cracks =
+			std::pow(differenceNoise, 71.0) * 0.8
+			+ std::pow(differenceNoise, 9.0) * 0.2;
 
-		return cracks + clouds * 0.000031;
+		const auto clouds = std::pow(n2, 6.0);
+
+		return Saturate(cracks + clouds * 0.00035);
 	}
 }

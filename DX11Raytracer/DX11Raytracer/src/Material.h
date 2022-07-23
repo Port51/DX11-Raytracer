@@ -11,7 +11,7 @@ namespace gfx
     class Material
     {
     public:
-        virtual const bool Scatter(const Ray& r_in, const RayHitRecord& rec, Color& attenuation, Color& emission, Ray& scattered, const GBuffer& gBuffer, const uint gBufferIdx) const = 0;
+        virtual const bool Scatter(const Ray& r_in, const RayHitRecord& rec, Color& attenuation, Color& emission, Ray& scattered, const GBuffer& gBuffer, const uint gBufferIdx, const uint passIteration) const = 0;
         virtual const bool IsInGBuffer(const uint gBufferIdx) const = 0;
     };
 }

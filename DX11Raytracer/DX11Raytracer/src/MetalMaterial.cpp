@@ -13,7 +13,7 @@ namespace gfx
         : m_albedoTexture(std::move(texture)), m_roughness(roughness)
     {}
 
-    const bool MetalMaterial::Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Color& emission, Ray& scattered, const GBuffer& gBuffer, const uint gBufferIdx) const
+    const bool MetalMaterial::Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Color& emission, Ray& scattered, const GBuffer& gBuffer, const uint gBufferIdx, const uint passIteration) const
     {
         vec3 reflectedDir = Reflect(Normalize(rayIn.GetDirection()), rec.normalWS);
         scattered = Ray(rec.positionWS, reflectedDir + m_roughness * vec3::RandomInUnitSphere(), rayIn.GetTime(), rayIn.GetRandomSeed(), rayIn.GetPixelIdx());

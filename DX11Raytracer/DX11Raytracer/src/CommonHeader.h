@@ -24,6 +24,8 @@ namespace gfx
 	const bool UseThreading = true;
 	const bool UseDepthOfField = true;
 
+	const uint32_t RaymarchPassCt = 20u;
+
 	class Material;
 	struct RayHitRecord
 	{
