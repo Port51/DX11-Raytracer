@@ -51,7 +51,9 @@ namespace gfx
             pixelIdx = m_pixelIdx;
             return true;
         }
+        return false;
 
+        /*
         // Reconstruct pixel index from UVs
         int x = u * ScreenWidth;
         int y = v * ScreenHeight;
@@ -60,6 +62,7 @@ namespace gfx
 
         pixelIdx = y * ScreenWidth + x;
         return true;
+        */
     }
 
 }

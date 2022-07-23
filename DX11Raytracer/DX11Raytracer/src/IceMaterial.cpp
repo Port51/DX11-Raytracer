@@ -36,7 +36,7 @@ namespace gfx
 		const double sinTheta = sqrt(1.0 - cosTheta * cosTheta);
 
 		//const bool totalInternalReflection = refractionRatio * sinTheta > 1.0;
-		const double reflectBias = 2.5; // makes for better screenshot...
+		const double reflectBias = 1.8; // makes for better screenshot...
 		const bool fresnelReflection = (SchlickApprox(cosTheta, refractionRatio) * reflectBias) > rayIn.GetRandomSeed();
 
 		//auto sch = SchlickApprox(cosTheta, refractionRatio);
@@ -64,7 +64,7 @@ namespace gfx
 			{
 				// This happens when a ray bounces outside the view frustum
 				// In this case, do a low quality raymarch
-				emission = GetIceRaymarch(rayIn, rec, 5u, 5u, false, passIteration);
+				emission = GetIceRaymarch(rayIn, rec, 5u, 6u, false, passIteration);
 			}
 			return false;
 		}
@@ -97,7 +97,8 @@ namespace gfx
 		for (size_t i = 0u; i < maxRaySteps; ++i)
 		{
 			auto t = i * stepLength + offset;
-			auto ice = GetIceSample(rec.positionWS + direction * t, octaves, highQuality);
+			auto sample = GetIceSample(rec.positionWS + direction * t, octaves, highQuality);
+			auto ice = sample.x;
 
 			ice *= visibility;
 			auto iceVisible = ice * visibility;
@@ -110,27 +111,40 @@ namespace gfx
 		return result;
 	}
 
-	const double IceMaterial::GetIceSample(const vec3& position, const uint octaves, const bool highQuality) const
+	const vec3 IceMaterial::GetIceSample(const vec3& position, const uint octaves, const bool highQuality)
 	{
 		const auto ScaleXZ = 11.0;
 		const auto ScaleY  = 5.5;
 		const auto n0 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ), octaves);
 		const auto n1 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) + vec3(21309.90, 3289.32, 93432.032), octaves);
 
-		const auto differenceNoise = Saturate((1.0 - abs(n0 - n1)) * 1.8 - 0.8);
+		const auto n2 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) * 2.0, octaves);
+		const auto n3 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) * 2.0 + vec3(21309.90, 3289.32, 93432.032), octaves);
+
+		const auto heightSlopeQ = 10.0;
+		const auto heightSlopeOffset = 0.5;
+
+		const auto largeDifferenceNoise = Saturate((1.0 - abs(n0 - n1)) * 1.8 - 0.8);
+		const auto largeHeightRatio = Saturate((n1 - n0) * heightSlopeQ + heightSlopeOffset);
+
+		// Restrict small cracks to lower region
+		const auto smallDifferenceNoise = Saturate((1.0 - abs(n2 - n3)) * 1.8 - 0.8) * (1.0 - largeHeightRatio);
+		const auto smallHeightRatio = Saturate((n2 - n3) * heightSlopeQ + heightSlopeOffset);
+
 		const auto cracks =
-			std::pow(differenceNoise, 71.0) * 0.8
-			+ std::pow(differenceNoise, 9.0) * 0.2;
+			std::pow(largeDifferenceNoise, 71.0) * 0.8
+			+ std::pow(largeDifferenceNoise, 9.0) * 0.2
+			+ std::pow(smallDifferenceNoise, 67.0) * 0.67;
 
 		if (highQuality)
 		{
 			const auto n2 = PerlinNoise::GetNoise3D(position * vec3(31.0) + vec3(109.90, 289.32, 3432.032), octaves);
 			const auto clouds = std::pow(n2, 6.0);
-			return Saturate(cracks + clouds * 0.00035);
+			return vec3(Saturate(cracks + clouds * 0.00035), largeHeightRatio, smallHeightRatio);
 		}
 		else
 		{
-			return Saturate(cracks);
+			return vec3(Saturate(cracks), largeHeightRatio, smallHeightRatio);
 		}
 	}
 }

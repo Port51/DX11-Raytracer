@@ -1,6 +1,7 @@
 #include "IceSurface.h"
 #include "PerlinNoise.h"
 #include "Material.h"
+#include "IceMaterial.h"
 
 namespace gfx
 {
@@ -13,9 +14,8 @@ namespace gfx
 		// Filter by GBuffer
 		if (!m_pMaterial->IsInGBuffer(gBufferIdx)) return false;
 
-		/*
 		// Setup initial test pts to only allow possible water heights
-		const double limit = 0.1;
+		const double limit = 1.1;
 		auto t0 = t_min;
 		if (r.GetPositionAfterTime(t0).y > limit)
 		{
@@ -73,12 +73,12 @@ namespace gfx
 		else
 		{
 			return false;
-		}*/
+		}
 
 		
 		// Ray-plane intersection
 		// t = (P0 - R0) * P / (R * P)
-		const vec3 normal = vec3(0.0, -1.0, 0.0);
+		/*const vec3 normal = vec3(0.0, -1.0, 0.0);
 		const auto t = Dot(m_positionWS - r.GetOrigin(), normal) / Dot(r.GetDirection(), normal);
 		if (t >= t_min && t <= t_max)
 		{
@@ -94,7 +94,7 @@ namespace gfx
 		else
 		{
 			return false;
-		}
+		}*/
 	}
 
 	const bool IceSurface::GetAABB(AABB& aabb) const
@@ -108,8 +108,13 @@ namespace gfx
 	double IceSurface::GetRayHeightAboveSurface(const vec3 p)
 	{
 		const auto radSqr = p.x * p.x + p.z * p.z;
-		const auto h = min(1.0, radSqr / 300.0) * std::pow(PerlinNoise::GetNoise3D(p, 2u), 2.0) * 0.2;
-		return p.y - h * 0.0;
+		//const auto h = min(1.0, radSqr / 300.0) * std::pow(PerlinNoise::GetNoise3D(p, 2u), 2.0) * 0.2;
+
+		const vec3 sample = IceMaterial::GetIceSample(p, 6u, false);
+		const auto h = 
+			(sample.y > 0.0 ? 0.43 : 0.0)
+			+ (sample.z * 0.271);
+		return p.y - h * 0.75;
 	}
 
 	vec3 IceSurface::GetOceanNormal(const vec3 p)
