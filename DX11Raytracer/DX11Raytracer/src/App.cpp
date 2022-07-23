@@ -98,7 +98,16 @@ namespace gfx
                 iterationIndex++;
             }
 
-            MapImageBuffer();
+            if (iterationIndex == 0u)
+            {
+                // Render ice buffer while creating it
+                MapImageBuffer(m_pGBuffer->IceRaymarchCache);
+            }
+            else
+            {
+                // Final image
+                MapImageBuffer(m_pGBuffer->CameraColor);
+            }
 
             m_pGfx->SetViewport(0, 0, m_screenWidth, m_screenHeight);
             m_pFullScreenBlit->Execute(*m_pGfx, m_pImageBufferSRV.Get(), m_pConstantBuffer.Get());
@@ -110,6 +119,9 @@ namespace gfx
 
     void App::ExecuteTiles(const int startIdx, const int tileCount, const uint iterationIndex)
     {
+        const uint gBufferIdx = (iterationIndex == 0u) ? 1u : 0u;
+        Color* pTargetBuffer = (gBufferIdx == 0u) ? m_pGBuffer->CameraColor.data() : m_pGBuffer->IceRaymarchCache.data();
+
         if (UseThreading)
         {
             std::vector<std::thread> renderThreads;
@@ -125,7 +137,7 @@ namespace gfx
                 const uint tx = idx % TileDimensionX;
                 const uint ty = idx / TileDimensionX;
 
-                renderThreads.push_back(std::thread(&CPURaytracer::RunTile, m_pCPURaytracer.get(), *m_pCamera.get(), m_pGBuffer->CameraColor.data(), tx, ty, tileIteration, *m_pGBuffer.get(), 0u));
+                renderThreads.push_back(std::thread(&CPURaytracer::RunTile, m_pCPURaytracer.get(), *m_pCamera.get(), pTargetBuffer, tx, ty, tileIteration, *m_pGBuffer.get(), gBufferIdx));
             }
 
             for (int i = 0; i < tileCount; ++i)
@@ -150,18 +162,18 @@ namespace gfx
                 const uint tx = idx % TileDimensionX;
                 const uint ty = idx / TileDimensionX;
 
-                m_pCPURaytracer->RunTile(*m_pCamera.get(), m_pGBuffer->CameraColor.data(), tx, ty, iterationIndex, *m_pGBuffer.get(), 0u);
+                m_pCPURaytracer->RunTile(*m_pCamera.get(), pTargetBuffer, tx, ty, iterationIndex, *m_pGBuffer.get(), gBufferIdx);
             }
         }
     }
 
-    void App::MapImageBuffer()
+    void App::MapImageBuffer(const std::vector<Color>& buffer)
     {
         D3D11_MAPPED_SUBRESOURCE mappedSubresource;
         m_pGfx->m_pDeviceContext->Map(m_pImageBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
 
         float* sd = reinterpret_cast<float*>(mappedSubresource.pData);
-        memcpy(sd, m_pGBuffer->CameraColor.data(), sizeof(m_pGBuffer->CameraColor.at(0)) * m_pGBuffer->CameraColor.size()); // todo: only map what's changed
+        memcpy(sd, buffer.data(), sizeof(buffer.at(0)) * buffer.size()); // todo: only map what's changed
 
         m_pGfx->m_pDeviceContext->Unmap(m_pImageBuffer.Get(), 0);
     }

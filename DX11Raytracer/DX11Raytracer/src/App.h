@@ -31,7 +31,7 @@ namespace gfx
 		int Run();
 	private:
 		void ExecuteTiles(const int startIdx, const int tileCount, const uint iterationIndex);
-		void MapImageBuffer();
+		void MapImageBuffer(const std::vector<Color>& buffer);
 	private:
 		std::unique_ptr<Graphics> m_pGfx;
 		std::unique_ptr<GBuffer> m_pGBuffer;

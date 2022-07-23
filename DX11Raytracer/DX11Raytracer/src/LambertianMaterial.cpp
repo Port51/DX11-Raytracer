@@ -14,7 +14,7 @@ namespace gfx
         : m_albedoTexture(std::move(texture))
     {}
 
-    const bool LambertianMaterial::Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Color& emission, Ray& scattered, const GBuffer& gBuffer, const uint bufferIdx) const
+    const bool LambertianMaterial::Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Color& emission, Ray& scattered, const GBuffer& gBuffer, const uint gBufferIdx) const
     {
         //vec3 scatterDirWS = rec.normalWS + Normalize(vec3::RandomInUnitSphere()); // normalize to use Lambertian distribution
         vec3 scatterDirWS = vec3::RandomInHemisphere(rec.normalWS); // normalize to use Lambertian distribution
@@ -22,7 +22,7 @@ namespace gfx
         if (scatterDirWS.IsNearlyZero())
             scatterDirWS = rec.normalWS;
 
-        scattered = Ray(rec.positionWS, scatterDirWS, rayIn.GetTime(), rayIn.GetRandomSeed());
+        scattered = Ray(rec.positionWS, scatterDirWS, rayIn.GetTime(), rayIn.GetRandomSeed(), rayIn.GetPixelIdx());
         attenuation = m_albedoTexture->GetColor(rec.u, rec.v, rec.positionWS);
         emission = Color(0.0, 0.0, 0.0, 0.0);
         return true;

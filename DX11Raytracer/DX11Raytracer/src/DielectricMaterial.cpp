@@ -7,7 +7,7 @@ namespace gfx
         : m_indexOfRefraction(indexOfRefraction)
     {}
 
-    const bool DielectricMaterial::Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Color& emission, Ray& scattered, const GBuffer& gBuffer, const uint bufferIdx) const
+    const bool DielectricMaterial::Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Color& emission, Ray& scattered, const GBuffer& gBuffer, const uint gBufferIdx) const
     {
         // Snell's law:
         // n0 * sin(theta0) = n1 * sin(theta1)
@@ -36,7 +36,7 @@ namespace gfx
         else
             direction = Refract(rayDirNorm, rec.normalWS, refractionRatio);
 
-        scattered = Ray(rec.positionWS, direction, rayIn.GetTime(), rayIn.GetRandomSeed());
+        scattered = Ray(rec.positionWS, direction, rayIn.GetTime(), rayIn.GetRandomSeed(), rayIn.GetPixelIdx());
         return true;
     }
 

@@ -9,8 +9,36 @@ namespace gfx
 	IceMaterial::IceMaterial()
 	{}
 
-	const bool IceMaterial::Scatter(const Ray & rayIn, const RayHitRecord & rec, Color& attenuation, Color& emission, Ray& scattered, const GBuffer& gBuffer, const uint bufferIdx) const
+	const bool IceMaterial::Scatter(const Ray & rayIn, const RayHitRecord & rec, Color& attenuation, Color& emission, Ray& scattered, const GBuffer& gBuffer, const uint gBufferIdx) const
 	{
+		if (gBufferIdx == 1u)
+		{
+			// Raymarch pass
+			//const vec3 direction = Normalize(Refract(rayDirNorm, rec.normalWS, refractionRatio) + roughness * vec3::RandomInUnitSphere());
+			const vec3 direction = Normalize(rayIn.GetDirection());
+			emission = Color(0.0, 0.0, 0.0, 0.0);
+			auto visibility = 1.0;
+
+			const uint maxRaySteps = 1000u;
+			const auto maxDistance = 7.0;
+			const auto stepLength = maxDistance / maxRaySteps;
+
+			for (size_t i = 0u; i < maxRaySteps; ++i)
+			{
+				auto t = i * stepLength;
+				auto ice = GetIceSample(rec.positionWS + direction * t);
+
+				ice *= visibility;
+				auto iceVisible = ice * visibility;
+
+				// Exponential decay for light bounces
+				emission += Color(iceVisible * std::exp(t * -2.0), iceVisible * std::exp(t * -1.2), iceVisible * std::exp(t * -0.7), iceVisible);
+				visibility *= (1.0 - ice);
+			}
+
+			return false;
+		}
+
 		// Use for debugging
 		//return false;
 
@@ -50,35 +78,14 @@ namespace gfx
 		//if (totalInternalReflection || fresnelReflection)
 		{
 			const vec3 direction = Reflect(rayDirNorm, rec.normalWS) + roughness * vec3::RandomInUnitSphere();
-			scattered = Ray(rec.positionWS, direction, rayIn.GetTime(), rayIn.GetRandomSeed());
+			scattered = Ray(rec.positionWS, direction, rayIn.GetTime(), rayIn.GetRandomSeed(), rayIn.GetPixelIdx());
 			emission = Color(0.0, 0.0, 0.0, 0.0);
 			return true;
 		}
 		else
 		{
-			// Do raymarch
-			//const vec3 direction = Normalize(Refract(rayDirNorm, rec.normalWS, refractionRatio) + roughness * vec3::RandomInUnitSphere());
-			const vec3 direction = Normalize(rayDirNorm + roughness * vec3::RandomInUnitSphere());
-			emission = Color(0.0, 0.0, 0.0, 0.0);
-			auto visibility = 1.0;
-
-			const uint maxRaySteps = 1000u;
-			const auto maxDistance = 7.0;
-			const auto stepLength = maxDistance / maxRaySteps;
-
-			for (size_t i = 0u; i < maxRaySteps; ++i)
-			{
-				auto t = i * stepLength;
-				auto ice = GetIceSample(rec.positionWS + direction * t);
-
-				ice *= visibility;
-				auto iceVisible = ice * visibility;
-
-				// Exponential decay for light bounces
-				emission += Color(iceVisible * std::exp(t * -2.0), iceVisible * std::exp(t * -1.2), iceVisible * std::exp(t * -0.7), iceVisible);
-				visibility *= (1.0 - ice);
-			}
-
+			// Sample raymarched gbuffer
+			emission = gBuffer.IceRaymarchCache.at(rayIn.GetPixelIdx());
 			return false;
 		}
 	}

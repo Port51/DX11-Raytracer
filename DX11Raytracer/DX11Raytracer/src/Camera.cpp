@@ -19,7 +19,7 @@ namespace gfx
         m_lensRadius = aperture * 0.5;
     }
 
-    Ray Camera::GetRay(const double u, const double v) const
+    Ray Camera::GetRay(const double u, const double v, const uint pixelIdx) const
     {
         if (UseDepthOfField)
         {
@@ -27,13 +27,13 @@ namespace gfx
             const vec3 discOffset = m_lensRadius * vec3::RandomInUnitDisk();
             const vec3 rayOffset = m_horizontalBasis * discOffset.x + m_verticalBasis * discOffset.y;
             const vec3 rayDir = (m_forwardBasis + m_horizontalBasis * (m_viewportWidth * u) + m_verticalBasis * (m_viewportHeight * v)) * m_focusDist - rayOffset;
-            return Ray(m_positionWS + rayOffset, rayDir, Random::RandomDouble(), Random::RandomDouble());
+            return Ray(m_positionWS + rayOffset, rayDir, Random::RandomDouble(), Random::RandomDouble(), pixelIdx);
         }
         else
         {
             // Normal ray with no DOF
             const vec3 rayDir = m_forwardBasis + m_horizontalBasis * (m_viewportWidth * u) + m_verticalBasis * (m_viewportHeight * v);
-            return Ray(m_positionWS, rayDir, Random::RandomDouble(), Random::RandomDouble());
+            return Ray(m_positionWS, rayDir, Random::RandomDouble(), Random::RandomDouble(), pixelIdx);
         }
     }
 }

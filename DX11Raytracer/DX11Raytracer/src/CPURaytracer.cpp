@@ -90,7 +90,7 @@ namespace gfx
         m_pRendererList = std::make_unique<BVHNode>(rendererList);
     }
 
-	void CPURaytracer::RunTile(const Camera& camera, Color* const buffer, const uint tileX, const uint tileY, const uint iteration, const GBuffer& gBuffer, const uint bufferIdx) const
+	void CPURaytracer::RunTile(const Camera& camera, Color* const buffer, const uint tileX, const uint tileY, const uint iteration, const GBuffer& gBuffer, const uint gBufferIdx) const
 	{
 		const int tileOffset = (tileY * TileDimensionX + tileX) * (TileSize * TileSize);
 
@@ -117,8 +117,8 @@ namespace gfx
                     const double u = static_cast<double>(x + Random::RandomDouble(-0.5, 0.5)) / (ScreenWidth - 1) * 2.0 - 1.0;
                     const double v = static_cast<double>(y + Random::RandomDouble(-0.5, 0.5)) / (ScreenHeight - 1) * 2.0 - 1.0;
 
-                    Ray r = camera.GetRay(u, v);
-                    color += (GetRayColor(r, maxBounces, gBuffer, bufferIdx) * sampleScale);
+                    Ray r = camera.GetRay(u, v, localIdx);
+                    color += (GetRayColor(r, maxBounces, gBuffer, gBufferIdx) * sampleScale);
                 }
 
                 buffer[localIdx].r = (buffer[localIdx].r * multisampleScale0 + color.r) * multisampleScale1;
@@ -129,7 +129,7 @@ namespace gfx
 
 	}
 
-    const Color CPURaytracer::GetRayColor(Ray& ray, const int depth, const GBuffer& gBuffer, const uint bufferIdx) const
+    const Color CPURaytracer::GetRayColor(Ray& ray, const int depth, const GBuffer& gBuffer, const uint gBufferIdx) const
     {
         if (depth <= 0.0) return Color(0.0);
 
@@ -141,9 +141,9 @@ namespace gfx
             Color attenuationColor;
             Color emittedColor;
             Ray bounceRay;
-            if (rhr.pMaterial->Scatter(ray, rhr, attenuationColor, emittedColor, bounceRay, gBuffer, bufferIdx))
+            if (rhr.pMaterial->Scatter(ray, rhr, attenuationColor, emittedColor, bounceRay, gBuffer, gBufferIdx))
             {
-                return emittedColor + attenuationColor * GetRayColor(bounceRay, depth - 1, gBuffer, bufferIdx);
+                return emittedColor + attenuationColor * GetRayColor(bounceRay, depth - 1, gBuffer, gBufferIdx);
             }
             return emittedColor;
         }

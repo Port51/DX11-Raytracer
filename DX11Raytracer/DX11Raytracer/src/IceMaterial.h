@@ -11,7 +11,7 @@ namespace gfx
         IceMaterial();
 
     public:
-        virtual const bool Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Color& emission, Ray& scattered, const GBuffer& gBuffer, const uint bufferIdx) const override;
+        virtual const bool Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Color& emission, Ray& scattered, const GBuffer& gBuffer, const uint gBufferIdx) const override;
         virtual const Color GetEmission(const RayHitRecord& rec) const override;
 
     private:

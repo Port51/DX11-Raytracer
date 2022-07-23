@@ -6,8 +6,8 @@ namespace gfx
 	Ray::Ray()
     {}
 
-    Ray::Ray(const vec3& origin, const vec3& direction, const double time, const double randomSeed)
-        : m_origin(origin), m_direction(direction), m_rcpDirection(vec3(1.0 / direction.x, 1.0 / direction.y, 1.0 / direction.z)), m_time(time), m_randomSeed(randomSeed)
+    Ray::Ray(const vec3& origin, const vec3& direction, const double time, const double randomSeed, const uint pixelIdx)
+        : m_origin(origin), m_direction(direction), m_rcpDirection(vec3(1.0 / direction.x, 1.0 / direction.y, 1.0 / direction.z)), m_time(time), m_randomSeed(randomSeed), m_pixelIdx(pixelIdx)
     {}
 
     const double Ray::GetTime() const
@@ -38,6 +38,11 @@ namespace gfx
     const vec3& Ray::GetPositionAfterTime(const double t) const
     {
         return m_origin + t * m_direction;
+    }
+
+    const uint Ray::GetPixelIdx() const
+    {
+        return m_pixelIdx;
     }
 
 }
