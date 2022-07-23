@@ -68,7 +68,7 @@ namespace gfx
 				auto iceVisible = ice * visibility;
 
 				// Exponential decay for light bounces
-				emission += Color(iceVisible * std::exp(t * -3.0), iceVisible * std::exp(t * -2.0), iceVisible * std::exp(t * -1.0), iceVisible);
+				emission += Color(iceVisible * std::exp(t * -2.0), iceVisible * std::exp(t * -1.2), iceVisible * std::exp(t * -0.7), iceVisible);
 				visibility *= (1.0 - ice);
 			}
 
@@ -96,14 +96,15 @@ namespace gfx
 
 	const double IceMaterial::GetIceSample(const vec3& position) const
 	{
-		const auto ScaleXZ = 51.0;
-		const auto ScaleY  = 1.5;
-		const auto n0 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ), 8u);
-		const auto n1 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) + vec3(21309.90, 3289.32, 93432.032), 8u);
+		const auto ScaleXZ = 11.0;
+		const auto ScaleY  = 0.5;
+		const auto n0 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ), 9u);
+		const auto n1 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) + vec3(21309.90, 3289.32, 93432.032), 9u);
+		const auto n2 = PerlinNoise::GetNoise3D(position * vec3(51.0) + vec3(209.90, 289.32, 3432.032), 9u);
 
-		const auto cracks = std::pow(min(1.0, (1.0 - abs(n0 - n1)) * 1.115 - 0.1), 7.0);
-		const auto clouds = n0 * n0 * 0.125 * (1.0 - cracks);
+		const auto cracks = std::pow(Saturate((1.0 - abs(n0 - n1)) * 1.8 - 0.8), 71.0);
+		const auto clouds = std::pow(n2, 7.0);
 
-		return cracks + clouds * 0.0;
+		return cracks + clouds * 0.000031;
 	}
 }
