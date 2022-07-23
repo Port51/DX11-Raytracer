@@ -14,7 +14,7 @@ namespace gfx
 		if (gBufferIdx == 1u)
 		{
 			// Raymarch pass
-			emission = GetIceRaymarch(rayIn, rec, 50u, 7u, false, passIteration);
+			emission = GetIceRaymarch(rayIn, rec, 50u, 7u, true, passIteration);
 			return false;
 		}
 
@@ -115,26 +115,42 @@ namespace gfx
 	{
 		const auto ScaleXZ = 11.0;
 		const auto ScaleY  = 5.5;
-		const auto n0 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ), octaves);
-		const auto n1 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) + vec3(21309.90, 3289.32, 93432.032), octaves);
+		auto n0 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ), octaves);
+		auto n1 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) + vec3(21309.90, 3289.32, 93432.032), octaves);
 
-		const auto n2 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) * 2.0, octaves);
-		const auto n3 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) * 2.0 + vec3(21309.90, 3289.32, 93432.032), octaves);
+		//auto n2 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) * 2.0, octaves);
+		//auto n3 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) * 2.0 + vec3(21309.90, 3289.32, 93432.032), octaves);
 
 		const auto heightSlopeQ = 10.0;
 		const auto heightSlopeOffset = 0.5;
 
-		const auto largeDifferenceNoise = Saturate((1.0 - abs(n0 - n1)) * 1.8 - 0.8);
 		const auto largeHeightRatio = Saturate((n1 - n0) * heightSlopeQ + heightSlopeOffset);
+		//const auto smallHeightRatio = Saturate((n2 - n3) * heightSlopeQ + heightSlopeOffset) * (1.0 - largeHeightRatio);
+		const auto smallHeightRatio = 0.0;
 
+		// Create a cave!
+		if (highQuality)
+		{
+			const vec3 caveStart = vec3(2.0, -2.25, 0.0);
+			const vec3 caveRight = vec3(0.0, 0.0, 1.0);
+
+			vec3 caveOffset = vec3(position.z - caveStart.x, (position.y - caveStart.y) * 0.65, 0.0);
+			const auto caveSdf = caveOffset.Length();
+
+			auto isCave = Saturate(1.0 - caveSdf * 0.551);// * (largeHeightRatio > 0.0);
+			//isCave = 1.0;
+			n0 = Lerp(n0, 1.0, isCave);
+			n1 = Lerp(n1, 0.0, isCave);
+			//n2 = Lerp(n2, 1.0, isCave);
+			//n3 = Lerp(n3, 0.0, isCave);
+		}
+		const auto largeDifferenceNoise = Saturate((1.0 - abs(n0 - n1)) * 1.8 - 0.8);
 		// Restrict small cracks to lower region
-		const auto smallDifferenceNoise = Saturate((1.0 - abs(n2 - n3)) * 1.8 - 0.8) * (1.0 - largeHeightRatio);
-		const auto smallHeightRatio = Saturate((n2 - n3) * heightSlopeQ + heightSlopeOffset);
+		//const auto smallDifferenceNoise = Saturate((1.0 - abs(n2 - n3)) * 1.8 - 0.8) * (1.0 - largeHeightRatio);
 
 		const auto cracks =
-			std::pow(largeDifferenceNoise, 71.0) * 0.8
-			+ std::pow(largeDifferenceNoise, 9.0) * 0.2
-			+ std::pow(smallDifferenceNoise, 67.0) * 0.67;
+			std::pow(largeDifferenceNoise, 71.0);
+			//+ std::pow(smallDifferenceNoise, 67.0) * 0.67;
 
 		if (highQuality)
 		{
