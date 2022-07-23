@@ -6,7 +6,11 @@ namespace gfx
 	Ray::Ray()
     {}
 
-    Ray::Ray(const vec3& origin, const vec3& direction, const double time, const double randomSeed, const uint pixelIdx)
+    Ray::Ray(const vec3 & origin, const vec3 & direction, const double time, const double randomSeed)
+        : m_origin(origin), m_direction(direction), m_rcpDirection(vec3(1.0 / direction.x, 1.0 / direction.y, 1.0 / direction.z)), m_time(time), m_randomSeed(randomSeed), m_pixelIdx(-1)
+    {}
+
+    Ray::Ray(const vec3& origin, const vec3& direction, const double time, const double randomSeed, const int pixelIdx)
         : m_origin(origin), m_direction(direction), m_rcpDirection(vec3(1.0 / direction.x, 1.0 / direction.y, 1.0 / direction.z)), m_time(time), m_randomSeed(randomSeed), m_pixelIdx(pixelIdx)
     {}
 
@@ -40,9 +44,22 @@ namespace gfx
         return m_origin + t * m_direction;
     }
 
-    const uint Ray::GetPixelIdx() const
+    const bool Ray::TryGetPixelIdx(const double u, const double v, uint& pixelIdx) const
     {
-        return m_pixelIdx;
+        if (m_pixelIdx != -1)
+        {
+            pixelIdx = m_pixelIdx;
+            return true;
+        }
+
+        // Reconstruct pixel index from UVs
+        int x = u * ScreenWidth;
+        int y = v * ScreenHeight;
+
+        if (x < 0 || x >= ScreenWidth || y < 0 || y >= ScreenHeight) return false;
+
+        pixelIdx = y * ScreenWidth + x;
+        return true;
     }
 
 }

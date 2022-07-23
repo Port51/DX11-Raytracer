@@ -16,6 +16,7 @@ namespace gfx
 
     private:
         static double SchlickApprox(const double cosine, const double reflectiveIdx);
-        const double GetIceSample(const vec3& position) const;
+        const Color GetIceRaymarch(const Ray& rayIn, const RayHitRecord& rec, const uint maxRaySteps, const uint octaves, const bool highQuality, const uint passIteration) const;
+        const double GetIceSample(const vec3& position, const bool highQuality) const;
     };
 }

@@ -22,7 +22,7 @@ namespace gfx
         if (scatterDirWS.IsNearlyZero())
             scatterDirWS = rec.normalWS;
 
-        scattered = Ray(rec.positionWS, scatterDirWS, rayIn.GetTime(), rayIn.GetRandomSeed(), rayIn.GetPixelIdx());
+        scattered = Ray(rec.positionWS, scatterDirWS, rayIn.GetTime(), rayIn.GetRandomSeed());
         attenuation = m_albedoTexture->GetColor(rec.u, rec.v, rec.positionWS);
         emission = Color(0.0, 0.0, 0.0, 0.0);
         return true;
