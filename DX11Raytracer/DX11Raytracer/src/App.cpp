@@ -96,6 +96,8 @@ namespace gfx
             {
                 nextTileIndex -= TileCount;
                 iterationIndex++;
+
+                if (iterationIndex == RaymarchPassCt) nextTileIndex = 0u; // reset when switch passes
             }
 
             if (iterationIndex == 0u)
@@ -119,20 +121,38 @@ namespace gfx
 
     void App::ExecuteTiles(const int startIdx, const int tileCount, const uint iterationIndex)
     {
-        const uint gBufferIdx = (iterationIndex == 0u) ? 1u : 0u;
-        Color* pTargetBuffer = (gBufferIdx == 0u) ? m_pGBuffer->CameraColor.data() : m_pGBuffer->IceRaymarchCache.data();
+
+        uint gBufferIdx;
+        Color* pTargetBuffer;
+        uint iterationIndexForPass;
+        if (iterationIndex < RaymarchPassCt)
+        {
+            // Raymarching pass
+            gBufferIdx = 1u;
+            pTargetBuffer = m_pGBuffer->IceRaymarchCache.data();
+            iterationIndexForPass = iterationIndex;
+        }
+        else
+        {
+            // Color pass
+            gBufferIdx = 0u;
+            pTargetBuffer = m_pGBuffer->CameraColor.data();
+            iterationIndexForPass = iterationIndex - RaymarchPassCt;
+        }
 
         if (UseThreading)
         {
             std::vector<std::thread> renderThreads;
             for (int i = 0; i < tileCount; ++i)
             {
-                uint tileIteration = iterationIndex;
+                uint tileIteration = iterationIndexForPass;
                 uint idx = (startIdx + i) % TileCount;
                 if (idx > TileCount)
                 {
                     idx -= TileCount;
                     tileIteration++;
+
+                    if (gBufferIdx == 1u && tileIteration >= RaymarchPassCt) break;
                 }
                 const uint tx = idx % TileDimensionX;
                 const uint ty = idx / TileDimensionX;

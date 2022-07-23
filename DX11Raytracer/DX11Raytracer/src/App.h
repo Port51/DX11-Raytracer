@@ -24,6 +24,8 @@ namespace gfx
 
 	class App
 	{
+	private:
+		const uint RaymarchPassCt = 1u;
 	public:
 		App(const int screenWidth, const int screenHeight, const char* windowTitle, const uint maxThreadCount);
 		~App();

@@ -19,7 +19,7 @@ namespace gfx
 			emission = Color(0.0, 0.0, 0.0, 0.0);
 			auto visibility = 1.0;
 
-			const uint maxRaySteps = 1000u;
+			const uint maxRaySteps = 100u;
 			const auto maxDistance = 7.0;
 			const auto stepLength = maxDistance / maxRaySteps;
 
