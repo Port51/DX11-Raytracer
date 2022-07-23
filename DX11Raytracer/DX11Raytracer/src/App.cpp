@@ -152,7 +152,7 @@ namespace gfx
                 const uint tx = idx % TileDimensionX;
                 const uint ty = idx / TileDimensionX;
 
-                renderThreads.push_back(std::thread(&CPURaytracer::RunTile, m_pCPURaytracer.get(), *m_pCamera.get(), m_imageData.data(), tx, ty, tileIteration));
+                renderThreads.push_back(std::thread(&CPURaytracer::RunTile, m_pCPURaytracer.get(), *m_pCamera.get(), m_imageData.data(), tx, ty, tileIteration, 0u));
             }
 
             for (int i = 0; i < tileCount; ++i)
@@ -177,7 +177,7 @@ namespace gfx
                 const uint tx = idx % TileDimensionX;
                 const uint ty = idx / TileDimensionX;
 
-                m_pCPURaytracer->RunTile(*m_pCamera.get(), m_imageData.data(), tx, ty, iterationIndex);
+                m_pCPURaytracer->RunTile(*m_pCamera.get(), m_imageData.data(), tx, ty, iterationIndex, 0u);
             }
         }
     }

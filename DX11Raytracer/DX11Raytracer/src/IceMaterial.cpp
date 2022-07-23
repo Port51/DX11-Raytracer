@@ -8,7 +8,7 @@ namespace gfx
 	IceMaterial::IceMaterial()
 	{}
 
-	const bool IceMaterial::Scatter(const Ray & rayIn, const RayHitRecord & rec, Color& attenuation, Color& emission, Ray& scattered) const
+	const bool IceMaterial::Scatter(const Ray & rayIn, const RayHitRecord & rec, Color& attenuation, Color& emission, Ray& scattered, const uint bufferIdx) const
 	{
 		// Use for debugging
 		//return false;

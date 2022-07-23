@@ -14,8 +14,20 @@ namespace gfx
 			: r(0.f), g(0.f), b(0.f), a(0.f)
 		{}
 
+		Color(const float v)
+			: r(v), g(v), b(v), a(v)
+		{}
+
 		Color(const float r, const float g, const float b, const float a)
 			: r(r), g(g), b(b), a(a)
+		{}
+
+		Color(const double v)
+			: r(static_cast<float>(v)), g(static_cast<float>(v)), b(static_cast<float>(v)), a(static_cast<float>(v))
+		{}
+
+		Color(const double r, const double g, const double b, const double a)
+			: r(static_cast<float>(r)), g(static_cast<float>(g)), b(static_cast<float>(b)), a(static_cast<float>(a))
 		{}
 
 		Color& operator+=(const Color& v)

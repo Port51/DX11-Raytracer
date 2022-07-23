@@ -13,7 +13,7 @@ namespace gfx
         LambertianMaterial(std::shared_ptr<Texture> texture);
 
     public:
-        virtual const bool Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Color& emission, Ray& scattered) const override;
+        virtual const bool Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Color& emission, Ray& scattered, const uint bufferIdx) const override;
 
     private:
         std::shared_ptr<Texture> m_albedoTexture;

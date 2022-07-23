@@ -10,7 +10,7 @@ namespace gfx
         DielectricMaterial(const double indexOfRefraction);
 
     public:
-        virtual const bool Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Color& emission, Ray& scattered) const override;
+        virtual const bool Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Color& emission, Ray& scattered, const uint bufferIdx) const override;
 
     private:
         static double SchlickApprox(const double cosine, const double reflectiveIdx);
