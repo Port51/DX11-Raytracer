@@ -107,7 +107,7 @@ namespace gfx
             {
                 const int x = TileSize * tileX + lx;
                 const int y = TileSize * tileY + ly;
-                const int localIdx = ly * TileSize + lx + tileOffset;
+                const int pixelIdx = y * ScreenWidth + x;
 
                 Color color;
                 for (int a = 0; a < samplesPerPixel; ++a)
@@ -117,23 +117,23 @@ namespace gfx
                     const double u = static_cast<double>(x + Random::RandomDouble(-0.5, 0.5)) / (ScreenWidth - 1) * 2.0 - 1.0;
                     const double v = static_cast<double>(y + Random::RandomDouble(-0.5, 0.5)) / (ScreenHeight - 1) * 2.0 - 1.0;
 
-                    Ray r = camera.GetRay(u, v, localIdx);
+                    Ray r = camera.GetRay(u, v, pixelIdx);
                     color += (GetRayColor(r, maxBounces, gBuffer, gBufferIdx, passIteration) * sampleScale);
                 }
 
                 if (gBufferIdx == 1u)
                 {
                     // Accumulation buffer
-                    buffer[localIdx].r = max(buffer[localIdx].r, color.r);
-                    buffer[localIdx].g = max(buffer[localIdx].g, color.g);
-                    buffer[localIdx].b = max(buffer[localIdx].b, color.b);
+                    buffer[pixelIdx].r = max(buffer[pixelIdx].r, color.r);
+                    buffer[pixelIdx].g = max(buffer[pixelIdx].g, color.g);
+                    buffer[pixelIdx].b = max(buffer[pixelIdx].b, color.b);
                 }
                 else
                 {
                     // Average over time
-                    buffer[localIdx].r = (buffer[localIdx].r * multisampleScale0 + color.r) * multisampleScale1;
-                    buffer[localIdx].g = (buffer[localIdx].g * multisampleScale0 + color.g) * multisampleScale1;
-                    buffer[localIdx].b = (buffer[localIdx].b * multisampleScale0 + color.b) * multisampleScale1;
+                    buffer[pixelIdx].r = (buffer[pixelIdx].r * multisampleScale0 + color.r) * multisampleScale1;
+                    buffer[pixelIdx].g = (buffer[pixelIdx].g * multisampleScale0 + color.g) * multisampleScale1;
+                    buffer[pixelIdx].b = (buffer[pixelIdx].b * multisampleScale0 + color.b) * multisampleScale1;
                 }
                 
             }

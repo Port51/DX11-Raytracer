@@ -14,11 +14,11 @@ float4 main(float4 uv : Texcoord) : SV_Target
 {
     uint2 tuv = (uint2)uv.zw; // tile uv
     uint2 uvi = (uint2)uv.xy;
-    uint2 luv = uvi % 16u; // local uv in tile
 
-    //uint idx = (tuv.y * 16u + tuv.x) * 256u + (luv.y * 16u + luv.x);
-    uint idx = (tuv.y * _TileCountX + tuv.x) * (_TileSizeX * _TileSizeY) + (luv.y * _TileSizeX + luv.x);
+    //uint2 luv = uvi % 16u; // local uv in tile
+    //uint idx = (tuv.y * _TileCountX + tuv.x) * (_TileSizeX * _TileSizeY) + (luv.y * _TileSizeX + luv.x);
 
-    return float4(buffer[idx].rgb, 1); // apply gamma correction
-    //return float4(pow(buffer[idx].rgb, 2.0), 1); // apply gamma correction
+    uint idx = uvi.y * _TileCountX * _TileSizeX + uvi.x;
+
+    return float4(buffer[idx].rgb, 1);
 }

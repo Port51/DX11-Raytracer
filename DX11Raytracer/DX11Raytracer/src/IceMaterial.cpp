@@ -18,15 +18,6 @@ namespace gfx
 			return false;
 		}
 
-		// Use for debugging
-		//return false;
-
-		// Snell's law:
-		// n0 * sin(theta0) = n1 * sin(theta1)
-		// 
-		// n0 and n1 are refractive indices of materials
-		// angles are relative to normals
-
 		const auto n0 = PerlinNoise::GetNoise3D(rec.positionWS * vec3(25.0, 25.0, 1.0), 8u);
 		const auto roughness = std::pow(SCurve(n0), 10.0);
 
@@ -45,7 +36,7 @@ namespace gfx
 		const double sinTheta = sqrt(1.0 - cosTheta * cosTheta);
 
 		//const bool totalInternalReflection = refractionRatio * sinTheta > 1.0;
-		const double reflectBias = 2.0; // makes for better screenshot...
+		const double reflectBias = 2.5; // makes for better screenshot...
 		const bool fresnelReflection = (SchlickApprox(cosTheta, refractionRatio) * reflectBias) > rayIn.GetRandomSeed();
 
 		//auto sch = SchlickApprox(cosTheta, refractionRatio);
