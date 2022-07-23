@@ -6,7 +6,7 @@ namespace gfx
         : m_indexOfRefraction(indexOfRefraction)
     {}
 
-    const bool DielectricMaterial::Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Ray& scattered) const
+    const bool DielectricMaterial::Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Color& emission, Ray& scattered) const
     {
         // Snell's law:
         // n0 * sin(theta0) = n1 * sin(theta1)
@@ -15,6 +15,7 @@ namespace gfx
         // angles are relative to normals
 
         attenuation = Color(1.0, 1.0, 1.0, 1.0);
+        emission = Color(0.0, 0.0, 0.0, 0.0);
 
         // This assumes the other medium is air - need to update if adding more complicated situations
         const double refractionRatio = rec.isFrontFacing ? (1.0 / m_indexOfRefraction) : m_indexOfRefraction;

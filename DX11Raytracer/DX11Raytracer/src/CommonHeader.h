@@ -53,6 +53,11 @@ namespace gfx
 		return max(min(x, _max), _min);
 	}
 
+	inline double Saturate(const double x)
+	{
+		return max(min(x, 1.0), 0.0);
+	}
+
 	inline double Frac(const double x)
 	{
 		const auto whole = std::floor(x);

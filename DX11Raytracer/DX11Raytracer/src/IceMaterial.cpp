@@ -1,16 +1,17 @@
 #include "IceMaterial.h"
 #include "SolidColorTexture.h"
 #include "Texture.h"
+#include "PerlinNoise.h"
 
 namespace gfx
 {
 	IceMaterial::IceMaterial()
 	{}
 
-	const bool IceMaterial::Scatter(const Ray & rayIn, const RayHitRecord & rec, Color & attenuation, Ray & scattered) const
+	const bool IceMaterial::Scatter(const Ray & rayIn, const RayHitRecord & rec, Color& attenuation, Color& emission, Ray& scattered) const
 	{
 		// Use for debugging
-		return false;
+		//return false;
 
 		// Snell's law:
 		// n0 * sin(theta0) = n1 * sin(theta1)
@@ -18,10 +19,17 @@ namespace gfx
 		// n0 and n1 are refractive indices of materials
 		// angles are relative to normals
 
-		attenuation = Color(1.0, 1.0, 1.0, 1.0) * m_noise.GetNoise3D(rec.positionWS, 2u);
+		const auto n0 = PerlinNoise::GetNoise3D(rec.positionWS * vec3(25.0, 25.0, 1.0), 8u);
+		const auto roughness = std::pow(SCurve(n0), 10.0);
+
+		attenuation = Color(1.0, 1.0, 1.0, 1.0) * PerlinNoise::GetNoise3D(rec.positionWS, 2u);
 
 		// This assumes the other medium is air - need to update if adding more complicated situations
-		const double refractionRatio = rec.isFrontFacing ? (1.0 / 1.33) : 1.33;
+		const double refractionRatio = rec.isFrontFacing ? (1.0 / 1.1) : 1.1; // should be 1.33, but this looks better...
+
+		vec3 lambertScatterDirWS = vec3::RandomInHemisphere(rec.normalWS);
+		if (lambertScatterDirWS.IsNearlyZero())
+			lambertScatterDirWS = rec.normalWS;
 
 		const vec3 rayDirNorm = Normalize(rayIn.GetDirection());
 
@@ -32,14 +40,40 @@ namespace gfx
 		const bool fresnelReflection = SchlickApprox(cosTheta, refractionRatio) > rayIn.GetRandomSeed();
 
 		// Either reflect or refract
-		vec3 direction;
-		if (totalInternalReflection || fresnelReflection)
-			direction = Reflect(rayDirNorm, rec.normalWS);
+		if ((totalInternalReflection || fresnelReflection) && false)
+		{
+			const vec3 direction = Reflect(rayDirNorm, rec.normalWS) + roughness * vec3::RandomInUnitSphere();
+			scattered = Ray(rec.positionWS, direction, rayIn.GetTime(), rayIn.GetRandomSeed());
+			emission = Color(0.0, 0.0, 0.0, 0.0);
+			return true;
+		}
 		else
-			direction = Refract(rayDirNorm, rec.normalWS, refractionRatio);
+		{
+			// Do raymarch
+			vec3 direction = Normalize(Refract(rayDirNorm, rec.normalWS, refractionRatio) + roughness * vec3::RandomInUnitSphere());
+			direction = rayDirNorm;
+			emission = Color(0.0, 0.0, 0.0, 0.0);
+			auto visibility = 1.0;
 
-		scattered = Ray(rec.positionWS, direction, rayIn.GetTime(), rayIn.GetRandomSeed());
-		return true;
+			const uint maxRaySteps = 1000u;
+			const auto maxDistance = 7.0;
+			const auto stepLength = maxDistance / maxRaySteps;
+
+			for (size_t i = 0u; i < maxRaySteps; ++i)
+			{
+				auto t = i * stepLength;
+				auto ice = GetIceSample(rec.positionWS + direction * t);
+
+				ice *= visibility;
+				auto iceVisible = ice * visibility;
+
+				// Exponential decay for light bounces
+				emission += Color(iceVisible * std::exp(t * -3.0), iceVisible * std::exp(t * -2.0), iceVisible * std::exp(t * -1.0), iceVisible);
+				visibility *= (1.0 - ice);
+			}
+
+			return false;
+		}
 	}
 
 	const Color IceMaterial::GetEmission(const RayHitRecord& rec) const
@@ -48,10 +82,11 @@ namespace gfx
 		// Use for debugging
 		//auto debugVal = rec.positionWS.y / 0.2;
 		auto debugVal = GetIceSample(rec.positionWS);
-		return Color(debugVal, debugVal, debugVal, debugVal);
+		//if (rec.positionWS.y > 0.01) debugVal = 0;
+		//return Color(debugVal, debugVal, debugVal, debugVal);
 
 		// Normal output
-		//return Color(0.0, 0.0, 0.0, 0.0);
+		return Color(0.0, 0.0, 0.0, 0.0);
 	}
 
 	double IceMaterial::SchlickApprox(const double cosine, const double reflectiveIdx)
@@ -61,14 +96,14 @@ namespace gfx
 
 	const double IceMaterial::GetIceSample(const vec3& position) const
 	{
-		const auto ScaleXY = 55.0;
-		const auto ScaleZ  = 20.0;
-		const auto n0 = m_noise.GetNoise3D(position * vec3(ScaleXY, ScaleXY, ScaleZ), 8u);
-		const auto n1 = m_noise.GetNoise3D(position * vec3(ScaleXY, ScaleXY, ScaleZ) + vec3(21309.90, 3289.32, 93432.032), 8u);
+		const auto ScaleXZ = 51.0;
+		const auto ScaleY  = 1.5;
+		const auto n0 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ), 8u);
+		const auto n1 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) + vec3(21309.90, 3289.32, 93432.032), 8u);
 
 		const auto cracks = std::pow(min(1.0, (1.0 - abs(n0 - n1)) * 1.115 - 0.1), 7.0);
 		const auto clouds = n0 * n0 * 0.125 * (1.0 - cracks);
 
-		return cracks + clouds;
+		return cracks + clouds * 0.0;
 	}
 }

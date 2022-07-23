@@ -135,13 +135,12 @@ namespace gfx
         RayHitRecord rhr;
         if (m_pRendererList->Hit(ray, 0.001, Infinity, rhr))
         {
-            Color emittedColor = rhr.pMaterial->GetEmission(rhr);
-
             // Do more bounces!
             // Bounces and attenuation color are determined by the material we just hit
             Color attenuationColor;
+            Color emittedColor;
             Ray bounceRay;
-            if (rhr.pMaterial->Scatter(ray, rhr, attenuationColor, bounceRay))
+            if (rhr.pMaterial->Scatter(ray, rhr, attenuationColor, emittedColor, bounceRay))
             {
                 return emittedColor + attenuationColor * GetRayColor(bounceRay, depth - 1);
             }

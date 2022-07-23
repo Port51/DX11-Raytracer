@@ -1,4 +1,5 @@
 #include "IceSurface.h"
+#include "PerlinNoise.h"
 
 namespace gfx
 {
@@ -8,6 +9,7 @@ namespace gfx
 
 	const bool IceSurface::Hit(const Ray & r, const double t_min, const double t_max, RayHitRecord & rec) const
 	{
+		/*
 		// Setup initial test pts to only allow possible water heights
 		const double limit = 0.1;
 		auto t0 = t_min;
@@ -22,8 +24,8 @@ namespace gfx
 			t1 = (-0.1 - r.GetOrigin().y) / r.GetDirection().y;
 		}
 
-		auto h0 = GetRayHeightAboveOcean(r.GetPositionAfterTime(t0));
-		auto h1 = GetRayHeightAboveOcean(r.GetPositionAfterTime(t1));
+		auto h0 = GetRayHeightAboveSurface(r.GetPositionAfterTime(t0));
+		auto h1 = GetRayHeightAboveSurface(r.GetPositionAfterTime(t1));
 
 		if (h1 > 0.0) return false;
 
@@ -36,7 +38,7 @@ namespace gfx
 
 			tmid = t0 * (1.0 - mix) + t1 * mix;
 			auto p = r.GetPositionAfterTime(tmid);
-			auto hmid = GetRayHeightAboveOcean(p);
+			auto hmid = GetRayHeightAboveSurface(p);
 
 			if (hmid < 0.0)
 			{
@@ -67,12 +69,12 @@ namespace gfx
 		else
 		{
 			return false;
-		}
+		}*/
 
-		/*
+		
 		// Ray-plane intersection
 		// t = (P0 - R0) * P / (R * P)
-		const vec3 normal = vec3(0.0, 1.0, 0.0);
+		const vec3 normal = vec3(0.0, -1.0, 0.0);
 		const auto t = Dot(m_positionWS - r.GetOrigin(), normal) / Dot(r.GetDirection(), normal);
 		if (t >= t_min && t <= t_max)
 		{
@@ -89,7 +91,6 @@ namespace gfx
 		{
 			return false;
 		}
-		*/
 	}
 
 	const bool IceSurface::GetAABB(AABB& aabb) const
@@ -100,9 +101,11 @@ namespace gfx
 		return true;
 	}
 	
-	double IceSurface::GetRayHeightAboveOcean(const vec3 p)
+	double IceSurface::GetRayHeightAboveSurface(const vec3 p)
 	{
-		return p.y - (std::sin(p.x * 7.0) * 0.02);
+		const auto radSqr = p.x * p.x + p.z * p.z;
+		const auto h = min(1.0, radSqr / 300.0) * std::pow(PerlinNoise::GetNoise3D(p, 2u), 2.0) * 0.2;
+		return p.y - h * 0.0;
 	}
 
 	vec3 IceSurface::GetOceanNormal(const vec3 p)
