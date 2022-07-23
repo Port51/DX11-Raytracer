@@ -21,7 +21,7 @@ namespace gfx
         return m_renderers;
     }
 
-    const bool RendererList::Hit(const Ray& r, const double t_min, const double t_max, RayHitRecord& rec) const
+    const bool RendererList::Hit(const Ray& r, const double t_min, const double t_max, RayHitRecord& rec, const uint gBufferIdx) const
     {
         RayHitRecord temp;
         auto hitAnything = false;
@@ -29,7 +29,7 @@ namespace gfx
 
         for (const auto& renderer : m_renderers)
         {
-            if (renderer->Hit(r, t_min, closestSoFar, temp))
+            if (renderer->Hit(r, t_min, closestSoFar, temp, gBufferIdx))
             {
                 hitAnything = true;
                 closestSoFar = temp.time;

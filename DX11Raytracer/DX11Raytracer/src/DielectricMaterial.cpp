@@ -40,6 +40,11 @@ namespace gfx
         return true;
     }
 
+    const bool DielectricMaterial::IsInGBuffer(const uint gBufferIdx) const
+    {
+        return (gBufferIdx != 1u);
+    }
+
     double DielectricMaterial::SchlickApprox(const double cosine, const double reflectiveIdx)
     {
         // Use Schlick's approximation for reflectance.

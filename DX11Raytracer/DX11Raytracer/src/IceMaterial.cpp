@@ -90,17 +90,9 @@ namespace gfx
 		}
 	}
 
-	const Color IceMaterial::GetEmission(const RayHitRecord& rec) const
+	const bool IceMaterial::IsInGBuffer(const uint gBufferIdx) const
 	{
-
-		// Use for debugging
-		//auto debugVal = rec.positionWS.y / 0.2;
-		auto debugVal = GetIceSample(rec.positionWS);
-		//if (rec.positionWS.y > 0.01) debugVal = 0;
-		//return Color(debugVal, debugVal, debugVal, debugVal);
-
-		// Normal output
-		return Color(0.0, 0.0, 0.0, 0.0);
+		return true;
 	}
 
 	double IceMaterial::SchlickApprox(const double cosine, const double reflectiveIdx)

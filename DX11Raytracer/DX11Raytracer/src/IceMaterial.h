@@ -12,7 +12,7 @@ namespace gfx
 
     public:
         virtual const bool Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Color& emission, Ray& scattered, const GBuffer& gBuffer, const uint gBufferIdx) const override;
-        virtual const Color GetEmission(const RayHitRecord& rec) const override;
+        virtual const bool IsInGBuffer(const uint gBufferIdx) const override;
 
     private:
         static double SchlickApprox(const double cosine, const double reflectiveIdx);

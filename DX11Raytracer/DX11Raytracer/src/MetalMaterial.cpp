@@ -21,4 +21,8 @@ namespace gfx
         emission = Color(0.0, 0.0, 0.0, 0.0);
         return (Dot(scattered.GetDirection(), rec.normalWS) > 0);
     }
+    const bool MetalMaterial::IsInGBuffer(const uint gBufferIdx) const
+    {
+        return (gBufferIdx != 1u);
+    }
 }

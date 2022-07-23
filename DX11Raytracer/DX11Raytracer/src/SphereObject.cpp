@@ -1,4 +1,5 @@
 #include "SphereObject.h"
+#include "Material.h"
 
 namespace gfx
 {
@@ -7,8 +8,11 @@ namespace gfx
     {
     }
 
-    const bool SphereObject::Hit(const Ray& r, const double tMin, const double tMax, RayHitRecord& rec) const
+    const bool SphereObject::Hit(const Ray& r, const double tMin, const double tMax, RayHitRecord& rec, const uint gBufferIdx) const
 	{
+        // Filter by GBuffer
+        if (!m_pMaterial->IsInGBuffer(gBufferIdx)) return false;
+
         vec3 center = GetPositionAtTime(r.GetTime());
         vec3 oc = r.GetOrigin() - center;
         auto a = Dot(r.GetDirection(), r.GetDirection());

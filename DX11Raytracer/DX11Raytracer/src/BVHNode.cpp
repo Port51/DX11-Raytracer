@@ -62,13 +62,13 @@ namespace gfx
         return true;
     }
 
-    const bool BVHNode::Hit(const Ray& r, const double t_min, const double t_max, RayHitRecord& rec) const
+    const bool BVHNode::Hit(const Ray& r, const double t_min, const double t_max, RayHitRecord& rec, const uint gBufferIdx) const
     {
         if (!m_aabb.Hit(r, t_min, t_max))
             return false;
 
-        const bool hit_left = m_left->Hit(r, t_min, t_max, rec);
-        const bool hit_right = m_right->Hit(r, t_min, hit_left ? rec.time : t_max, rec);
+        const bool hit_left = m_left->Hit(r, t_min, t_max, rec, gBufferIdx);
+        const bool hit_right = m_right->Hit(r, t_min, hit_left ? rec.time : t_max, rec, gBufferIdx);
 
         return hit_left || hit_right;
     }

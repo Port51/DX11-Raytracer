@@ -1,5 +1,6 @@
 #include "IceSurface.h"
 #include "PerlinNoise.h"
+#include "Material.h"
 
 namespace gfx
 {
@@ -7,8 +8,11 @@ namespace gfx
 		: m_pMaterial(std::move(pMaterial)), RayReceiver(positionWS)
 	{}
 
-	const bool IceSurface::Hit(const Ray & r, const double t_min, const double t_max, RayHitRecord & rec) const
+	const bool IceSurface::Hit(const Ray & r, const double t_min, const double t_max, RayHitRecord & rec, const uint gBufferIdx) const
 	{
+		// Filter by GBuffer
+		if (!m_pMaterial->IsInGBuffer(gBufferIdx)) return false;
+
 		/*
 		// Setup initial test pts to only allow possible water heights
 		const double limit = 0.1;

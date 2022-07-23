@@ -15,7 +15,7 @@ namespace gfx
         BVHNode(std::vector<std::shared_ptr<RayReceiver>>& src, const size_t start, const size_t end);
         
     public:
-        virtual const bool Hit(const Ray& r, const double t_min, const double t_max, RayHitRecord& rec) const override;
+        virtual const bool Hit(const Ray& r, const double t_min, const double t_max, RayHitRecord& rec, const uint gBufferIdx) const override;
         virtual const bool GetAABB(AABB& aabb) const override;
 
     private:

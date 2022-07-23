@@ -27,4 +27,8 @@ namespace gfx
         emission = Color(0.0, 0.0, 0.0, 0.0);
         return true;
     }
+    const bool LambertianMaterial::IsInGBuffer(const uint gBufferIdx) const
+    {
+        return (gBufferIdx != 1u);
+    }
 }

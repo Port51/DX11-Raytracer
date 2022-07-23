@@ -134,7 +134,7 @@ namespace gfx
         if (depth <= 0.0) return Color(0.0);
 
         RayHitRecord rhr;
-        if (m_pRendererList->Hit(ray, 0.001, Infinity, rhr))
+        if (m_pRendererList->Hit(ray, 0.001, Infinity, rhr, gBufferIdx))
         {
             // Do more bounces!
             // Bounces and attenuation color are determined by the material we just hit
