@@ -25,7 +25,7 @@ namespace gfx
 		attenuation = Color(1.0, 1.0, 1.0, 1.0) * PerlinNoise::GetNoise3D(rec.positionWS, 2u);
 
 		// This assumes the other medium is air - need to update if adding more complicated situations
-		const double refractionRatio = rec.isFrontFacing ? (1.0 / 1.1) : 1.1; // should be 1.33, but this looks better...
+		const double refractionRatio = rec.isFrontFacing ? (1.0 / 1.33) : 1.33; // should be 1.33, but this looks better...
 
 		vec3 lambertScatterDirWS = vec3::RandomInHemisphere(rec.normalWS);
 		if (lambertScatterDirWS.IsNearlyZero())
@@ -33,14 +33,20 @@ namespace gfx
 
 		const vec3 rayDirNorm = Normalize(rayIn.GetDirection());
 
-		const double cosTheta = fmin(Dot(-rayDirNorm, rec.normalWS), 1.0);
+		const double cosTheta = fmin(Dot(rayDirNorm, rec.normalWS), 1.0);
 		const double sinTheta = sqrt(1.0 - cosTheta * cosTheta);
 
-		const bool totalInternalReflection = refractionRatio * sinTheta > 1.0;
-		const bool fresnelReflection = SchlickApprox(cosTheta, refractionRatio) > rayIn.GetRandomSeed();
+		//const bool totalInternalReflection = refractionRatio * sinTheta > 1.0;
+		const double reflectBias = 2.0; // makes for better screenshot...
+		const bool fresnelReflection = (SchlickApprox(cosTheta, refractionRatio) * reflectBias) > rayIn.GetRandomSeed();
+
+		//auto sch = SchlickApprox(cosTheta, refractionRatio);
+		//emission = Color(sch, 0.0, 0.0, 0.0);
+		//return false;
 
 		// Either reflect or refract
-		if ((totalInternalReflection || fresnelReflection) && false)
+		if (fresnelReflection)
+		//if (totalInternalReflection || fresnelReflection)
 		{
 			const vec3 direction = Reflect(rayDirNorm, rec.normalWS) + roughness * vec3::RandomInUnitSphere();
 			scattered = Ray(rec.positionWS, direction, rayIn.GetTime(), rayIn.GetRandomSeed());
@@ -50,8 +56,8 @@ namespace gfx
 		else
 		{
 			// Do raymarch
-			vec3 direction = Normalize(Refract(rayDirNorm, rec.normalWS, refractionRatio) + roughness * vec3::RandomInUnitSphere());
-			direction = rayDirNorm;
+			//const vec3 direction = Normalize(Refract(rayDirNorm, rec.normalWS, refractionRatio) + roughness * vec3::RandomInUnitSphere());
+			const vec3 direction = Normalize(rayDirNorm + roughness * vec3::RandomInUnitSphere());
 			emission = Color(0.0, 0.0, 0.0, 0.0);
 			auto visibility = 1.0;
 
@@ -91,7 +97,10 @@ namespace gfx
 
 	double IceMaterial::SchlickApprox(const double cosine, const double reflectiveIdx)
 	{
-		return 0.0;
+		// Use Schlick's approximation for reflectance.
+		auto r0 = (1.0 - reflectiveIdx) / (1.0 + reflectiveIdx);
+		r0 = r0 * r0;
+		return r0 + (1.0 - r0) * std::pow((1.0 - cosine), 5.0);
 	}
 
 	const double IceMaterial::GetIceSample(const vec3& position) const
