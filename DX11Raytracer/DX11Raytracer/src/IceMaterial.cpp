@@ -2,13 +2,14 @@
 #include "SolidColorTexture.h"
 #include "Texture.h"
 #include "PerlinNoise.h"
+#include "GBuffer.h"
 
 namespace gfx
 {
 	IceMaterial::IceMaterial()
 	{}
 
-	const bool IceMaterial::Scatter(const Ray & rayIn, const RayHitRecord & rec, Color& attenuation, Color& emission, Ray& scattered, const uint bufferIdx) const
+	const bool IceMaterial::Scatter(const Ray & rayIn, const RayHitRecord & rec, Color& attenuation, Color& emission, Ray& scattered, const GBuffer& gBuffer, const uint bufferIdx) const
 	{
 		// Use for debugging
 		//return false;

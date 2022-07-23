@@ -209,6 +209,9 @@
     <ClInclude Include="src\ivec3.h">
       <Filter>Header Files\Raytracing</Filter>
     </ClInclude>
+    <ClInclude Include="src\GBuffer.h">
+      <Filter>Header Files\Raytracing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\FullScreenPS.hlsl">

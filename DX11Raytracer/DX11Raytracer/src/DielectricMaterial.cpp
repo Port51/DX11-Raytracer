@@ -1,4 +1,5 @@
 #include "DielectricMaterial.h"
+#include "GBuffer.h"
 
 namespace gfx
 {
@@ -6,7 +7,7 @@ namespace gfx
         : m_indexOfRefraction(indexOfRefraction)
     {}
 
-    const bool DielectricMaterial::Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Color& emission, Ray& scattered, const uint bufferIdx) const
+    const bool DielectricMaterial::Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Color& emission, Ray& scattered, const GBuffer& gBuffer, const uint bufferIdx) const
     {
         // Snell's law:
         // n0 * sin(theta0) = n1 * sin(theta1)

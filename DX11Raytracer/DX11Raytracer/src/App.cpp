@@ -6,12 +6,14 @@
 #include "CPURaytracer.h"
 #include "RayReceiver.h"
 #include "Camera.h"
+#include "GBuffer.h"
 #include <thread>
 
 namespace gfx
 {
 	App::App(const int screenWidth, const int screenHeight, const char* windowTitle, const uint maxThreadCount)
 		: m_pGfx(std::make_unique<Graphics>(screenWidth, screenHeight, windowTitle)),
+        m_pGBuffer(std::make_unique<GBuffer>(screenWidth, screenHeight)),
         m_screenWidth(screenWidth),
         m_screenHeight(screenHeight),
         m_maxThreadCount(maxThreadCount)
@@ -27,35 +29,6 @@ namespace gfx
 
         THROW_IF_FAILED(m_pGfx->m_pDevice->CreateBuffer(&ibd, nullptr, &m_pImageBuffer));
         THROW_IF_FAILED(m_pGfx->m_pDevice->CreateShaderResourceView(m_pImageBuffer.Get(), nullptr, &m_pImageBufferSRV));
-
-        m_imageData.resize(screenWidth * screenHeight);
-
-        // Setup some test data to make sure tiles work correctly
-        for (int tx = 0; tx < TileDimensionX; ++tx)
-        {
-            for (int ty = 0; ty < TileDimensionY; ++ty)
-            {
-                for (int lx = 0; lx < TileSize; ++lx)
-                {
-                    for (int ly = 0; ly < TileSize; ++ly)
-                    {
-                        int x = TileSize * tx + lx;
-                        int y = TileSize * ty + ly;
-                        float v0 = (float)lx / TileSize;
-                        float v1 = (float)ly / TileSize;
-
-                        int tileOffset = (TileSize * TileSize) * (ty * TileDimensionX + tx);
-                        int pixelOffset = ly * TileSize + lx;
-                        int idx = tileOffset + pixelOffset;
-
-                        m_imageData[idx].r = v0;
-                        m_imageData[idx].g = v1;
-                        m_imageData[idx].b = (float)x / 256;
-                        m_imageData[idx].a = 0;
-                    }
-                }
-            }
-        }
 
         D3D11_BUFFER_DESC cbd;
         ZERO_MEM(cbd);
@@ -152,7 +125,7 @@ namespace gfx
                 const uint tx = idx % TileDimensionX;
                 const uint ty = idx / TileDimensionX;
 
-                renderThreads.push_back(std::thread(&CPURaytracer::RunTile, m_pCPURaytracer.get(), *m_pCamera.get(), m_imageData.data(), tx, ty, tileIteration, 0u));
+                renderThreads.push_back(std::thread(&CPURaytracer::RunTile, m_pCPURaytracer.get(), *m_pCamera.get(), m_pGBuffer->CameraColor.data(), tx, ty, tileIteration, *m_pGBuffer.get(), 0u));
             }
 
             for (int i = 0; i < tileCount; ++i)
@@ -177,7 +150,7 @@ namespace gfx
                 const uint tx = idx % TileDimensionX;
                 const uint ty = idx / TileDimensionX;
 
-                m_pCPURaytracer->RunTile(*m_pCamera.get(), m_imageData.data(), tx, ty, iterationIndex, 0u);
+                m_pCPURaytracer->RunTile(*m_pCamera.get(), m_pGBuffer->CameraColor.data(), tx, ty, iterationIndex, *m_pGBuffer.get(), 0u);
             }
         }
     }
@@ -188,7 +161,7 @@ namespace gfx
         m_pGfx->m_pDeviceContext->Map(m_pImageBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
 
         float* sd = reinterpret_cast<float*>(mappedSubresource.pData);
-        memcpy(sd, m_imageData.data(), sizeof(m_imageData.at(0)) * m_imageData.size()); // todo: only map what's changed
+        memcpy(sd, m_pGBuffer->CameraColor.data(), sizeof(m_pGBuffer->CameraColor.at(0)) * m_pGBuffer->CameraColor.size()); // todo: only map what's changed
 
         m_pGfx->m_pDeviceContext->Unmap(m_pImageBuffer.Get(), 0);
     }
