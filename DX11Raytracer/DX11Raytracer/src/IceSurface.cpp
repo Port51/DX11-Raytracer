@@ -60,7 +60,7 @@ namespace gfx
 		if (tmid >= t_min && tmid <= t_max)
 		{
 			const vec3 hitpt = r.GetPositionAfterTime(tmid);
-			const vec3 normal = GetOceanNormal(hitpt);
+			const vec3 normal = GetSurfaceNormal(hitpt);
 			rec.time = tmid;
 			rec.isFrontFacing = Dot(r.GetDirection(), normal) < 0;
 			rec.normalWS = normal;
@@ -99,7 +99,7 @@ namespace gfx
 
 	const bool IceSurface::GetAABB(AABB& aabb) const
 	{
-		const double size = 100.0;
+		const double size = 1000000.0;
 		const double depth = 0.1;
 		aabb.Set(vec3(-size, -depth, -size), vec3(size, depth, size));
 		return true;
@@ -117,10 +117,13 @@ namespace gfx
 		return p.y - h * 0.75;
 	}
 
-	vec3 IceSurface::GetOceanNormal(const vec3 p)
+	vec3 IceSurface::GetSurfaceNormal(const vec3 p)
 	{
-		auto c = std::cos(p.x * 7.0) * 0.02;
-		return -vec3(c, std::sqrt(1.0 - c * c), 0.0);
+		// Lerp between waves and ice surface
+		const auto c = std::cos(p.x * 7.0) * 0.02;
+		const auto wavesNormal = -vec3(c, std::sqrt(1.0 - c * c), 0.0);
+		const auto iceNormal = vec3(0, -1, 0);
+		return Lerp(wavesNormal, iceNormal, Saturate(p.y * 100.0));
 	}
 
 	const bool IceSurface::GetRayPlaneHit(double& t) const

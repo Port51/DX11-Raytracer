@@ -9,7 +9,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	int returnCode = 0;
 	try
 	{
-		gfx::App app(gfx::ScreenWidth, gfx::ScreenHeight, "DX11Raytracer", std::thread::hardware_concurrency() - 1u);
+		gfx::App app(gfx::ScreenWidth, gfx::ScreenHeight, "DX11 Ray Tracer + Ray Marcher", std::thread::hardware_concurrency() - 1u);
 		return app.Run();
 	}
 	catch (const std::exception& e)

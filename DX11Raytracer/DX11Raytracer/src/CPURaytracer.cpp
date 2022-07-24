@@ -41,7 +41,7 @@ namespace gfx
         auto grassMaterial = std::make_shared<LambertianMaterial>(Color(0.2, 0.8, 0.2, 1.0));
         //rendererList.Add(std::make_unique<SphereObject>(vec3(0, -1000, 0), 1000, grassMaterial));
 
-        for (int a = -11; a < 11; a++)
+        /*for (int a = -11; a < 11; a++)
         {
             for (int b = -11; b < 11; b++)
             {
@@ -73,17 +73,25 @@ namespace gfx
                     }
                 }
             }
-        }
+        }*/
 
-        auto material1 = std::make_shared<DielectricMaterial>(1.5);
-        rendererList.Add(std::make_unique<SphereObject>(vec3(0, 1, 0), 1.0, material1));
+        //auto material1 = std::make_shared<DielectricMaterial>(1.5);
+        auto material1 = std::make_shared<MetalMaterial>(Color(0.5f, 0.5f, 1.0f, 1.0f), 0.0);
+        rendererList.Add(std::make_unique<SphereObject>(vec3(0.95, 1.5, -2.05), 1.0, material1));
 
-        auto material2 = std::make_shared<LambertianMaterial>(Color(0.4f, 0.2f, 0.1f, 1.0f));
-        rendererList.Add(std::make_unique<SphereObject>(vec3(-4, 1, 0), 1.0, material2));
+        //auto material2 = std::make_shared<LambertianMaterial>(Color(0.4f, 0.2f, 0.1f, 1.0f));
+        auto material2 = std::make_shared<MetalMaterial>(Color(1.0f), 0.0);
+        rendererList.Add(std::make_unique<SphereObject>(vec3(0.95, 1.5, 2.05), 1.0, material2));
 
-        auto material3 = std::make_shared<MetalMaterial>(Color(0.7f, 0.6f, 0.5f, 1.0f), 0.0);
-        rendererList.Add(std::make_unique<SphereObject>(vec3(4, 1, 0), 1.0, material3));
+        auto material3 = std::make_shared<MetalMaterial>(Color(1.0f, 0.2f, 0.0f, 1.0f), 0.0);
+        rendererList.Add(std::make_unique<SphereObject>(vec3(0.95, 1.5, 0), 1.0, material3));
 
+        //auto lambertMaterial = std::make_shared<LambertianMaterial>(Color(1.0f, 0.3f, 0.1f, 1.0f));
+        //rendererList.Add(std::make_unique<SphereObject>(vec3(-8.0, 0.55, 13.5), 0.42, lambertMaterial));
+        //rendererList.Add(std::make_unique<SphereObject>(vec3(-7.5, 0.55, 14.5), 0.42, lambertMaterial));
+        //rendererList.Add(std::make_unique<SphereObject>(vec3(-7.0, 0.55, 15.5), 0.42, lambertMaterial));
+
+        // Volumetric ice
         auto iceMaterial = std::make_shared<IceMaterial>();
         rendererList.Add(std::make_unique<IceSurface>(vec3(0, 0, 0), iceMaterial));
 
@@ -162,7 +170,7 @@ namespace gfx
 
         // Sky background
         const vec3 upColor = vec3(0.2, 0.7, 0.95);
-        const vec3 horizonColor = vec3(1.0, 0.3, 0.11);
+        const vec3 horizonColor = vec3(1.0, 0.75, 0.6);
         const vec3 deepColor = vec3(0.01, 0.03, 0.09);
 
         const vec3 rayDirNorm = Normalize(ray.GetDirection());

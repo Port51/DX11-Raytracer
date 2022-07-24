@@ -20,7 +20,7 @@ namespace gfx
             for (int i = 0; i < octaveCt; ++i)
             {
                 const uvec3 u2 = u - (u % uvec3(pitch));
-                const vec3 lerp = SCurve((p - vec3(u2.x, u2.y, u2.z)) / vec3(pitch));
+                const vec3 lerp = SCurve((p - vec3(u2.x, u2.y, u2.z)) / pitch);
 
                 const auto s000 = HashToNoise(Hash(u2));
                 const auto s100 = HashToNoise(Hash(u2 + uvec3(pitch, 0u, 0u)));
@@ -35,7 +35,7 @@ namespace gfx
                     Lerp(Lerp(s000, s100, lerp.x), Lerp(s010, s110, lerp.x), lerp.y),
                     Lerp(Lerp(s001, s101, lerp.x), Lerp(s011, s111, lerp.x), lerp.y), lerp.z);
                 auto vv = Lerp(s000, s100, lerp.x);
-                scale /= 2.0;
+                scale *= 0.5;
                 pitch /= 2u;
             }
 

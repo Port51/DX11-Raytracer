@@ -44,58 +44,6 @@ namespace gfx
                 + z * other.z;
         }
 
-        const bool IsNearlyZero() const
-        {
-            return Dot(*this) < 1e-5 * 1e-5;
-        }
-
-        const int32_t Length() const
-        {
-            return sqrt(LengthSqr());
-        }
-
-        const int32_t LengthSqr() const
-        {
-            return x * x + y * y + z * z;
-        }
-
-        static const ivec3 Random()
-        {
-            return ivec3(Random::RandomDouble(), Random::RandomDouble(), Random::RandomDouble());
-        }
-
-        static const ivec3 Random(int32_t min, int32_t max)
-        {
-            return ivec3(Random::RandomDouble(min, max), Random::RandomDouble(min, max), Random::RandomDouble(min, max));
-        }
-
-        static const ivec3 RandomInUnitSphere()
-        {
-            while (true)
-            {
-                auto p = ivec3::Random(-1.0, 1.0);
-                if (p.LengthSqr() >= 1.0) continue;
-                return p;
-            }
-        }
-
-        static const ivec3 RandomInHemisphere(const ivec3& normal)
-        {
-            ivec3 result = RandomInUnitSphere();
-            if (result.Dot(normal) < 0.0) result *= -1.0; // turns sphere into hemisphere
-            return result;
-        }
-
-        static const ivec3 RandomInUnitDisk()
-        {
-            while (true)
-            {
-                auto p = ivec3(Random::RandomDouble(-1.0, 1.0), Random::RandomDouble(-1.0, 1.0), 0.0);
-                if (p.LengthSqr() >= 1.0) continue;
-                return p;
-            }
-        }
-
     public:
         int32_t x;
         int32_t y;
@@ -156,7 +104,7 @@ namespace gfx
 
     inline ivec3 operator/(ivec3 v, int32_t t)
     {
-        return (1 / t) * v;
+        return ivec3(v.x / t, v.y / t, v.z / t);
     }
 
     inline ivec3 Cross(const ivec3& u, const ivec3& v)

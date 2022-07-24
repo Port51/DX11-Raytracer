@@ -18,8 +18,8 @@ namespace gfx
 			return false;
 		}
 
-		const auto n0 = PerlinNoise::GetNoise3D(rec.positionWS * vec3(25.0, 25.0, 1.0), 7u);
-		const auto roughness = std::pow(SCurve(n0), 10.0);
+		const auto n0 = PerlinNoise::GetNoise3D(rec.positionWS * vec3(55.0, 1.0, 55.0), 7u);
+		const auto roughness = std::pow(Saturate(n0), 3.0) * 0.15;
 
 		attenuation = Color(1.0, 1.0, 1.0, 1.0) * PerlinNoise::GetNoise3D(rec.positionWS, 2u);
 
@@ -64,7 +64,7 @@ namespace gfx
 			{
 				// This happens when a ray bounces outside the view frustum
 				// In this case, do a low quality raymarch
-				emission = GetIceRaymarch(rayIn, rec, 5u, 6u, false, passIteration);
+				emission = GetIceRaymarch(rayIn, rec, 5u, 6u, true, passIteration);
 			}
 			return false;
 		}
@@ -145,12 +145,12 @@ namespace gfx
 			//n3 = Lerp(n3, 0.0, isCave);
 		}
 		const auto largeDifferenceNoise = Saturate((1.0 - abs(n0 - n1)) * 1.8 - 0.8);
-		// Restrict small cracks to lower region
-		//const auto smallDifferenceNoise = Saturate((1.0 - abs(n2 - n3)) * 1.8 - 0.8) * (1.0 - largeHeightRatio);
+		// Restrict small cracks to ice region
+		//const auto smallDifferenceNoise = Saturate((1.0 - abs(n2 - n3)) * 1.8 - 0.8) * largeHeightRatio;
 
 		const auto cracks =
 			std::pow(largeDifferenceNoise, 71.0);
-			//+ std::pow(smallDifferenceNoise, 67.0) * 0.67;
+			//+ std::pow(smallDifferenceNoise, 67.0) * 0.37;
 
 		if (highQuality)
 		{
