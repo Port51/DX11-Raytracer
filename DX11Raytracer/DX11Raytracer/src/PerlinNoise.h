@@ -17,7 +17,7 @@ namespace gfx
             auto v = 0.0;
             auto scale = 1.0;
             uint pitch = 64u;
-            for (int i = 0; i < octaveCt; ++i)
+            for (uint i = 0; i < octaveCt; ++i)
             {
                 const uvec3 u2 = u - (u % uvec3(pitch));
                 const vec3 lerp = SCurve((p - vec3(u2.x, u2.y, u2.z)) / pitch);
@@ -47,8 +47,8 @@ namespace gfx
         // https://www.shadertoy.com/view/4djSRW
         static const float hashwithoutsine11(float p)
         {
-            p = Frac(p * 0.1031);
-            p *= p + 33.33;
+            p = Frac(p * 0.1031f);
+            p *= p + 33.33f;
             p *= p + p;
             return Frac(p);
         }

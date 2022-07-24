@@ -39,7 +39,7 @@ namespace gfx
         return m_rcpDirection;
     }
 
-    const vec3& Ray::GetPositionAfterTime(const double t) const
+    const vec3 Ray::GetPositionAfterTime(const double t) const
     {
         return m_origin + t * m_direction;
     }

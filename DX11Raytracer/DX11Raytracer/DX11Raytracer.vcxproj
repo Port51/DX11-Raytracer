@@ -135,6 +135,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\CheckeredTexture.cpp" />
+    <ClCompile Include="src\GBuffer.cpp" />
     <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\SolidColorTexture.cpp" />
     <ClCompile Include="src\BVHNode.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="src\GBuffer.h" />
     <ClInclude Include="src\ivec3.h" />
     <ClInclude Include="src\PerlinNoise.h" />
+    <ClInclude Include="src\Settings.h" />
     <ClInclude Include="src\SolidColorTexture.h" />
     <ClInclude Include="src\CheckeredTexture.h" />
     <ClInclude Include="src\RendererList.h" />

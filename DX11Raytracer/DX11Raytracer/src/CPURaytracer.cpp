@@ -1,4 +1,5 @@
 #include "CPURaytracer.h"
+#include "Settings.h"
 #include "Ray.h"
 #include "RayReceiver.h"
 #include "SphereObject.h"
@@ -106,18 +107,18 @@ namespace gfx
         const int samplesPerPixel = 5;
         const double sampleScale = 1.0 / samplesPerPixel;
 
-        const double multisampleScale0 = passIteration;
-        const double multisampleScale1 = 1.0 / (passIteration + 1);
+        const float multisampleScale0 = static_cast<float>(passIteration);
+        const float multisampleScale1 = 1.0f / static_cast<float>(passIteration + 1u);
 
-        for (int lx = 0; lx < TileSize; ++lx)
+        for (uint lx = 0u; lx < TileSize; ++lx)
         {
-            for (int ly = 0; ly < TileSize; ++ly)
+            for (uint ly = 0u; ly < TileSize; ++ly)
             {
                 const int x = TileSize * tileX + lx;
                 const int y = TileSize * tileY + ly;
                 const int pixelIdx = y * ScreenWidth + x;
 
-                Color color;
+                Color pixelColor;
                 for (int a = 0; a < samplesPerPixel; ++a)
                 {
                     // NDC coords
@@ -126,22 +127,23 @@ namespace gfx
                     const double v = static_cast<double>(y + Random::RandomDouble(-0.5, 0.5)) / (ScreenHeight - 1) * 2.0 - 1.0;
 
                     Ray r = camera.GetRay(u, v, pixelIdx);
-                    color += (GetRayColor(r, maxBounces, gBuffer, gBufferIdx, passIteration) * sampleScale);
+                    pixelColor += (GetRayColor(r, maxBounces, gBuffer, gBufferIdx, passIteration) * sampleScale);
                 }
 
                 if (gBufferIdx == 1u)
                 {
-                    // Accumulation buffer
-                    buffer[pixelIdx].r = max(buffer[pixelIdx].r, color.r);
-                    buffer[pixelIdx].g = max(buffer[pixelIdx].g, color.g);
-                    buffer[pixelIdx].b = max(buffer[pixelIdx].b, color.b);
+                    // Find max within sample ranges
+                    buffer[pixelIdx].r = max(buffer[pixelIdx].r, pixelColor.r);
+                    buffer[pixelIdx].g = max(buffer[pixelIdx].g, pixelColor.g);
+                    buffer[pixelIdx].b = max(buffer[pixelIdx].b, pixelColor.b);
                 }
                 else
                 {
-                    // Average over time
-                    buffer[pixelIdx].r = (buffer[pixelIdx].r * multisampleScale0 + color.r) * multisampleScale1;
-                    buffer[pixelIdx].g = (buffer[pixelIdx].g * multisampleScale0 + color.g) * multisampleScale1;
-                    buffer[pixelIdx].b = (buffer[pixelIdx].b * multisampleScale0 + color.b) * multisampleScale1;
+                    // Average over time (with min depth stored in alpha)
+                    buffer[pixelIdx].r = (buffer[pixelIdx].r * multisampleScale0 + pixelColor.r) * multisampleScale1;
+                    buffer[pixelIdx].g = (buffer[pixelIdx].g * multisampleScale0 + pixelColor.g) * multisampleScale1;
+                    buffer[pixelIdx].b = (buffer[pixelIdx].b * multisampleScale0 + pixelColor.b) * multisampleScale1;
+                    buffer[pixelIdx].a = min(buffer[pixelIdx].a, pixelColor.a);
                 }
                 
             }

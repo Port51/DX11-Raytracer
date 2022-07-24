@@ -41,8 +41,8 @@ namespace gfx
 			mix = h0 / max(h0 - h1, 0.0001); // bias based on which height is most positive/negative
 
 			tmid = t0 * (1.0 - mix) + t1 * mix;
-			auto p = r.GetPositionAfterTime(tmid);
-			auto hmid = GetRayHeightAboveSurface(p);
+			const auto& p = r.GetPositionAfterTime(tmid);
+			const auto& hmid = GetRayHeightAboveSurface(p);
 
 			if (hmid < 0.0)
 			{

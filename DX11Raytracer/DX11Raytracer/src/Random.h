@@ -31,6 +31,6 @@ public:
 	
 	static int RandomInt(const int min, const int max)
 	{
-		return static_cast<int>(RandomDouble(min, max + 1));
+		return static_cast<int>(RandomDouble(static_cast<double>(min), static_cast<double>(max + 1)));
 	}
 };

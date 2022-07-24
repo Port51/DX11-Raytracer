@@ -16,7 +16,7 @@ namespace gfx
         const vec3& GetOrigin() const;
         const vec3& GetDirection() const;
         const vec3& GetRcpDirection() const;
-        const vec3& GetPositionAfterTime(const double t) const;
+        const vec3 GetPositionAfterTime(const double t) const;
         const bool TryGetPixelIdx(const double u, const double v, uint& pixelIdx) const;
 
     private:

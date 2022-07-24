@@ -3,6 +3,7 @@
 #include "Texture.h"
 #include "PerlinNoise.h"
 #include "GBuffer.h"
+#include "Settings.h"
 
 namespace gfx
 {
@@ -21,7 +22,7 @@ namespace gfx
 		const auto n0 = PerlinNoise::GetNoise3D(rec.positionWS * vec3(55.0, 1.0, 55.0), 7u);
 		const auto roughness = std::pow(Saturate(n0), 3.0) * 0.15;
 
-		attenuation = Color(1.0, 1.0, 1.0, 1.0) * PerlinNoise::GetNoise3D(rec.positionWS, 2u);
+		attenuation = Color(1.0f) * PerlinNoise::GetNoise3D(rec.positionWS, 2u);
 
 		// This assumes the other medium is air - need to update if adding more complicated situations
 		const double refractionRatio = rec.isFrontFacing ? (1.0 / 1.33) : 1.33; // should be 1.33, but this looks better...

@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "Settings.h"
 
 namespace gfx
 {

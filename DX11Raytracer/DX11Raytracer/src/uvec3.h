@@ -13,6 +13,8 @@ namespace gfx
         uvec3() : x(0u), y(0u), z(0u) {}
         uvec3(const uint32_t value) : x(value), y(value), z(value) {}
         uvec3(const uint32_t x, const uint32_t y, const uint32_t z) : x(x), y(y), z(z) {}
+        uvec3(const float x, const float y, const float z) : x(static_cast<uint32_t>(x)), y(static_cast<uint32_t>(y)), z(static_cast<uint32_t>(z)) {}
+        uvec3(const double x, const double y, const double z) : x(static_cast<uint32_t>(x)), y(static_cast<uint32_t>(y)), z(static_cast<uint32_t>(z)) {}
 
     public:
         uvec3& operator+=(const uvec3& v)

@@ -1,4 +1,5 @@
 #include "CommonHeader.h"
+#include "Settings.h"
 #include <windows.h>
 #include "App.h"
 #include "ExceptionHandling.h"

@@ -120,6 +120,9 @@
     <ClCompile Include="src\Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\GBuffer.cpp">
+      <Filter>Source Files\Raytracing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DX11Include.h">
@@ -211,6 +214,9 @@
     </ClInclude>
     <ClInclude Include="src\GBuffer.h">
       <Filter>Header Files\Raytracing</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Settings.h">
+      <Filter>Header Files\Application</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

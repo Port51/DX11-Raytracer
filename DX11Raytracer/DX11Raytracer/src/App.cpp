@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "GBuffer.h"
 #include <thread>
+#include "Settings.h"
 
 namespace gfx
 {
