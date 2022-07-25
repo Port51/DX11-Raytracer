@@ -119,15 +119,15 @@ namespace gfx
 		auto n0 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ), octaves);
 		auto n1 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) + vec3(21309.90, 3289.32, 93432.032), octaves);
 
-		//auto n2 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) * 2.0, octaves);
-		//auto n3 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) * 2.0 + vec3(21309.90, 3289.32, 93432.032), octaves);
+		auto n2 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) * 4.0, octaves - 3u);
+		auto n3 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) * 4.0 + vec3(21309.90, 3289.32, 93432.032), octaves - 3u);
 
-		const auto heightSlopeQ = 10.0;
-		const auto heightSlopeOffset = 0.5;
+		const double heightSlopeQ = 10.0;
+		const double heightSlopeOffset = 0.5;
 
-		const auto largeHeightRatio = Saturate((n1 - n0) * heightSlopeQ + heightSlopeOffset);
+		double largeHeightRatio = Saturate((n1 - n0) * heightSlopeQ + heightSlopeOffset);
 		//const auto smallHeightRatio = Saturate((n2 - n3) * heightSlopeQ + heightSlopeOffset) * (1.0 - largeHeightRatio);
-		const auto smallHeightRatio = 0.0;
+		double smallHeightRatio = 0.0;
 
 		// Create a cave!
 		if (highQuality)
@@ -136,28 +136,29 @@ namespace gfx
 			const vec3 caveRight = vec3(0.0, 0.0, 1.0);
 
 			vec3 caveOffset = vec3(position.z - caveStart.x, (position.y - caveStart.y) * 0.65, 0.0);
-			const auto caveSdf = caveOffset.Length();
+			const double caveSdf = caveOffset.Length();
 
-			auto isCave = Saturate(1.0 - caveSdf * 0.551);// * (largeHeightRatio > 0.0);
+			double isCave = Saturate(1.0 - caveSdf * 0.551);// * (largeHeightRatio > 0.0);
 			//isCave = 1.0;
 			n0 = Lerp(n0, 1.0, isCave);
 			n1 = Lerp(n1, 0.0, isCave);
 			//n2 = Lerp(n2, 1.0, isCave);
 			//n3 = Lerp(n3, 0.0, isCave);
+			largeHeightRatio *= (1.0 - isCave);
 		}
-		const auto largeDifferenceNoise = Saturate((1.0 - abs(n0 - n1)) * 1.8 - 0.8);
+		const double largeDifferenceNoise = Saturate((1.0 - abs(n0 - n1)) * 1.8 - 0.8);
 		// Restrict small cracks to ice region
-		//const auto smallDifferenceNoise = Saturate((1.0 - abs(n2 - n3)) * 1.8 - 0.8) * largeHeightRatio;
+		const auto smallDifferenceNoise = Saturate((1.0 - abs(n2 - n3)) * 1.8 - 0.8) * largeHeightRatio;
 
-		const auto cracks =
-			std::pow(largeDifferenceNoise, 71.0);
-			//+ std::pow(smallDifferenceNoise, 67.0) * 0.37;
+		const double cracks =
+			std::pow(largeDifferenceNoise, 71.0)
+			+ std::pow(smallDifferenceNoise, 31.0) * 0.21;
 
 		if (highQuality)
 		{
-			const auto n2 = PerlinNoise::GetNoise3D(position * vec3(31.0) + vec3(109.90, 289.32, 3432.032), octaves);
-			const auto clouds = std::pow(n2, 6.0);
-			return vec3(Saturate(cracks + clouds * 0.00035), largeHeightRatio, smallHeightRatio);
+			const double n2 = PerlinNoise::GetNoise3D(position * vec3(131.0) + vec3(109.90, 289.32, 3432.032), octaves);
+			const double clouds = (std::pow(n2, 2.7) + n2 * 0.333) * largeHeightRatio;
+			return vec3(Saturate(cracks + clouds * 0.003251), largeHeightRatio, smallHeightRatio);
 		}
 		else
 		{
