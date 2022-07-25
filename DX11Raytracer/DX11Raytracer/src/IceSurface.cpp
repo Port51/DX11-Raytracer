@@ -112,8 +112,8 @@ namespace gfx
 
 		const vec3 sample = IceMaterial::GetIceSample(p, 6u, false);
 		const auto h = 
-			(sample.y > 0.0 ? 0.43 : 0.0)
-			+ (sample.z * 0.271);
+			(sample.y > 0.0 ? 0.43 : 0.0);
+			//+ (sample.z * 0.271);
 		return p.y - h * 0.75;
 	}
 

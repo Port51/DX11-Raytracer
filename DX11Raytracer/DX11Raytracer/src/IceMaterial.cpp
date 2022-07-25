@@ -150,9 +150,10 @@ namespace gfx
 		// Restrict small cracks to ice region
 		const auto smallDifferenceNoise = Saturate((1.0 - abs(n2 - n3)) * 1.8 - 0.8) * largeHeightRatio;
 
+		const double spread = Saturate(position.y / 0.42);
 		const double cracks =
-			std::pow(largeDifferenceNoise, 71.0)
-			+ std::pow(smallDifferenceNoise, 31.0) * 0.21;
+			std::pow(largeDifferenceNoise, 71.0 - 70.0 * spread)
+			+ std::pow(smallDifferenceNoise, 31.0) * 0.25;
 
 		if (highQuality)
 		{
