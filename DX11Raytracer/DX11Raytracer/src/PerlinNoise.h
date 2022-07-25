@@ -21,6 +21,8 @@ namespace gfx
             for (uint i = 0; i < octaveCt; ++i)
             {
                 const uvec3 u2 = u - (u % uvec3(pitch));
+
+                // Bilinear sampling
                 const vec3f lerp = SCurve((p - vec3f(u2.x, u2.y, u2.z)) / static_cast<float>(pitch));
 
                 const float s000 = Hash1DToNoise(Hash(u2.x, u2.y, u2.z));
@@ -35,7 +37,7 @@ namespace gfx
                 v += scale * Lerp(
                     Lerp(Lerp(s000, s100, lerp.x), Lerp(s010, s110, lerp.x), lerp.y),
                     Lerp(Lerp(s001, s101, lerp.x), Lerp(s011, s111, lerp.x), lerp.y), lerp.z);
-                float vv = Lerp(s000, s100, lerp.x);
+
                 scale *= 0.5f;
                 pitch /= 2u;
             }
@@ -137,19 +139,19 @@ namespace gfx
 
         // Used to switch hash methods easily for testing
         // pcg3d seems to be the best
-        static const uint Hash(const uint x, const uint y, const uint z)
+        static inline const uint Hash(const uint x, const uint y, const uint z)
         {
             return pcg3d_to_1d(x, y, z);
         }
 
         // Turns a hashed uvec3 into a noise value
-        static const float Hash3DToNoise(const uvec3 hash)
+        static inline const float Hash3DToNoise(const uvec3 hash)
         {
             return (static_cast<float>(hash.y % 65536u) / 65536.0f);
         }
 
         // Turns a hashed uint into a noise value
-        static const float Hash1DToNoise(const uint hash)
+        static inline const float Hash1DToNoise(const uint hash)
         {
             return (static_cast<float>(hash % 65536u) / 65536.0f);
         }

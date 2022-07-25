@@ -15,4 +15,6 @@ namespace gfx
 	const bool UseDepthOfField = true;
 
 	const uint32_t RaymarchPassCt = 20u;
+	const uint32_t RaymarchStepsPerPass = 50u;
+	const uint32_t RaymarchHeightFieldTraceSteps = 50u;
 }

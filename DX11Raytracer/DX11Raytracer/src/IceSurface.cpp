@@ -2,6 +2,7 @@
 #include "PerlinNoise.h"
 #include "Material.h"
 #include "IceMaterial.h"
+#include "Settings.h"
 
 namespace gfx
 {
@@ -15,7 +16,7 @@ namespace gfx
 		if (!m_pMaterial->IsInGBuffer(gBufferIdx)) return false;
 
 		// Setup initial test pts to only allow possible water heights
-		const double limit = 1.1;
+		const double limit = 0.35;
 		auto t0 = t_min;
 		if (r.GetPositionAfterTime(t0).y > limit)
 		{
@@ -23,9 +24,9 @@ namespace gfx
 		}
 
 		auto t1 = min(1000.0, t_max);
-		if (r.GetPositionAfterTime(t1).y < -0.1)
+		if (r.GetPositionAfterTime(t1).y < -0.05)
 		{
-			t1 = (-0.1 - r.GetOrigin().y) / r.GetDirection().y;
+			t1 = (-0.05 - r.GetOrigin().y) / r.GetDirection().y;
 		}
 
 		auto h0 = GetRayHeightAboveSurface(r.GetPositionAfterTime(t0));
@@ -35,14 +36,14 @@ namespace gfx
 
 		// Search for intersection
 		double tmid;
-		for (uint i = 0u; i < 10u; ++i)
+		for (uint i = 0u; i < RaymarchHeightFieldTraceSteps; ++i)
 		{
-			auto mix = 0.5;
-			mix = h0 / max(h0 - h1, 0.0001); // bias based on which height is most positive/negative
+			double mix = 0.5;
+			//mix = 0.25 + 0.5 * h0 / max(h0 - h1, 0.0001); // bias based on which height is most positive/negative
 
-			tmid = t0 * (1.0 - mix) + t1 * mix;
-			const auto& p = r.GetPositionAfterTime(tmid);
-			const auto& hmid = GetRayHeightAboveSurface(p);
+			tmid = Lerp(t0, t1, mix);
+			const vec3& p = r.GetPositionAfterTime(tmid);
+			const double& hmid = GetRayHeightAboveSurface(p);
 
 			if (hmid < 0.0)
 			{
@@ -112,15 +113,15 @@ namespace gfx
 
 		const vec3 sample = IceMaterial::GetIceSample(p, 6u, false);
 		const auto h = 
-			(sample.y > 0.0 ? 0.43 : 0.0);
+			(sample.y > 0.0 ? 0.3225 : std::sin(p.x * 5.51) * 0.025);
 			//+ (sample.z * 0.271);
-		return p.y - h * 0.75;
+		return p.y - h;
 	}
 
 	vec3 IceSurface::GetSurfaceNormal(const vec3 p)
 	{
 		// Lerp between waves and ice surface
-		const auto c = std::cos(p.x * 7.0) * 0.02;
+		const auto c = std::cos(p.x * 5.51) * 0.025;
 		const auto wavesNormal = -vec3(c, std::sqrt(1.0 - c * c), 0.0);
 		const auto iceNormal = vec3(0, -1, 0);
 		return Lerp(wavesNormal, iceNormal, Saturate(p.y * 100.0));

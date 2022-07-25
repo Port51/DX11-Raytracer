@@ -15,7 +15,7 @@ namespace gfx
 		if (gBufferIdx == 1u)
 		{
 			// Raymarch pass
-			emission = GetIceRaymarch(rayIn, rec, 50u, 7u, true, passIteration);
+			emission = GetIceRaymarch(rayIn, rec, RaymarchStepsPerPass, 7u, true, passIteration);
 			return false;
 		}
 
