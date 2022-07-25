@@ -105,7 +105,7 @@ namespace gfx
 			auto iceVisible = ice * visibility;
 
 			// Exponential decay for light bounces
-			result += Color(iceVisible * std::exp(t * -1.8), iceVisible * std::exp(t * -1.05), iceVisible * std::exp(t * -0.6), iceVisible);
+			result += Color(iceVisible * std::exp(t * -1.51), iceVisible * std::exp(t * -0.881), iceVisible * std::exp(t * -0.5121), iceVisible);
 			visibility *= (1.0 - ice);
 		}
 
@@ -115,7 +115,7 @@ namespace gfx
 	const vec3 IceMaterial::GetIceSample(const vec3& position, const uint octaves, const bool highQuality)
 	{
 		const auto ScaleXZ = 11.0;
-		const auto ScaleY  = 5.5;
+		const auto ScaleY  = 4.1;
 		auto n0 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ), octaves);
 		auto n1 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) + vec3(21309.90, 3289.32, 93432.032), octaves);
 
@@ -153,7 +153,7 @@ namespace gfx
 		const double spread = Saturate(position.y / 0.42);
 		const double cracks =
 			std::pow(largeDifferenceNoise, 71.0 - 70.0 * spread)
-			+ std::pow(smallDifferenceNoise, 31.0) * 0.25;
+			+ std::pow(smallDifferenceNoise, 31.0) * 0.272;
 
 		if (highQuality)
 		{

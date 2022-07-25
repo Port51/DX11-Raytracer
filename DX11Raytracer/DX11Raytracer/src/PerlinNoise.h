@@ -14,22 +14,22 @@ namespace gfx
             p += vec3(1000000.0, 1000000.0, 1000000.0);
             const uvec3 u = uvec3(p.x, p.y, p.z);
 
-            auto v = 0.0;
-            auto scale = 1.0;
+            double v = 0.0;
+            double scale = 1.0;
             uint pitch = 64u;
             for (uint i = 0; i < octaveCt; ++i)
             {
                 const uvec3 u2 = u - (u % uvec3(pitch));
                 const vec3 lerp = SCurve((p - vec3(u2.x, u2.y, u2.z)) / pitch);
 
-                const auto s000 = HashToNoise(Hash(u2));
-                const auto s100 = HashToNoise(Hash(u2 + uvec3(pitch, 0u, 0u)));
-                const auto s010 = HashToNoise(Hash(u2 + uvec3(0u, pitch, 0u)));
-                const auto s110 = HashToNoise(Hash(u2 + uvec3(pitch, pitch, 0u)));
-                const auto s001 = HashToNoise(Hash(u2 + uvec3(0u, 0u, pitch)));
-                const auto s101 = HashToNoise(Hash(u2 + uvec3(pitch, 0u, pitch)));
-                const auto s011 = HashToNoise(Hash(u2 + uvec3(0u, pitch, pitch)));
-                const auto s111 = HashToNoise(Hash(u2 + uvec3(pitch, pitch, pitch)));
+                const double s000 = Hash1DToNoise(Hash(u2));
+                const double s100 = Hash1DToNoise(Hash(u2 + uvec3(pitch, 0u, 0u)));
+                const double s010 = Hash1DToNoise(Hash(u2 + uvec3(0u, pitch, 0u)));
+                const double s110 = Hash1DToNoise(Hash(u2 + uvec3(pitch, pitch, 0u)));
+                const double s001 = Hash1DToNoise(Hash(u2 + uvec3(0u, 0u, pitch)));
+                const double s101 = Hash1DToNoise(Hash(u2 + uvec3(pitch, 0u, pitch)));
+                const double s011 = Hash1DToNoise(Hash(u2 + uvec3(0u, pitch, pitch)));
+                const double s111 = Hash1DToNoise(Hash(u2 + uvec3(pitch, pitch, pitch)));
 
                 v += scale * Lerp(
                     Lerp(Lerp(s000, s100, lerp.x), Lerp(s010, s110, lerp.x), lerp.y),
@@ -85,6 +85,27 @@ namespace gfx
             return v;
         }
 
+        // Modified from http://www.jcgt.org/published/0009/03/02/
+        static const uint pcg3d_to_1d(const uvec3& v)
+        {
+            uint x = v.x;
+            uint y = v.y;
+            uint z = v.z;
+            x = x * 1664525u + 1013904223u;
+            y = y * 1664525u + 1013904223u;
+            z = z * 1664525u + 1013904223u;
+
+            x += y * z;
+            y += z * x;
+            z += x * y;
+
+            x = x ^ (x >> 16u);
+            y = y ^ (y >> 16u);
+            z = z ^ (z >> 16u);
+
+            return (y * z + x) * z + y; // x2 [MAD] ops - can be reduced to x1 [MAD] op, but the scene looks way better this way
+        }
+
         // SuperFastHash, adapated from http://www.azillionmonkeys.com/qed/hash.html
         static const uint superfast(const uvec3 data)
         {
@@ -118,17 +139,22 @@ namespace gfx
 
         // Used to switch hash methods easily for testing
         // pcg3d seems to be the best
-        static const uvec3 Hash(const uvec3& v)
+        static const uint Hash(const uvec3& v)
         {
-            //return uvec3(superfast(v));
-            //return iqint2(v);
-            return pcg3d(v);
+            return pcg3d_to_1d(v);
         }
 
         // Turns a hashed uvec3 into a noise value
-        static const double HashToNoise(const uvec3 hash)
+        static const double Hash3DToNoise(const uvec3 hash)
         {
             return (double(hash.y % 65536u) / 65536.0);
         }
+
+        // Turns a hashed uint into a noise value
+        static const double Hash1DToNoise(const uint hash)
+        {
+            return (double(hash % 65536u) / 65536.0);
+        }
+
     };
 }

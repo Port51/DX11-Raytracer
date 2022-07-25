@@ -62,7 +62,7 @@ namespace gfx
         m_pFullScreenBlit = std::make_unique<FullScreenBlit>(*m_pGfx);
         m_pCPURaytracer = std::make_unique<CPURaytracer>();
 
-        vec3 camWS = vec3(8, 2.05, 2.2);
+        vec3 camWS = vec3(7.7, 2.05, 2.2);
         //camWS = vec3(0, 20, 0.5);
         vec3 targetWS = vec3(0, -3.0, 0);
         const auto aperture = 0.1;
