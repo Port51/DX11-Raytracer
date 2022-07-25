@@ -189,6 +189,7 @@
     <ClInclude Include="src\IceSurface.h" />
     <ClInclude Include="src\IceMaterial.h" />
     <ClInclude Include="src\uvec3.h" />
+    <ClInclude Include="src\vec3f.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\UpdateFrameBuffer.hlsl">

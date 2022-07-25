@@ -218,6 +218,9 @@
     <ClInclude Include="src\Settings.h">
       <Filter>Header Files\Application</Filter>
     </ClInclude>
+    <ClInclude Include="src\vec3f.h">
+      <Filter>Header Files\Raytracing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\FullScreenPS.hlsl">

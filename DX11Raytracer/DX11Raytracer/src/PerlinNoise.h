@@ -1,5 +1,6 @@
 #pragma once
 #include "CommonHeader.h"
+#include "vec3f.h"
 
 namespace gfx
 {
@@ -9,37 +10,37 @@ namespace gfx
         PerlinNoise() = default;
         ~PerlinNoise() = default;
 
-        static const double GetNoise3D(vec3 p, const uint octaveCt)
+        static const double GetNoise3D(vec3 pd, const uint octaveCt)
         {
-            p += vec3(1000000.0, 1000000.0, 1000000.0);
+            vec3f p = vec3f(pd.x + 1000000.0f, pd.y + 1000000.0f, pd.z + 1000000.0f);
             const uvec3 u = uvec3(p.x, p.y, p.z);
 
-            double v = 0.0;
-            double scale = 1.0;
+            float v = 0.0;
+            float scale = 1.0;
             uint pitch = 64u;
             for (uint i = 0; i < octaveCt; ++i)
             {
                 const uvec3 u2 = u - (u % uvec3(pitch));
-                const vec3 lerp = SCurve((p - vec3(u2.x, u2.y, u2.z)) / pitch);
+                const vec3f lerp = SCurve((p - vec3f(u2.x, u2.y, u2.z)) / pitch);
 
-                const double s000 = Hash1DToNoise(Hash(u2));
-                const double s100 = Hash1DToNoise(Hash(u2 + uvec3(pitch, 0u, 0u)));
-                const double s010 = Hash1DToNoise(Hash(u2 + uvec3(0u, pitch, 0u)));
-                const double s110 = Hash1DToNoise(Hash(u2 + uvec3(pitch, pitch, 0u)));
-                const double s001 = Hash1DToNoise(Hash(u2 + uvec3(0u, 0u, pitch)));
-                const double s101 = Hash1DToNoise(Hash(u2 + uvec3(pitch, 0u, pitch)));
-                const double s011 = Hash1DToNoise(Hash(u2 + uvec3(0u, pitch, pitch)));
-                const double s111 = Hash1DToNoise(Hash(u2 + uvec3(pitch, pitch, pitch)));
+                const float s000 = Hash1DToNoise(Hash(u2));
+                const float s100 = Hash1DToNoise(Hash(u2 + uvec3(pitch, 0u, 0u)));
+                const float s010 = Hash1DToNoise(Hash(u2 + uvec3(0u, pitch, 0u)));
+                const float s110 = Hash1DToNoise(Hash(u2 + uvec3(pitch, pitch, 0u)));
+                const float s001 = Hash1DToNoise(Hash(u2 + uvec3(0u, 0u, pitch)));
+                const float s101 = Hash1DToNoise(Hash(u2 + uvec3(pitch, 0u, pitch)));
+                const float s011 = Hash1DToNoise(Hash(u2 + uvec3(0u, pitch, pitch)));
+                const float s111 = Hash1DToNoise(Hash(u2 + uvec3(pitch, pitch, pitch)));
 
                 v += scale * Lerp(
                     Lerp(Lerp(s000, s100, lerp.x), Lerp(s010, s110, lerp.x), lerp.y),
                     Lerp(Lerp(s001, s101, lerp.x), Lerp(s011, s111, lerp.x), lerp.y), lerp.z);
-                auto vv = Lerp(s000, s100, lerp.x);
-                scale *= 0.5;
+                float vv = Lerp(s000, s100, lerp.x);
+                scale *= 0.5f;
                 pitch /= 2u;
             }
 
-            return v;
+            return static_cast<double>(v);
         }
 
     private:
@@ -145,15 +146,15 @@ namespace gfx
         }
 
         // Turns a hashed uvec3 into a noise value
-        static const double Hash3DToNoise(const uvec3 hash)
+        static const float Hash3DToNoise(const uvec3 hash)
         {
-            return (double(hash.y % 65536u) / 65536.0);
+            return (static_cast<float>(hash.y % 65536u) / 65536.0f);
         }
 
         // Turns a hashed uint into a noise value
-        static const double Hash1DToNoise(const uint hash)
+        static const float Hash1DToNoise(const uint hash)
         {
-            return (double(hash % 65536u) / 65536.0);
+            return (static_cast<float>(hash % 65536u) / 65536.0f);
         }
 
     };
