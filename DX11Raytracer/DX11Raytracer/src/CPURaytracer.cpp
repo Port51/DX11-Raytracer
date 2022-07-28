@@ -122,9 +122,11 @@ namespace gfx
                 for (int a = 0; a < samplesPerPixel; ++a)
                 {
                     // NDC coords
-                    // Randomness creates AA
-                    const double u = static_cast<double>(x + Random::RandomDouble(-0.5, 0.5)) / (ScreenWidth - 1) * 2.0 - 1.0;
-                    const double v = static_cast<double>(y + Random::RandomDouble(-0.5, 0.5)) / (ScreenHeight - 1) * 2.0 - 1.0;
+                    // Randomness creates AA, but shouldn't be used for ice volumetrics
+                    const double sx = static_cast<double>(x) + ((gBufferIdx != 1u) ? Random::RandomDouble(-0.5, 0.5) : 0.0);
+                    const double sy = static_cast<double>(y) + ((gBufferIdx != 1u) ? Random::RandomDouble(-0.5, 0.5) : 0.0);
+                    const double u = sx / (ScreenWidth - 1) * 2.0 - 1.0;
+                    const double v = sy / (ScreenHeight - 1) * 2.0 - 1.0;
 
                     Ray r = camera.GetRay(u, v, pixelIdx);
                     pixelColor += (GetRayColor(r, maxBounces, gBuffer, gBufferIdx, passIteration) * sampleScale);
@@ -133,9 +135,22 @@ namespace gfx
                 if (gBufferIdx == 1u)
                 {
                     // Find max within sample ranges
-                    buffer[pixelIdx].r = max(buffer[pixelIdx].r, pixelColor.r);
-                    buffer[pixelIdx].g = max(buffer[pixelIdx].g, pixelColor.g);
-                    buffer[pixelIdx].b = max(buffer[pixelIdx].b, pixelColor.b);
+                    if (!UseRaymarchSlices)
+                    {
+                        // New, accurate method
+                        const float alphaMult = Saturate(1.f - buffer[pixelIdx].a);
+                        buffer[pixelIdx].r += pixelColor.r * alphaMult;
+                        buffer[pixelIdx].g += pixelColor.g * alphaMult;
+                        buffer[pixelIdx].b += pixelColor.b * alphaMult;
+                        buffer[pixelIdx].a = Saturate(buffer[pixelIdx].a + pixelColor.a);
+                    }
+                    else
+                    {
+                        // Old "comb" method
+                        buffer[pixelIdx].r = max(buffer[pixelIdx].r, pixelColor.r);
+                        buffer[pixelIdx].g = max(buffer[pixelIdx].g, pixelColor.g);
+                        buffer[pixelIdx].b = max(buffer[pixelIdx].b, pixelColor.b);
+                    }
                 }
                 else
                 {

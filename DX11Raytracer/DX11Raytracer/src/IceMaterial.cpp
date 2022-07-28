@@ -91,17 +91,29 @@ namespace gfx
 		const vec3 direction = Normalize(rayIn.GetDirection());
 		double visibility = 1.0;
 
-		const double maxDistance = 8.0;
-		const double stepLength = maxDistance / maxRaySteps;
-		const double offset = static_cast<double>(passIteration % RaymarchPassCt) / static_cast<double>(RaymarchPassCt) * stepLength;
+		double stepLength;
+		double offset;
+
+		if (!UseRaymarchSlices)
+		{
+			// Iterate across small section
+			const double sectionLength = MaxRaymarchDistance / RaymarchPassCt;
+			stepLength = sectionLength / maxRaySteps;
+			offset = static_cast<double>(passIteration % RaymarchPassCt) * sectionLength;
+		}
+		else
+		{
+			// Original "comb" method implemented
+			// This causes inaccuracy with occlusion (but keep the code for demonstration purposes)
+			stepLength = MaxRaymarchDistance / maxRaySteps;
+			offset = static_cast<double>(passIteration % RaymarchPassCt) / static_cast<double>(RaymarchPassCt) * stepLength;
+		}
 
 		for (size_t i = 0u; i < maxRaySteps; ++i)
 		{
-			double t = i * stepLength + offset;
-			vec3 sample = GetIceSample(rec.positionWS + direction * t, octaves, highQuality);
-			double ice = sample.x;
-
-			ice *= visibility;
+			const double t = i * stepLength + offset;
+			const vec3 sample = GetIceSample(rec.positionWS + direction * t, octaves, highQuality);
+			double ice = sample.x * RaymarchDensity;
 			double iceVisible = ice * visibility;
 
 			// Exponential decay for light bounces
