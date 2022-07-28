@@ -1,4 +1,5 @@
 #include "PerlinNoise.h"
+#include "Settings.h"
 
 namespace gfx
 {
@@ -17,14 +18,14 @@ namespace gfx
             // Bilinear sampling
             const vec3f lerp = SCurve((p - vec3f(u2.x, u2.y, u2.z)) / static_cast<float>(pitch));
 
-            const float s000 = Hash1DToNoise(PCG_3D_to_1D(u2.x, u2.y, u2.z));
-            const float s100 = Hash1DToNoise(PCG_3D_to_1D(u2.x + pitch, u2.y, u2.z));
-            const float s010 = Hash1DToNoise(PCG_3D_to_1D(u2.x, u2.y + pitch, u2.z));
-            const float s110 = Hash1DToNoise(PCG_3D_to_1D(u2.x + pitch, u2.y + pitch, u2.z));
-            const float s001 = Hash1DToNoise(PCG_3D_to_1D(u2.x, u2.y, u2.z + pitch));
-            const float s101 = Hash1DToNoise(PCG_3D_to_1D(u2.x + pitch, u2.y, u2.z + pitch));
-            const float s011 = Hash1DToNoise(PCG_3D_to_1D(u2.x, u2.y + pitch, u2.z + pitch));
-            const float s111 = Hash1DToNoise(PCG_3D_to_1D(u2.x + pitch, u2.y + pitch, u2.z + pitch));
+            const float s000 = Hash1DToNoise(Hash3D(u2.x, u2.y, u2.z));
+            const float s100 = Hash1DToNoise(Hash3D(u2.x + pitch, u2.y, u2.z));
+            const float s010 = Hash1DToNoise(Hash3D(u2.x, u2.y + pitch, u2.z));
+            const float s110 = Hash1DToNoise(Hash3D(u2.x + pitch, u2.y + pitch, u2.z));
+            const float s001 = Hash1DToNoise(Hash3D(u2.x, u2.y, u2.z + pitch));
+            const float s101 = Hash1DToNoise(Hash3D(u2.x + pitch, u2.y, u2.z + pitch));
+            const float s011 = Hash1DToNoise(Hash3D(u2.x, u2.y + pitch, u2.z + pitch));
+            const float s111 = Hash1DToNoise(Hash3D(u2.x + pitch, u2.y + pitch, u2.z + pitch));
 
             noise += scale * Lerp(
                 Lerp(Lerp(s000, s100, lerp.x), Lerp(s010, s110, lerp.x), lerp.y),
@@ -84,7 +85,6 @@ namespace gfx
 
     // Modified from http://www.jcgt.org/published/0009/03/02/
     // Uses fewer instructions and doesn't copy a vec3
-
     const uint PerlinNoise::PCG_3D_to_1D(uint x, uint y, uint z)
     {
         x = x * 1664525u + 1013904223u;
@@ -100,6 +100,25 @@ namespace gfx
         z = z ^ (z >> 16u);
 
         return (y * z + x) * z + y; // x2 [MAD] ops - can be reduced to x1 [MAD] op, but the scene looks way better this way
+    }
+
+    // Adapted from https://www.shadertoy.com/view/XlGcRh
+    const uint PerlinNoise::xxHash32(const uint x, const uint y, const uint z)
+    {
+        const uint PRIME32_2 = 2246822519u, PRIME32_3 = 3266489917u;
+        const uint PRIME32_4 = 668265263u, PRIME32_5 = 374761393u;
+        uint h32 = z + PRIME32_5 + x * PRIME32_3;
+        h32 = PRIME32_4 * ((h32 << 17u) | (h32 >> (32u - 17u)));
+        h32 += y * PRIME32_3;
+        h32 = PRIME32_4 * ((h32 << 17u) | (h32 >> (32u - 17u)));
+        h32 = PRIME32_2 * (h32 ^ (h32 >> 15u));
+        h32 = PRIME32_3 * (h32 ^ (h32 >> 13u));
+        return h32 ^ (h32 >> 16u);
+    }
+
+    const inline uint PerlinNoise::Hash3D(const uint x, const uint y, const uint z)
+    {
+        return UseHQNoise ? PCG_3D_to_1D(x, y, z) : xxHash32(x, y, z);
     }
 
     // SuperFastHash, adapated from http://www.azillionmonkeys.com/qed/hash.html

@@ -14,6 +14,7 @@ namespace gfx
 	static const bool UseThreading = true;
 	static const bool UseDepthOfField = true;
 
+	static const bool UseHQNoise = true;
 	static const uint32_t RaymarchPassCt = 20u;
 	static const uint32_t RaymarchStepsPerPass = 50u;
 	static const uint32_t RaymarchHeightFieldTraceSteps = 50u;

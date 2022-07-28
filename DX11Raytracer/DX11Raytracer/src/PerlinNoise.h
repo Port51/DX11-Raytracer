@@ -29,6 +29,10 @@ namespace gfx
         // Uses fewer instructions and doesn't copy a vec3
         static const uint PCG_3D_to_1D(uint x, uint y, uint z);
 
+        static const uint xxHash32(const uint x, const uint y, const uint z);
+
+        static const uint Hash3D(const uint x, const uint y, const uint z);
+
         // SuperFastHash, adapated from http://www.azillionmonkeys.com/qed/hash.html
         static const uint SuperFast(const uvec3 data);
 
