@@ -134,6 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\PerlinNoise.cpp" />
     <ClCompile Include="src\CheckeredTexture.cpp" />
     <ClCompile Include="src\GBuffer.cpp" />
     <ClCompile Include="src\Material.cpp" />

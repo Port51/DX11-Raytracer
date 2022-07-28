@@ -75,7 +75,7 @@ namespace gfx
         {
             while (true)
             {
-                auto p = vec3::Random(-1.0, 1.0);
+                vec3 p = vec3::Random(-1.0, 1.0);
                 if (p.LengthSqr() >= 1.0) continue;
                 return p;
             }
@@ -92,7 +92,7 @@ namespace gfx
         {
             while (true)
             {
-                auto p = vec3(Random::RandomDouble(-1.0, 1.0), Random::RandomDouble(-1.0, 1.0), 0.0);
+                vec3 p = vec3(Random::RandomDouble(-1.0, 1.0), Random::RandomDouble(-1.0, 1.0), 0.0);
                 if (p.LengthSqr() >= 1.0) continue;
                 return p;
             }
@@ -162,7 +162,7 @@ namespace gfx
 
     inline vec3 Lerp(const vec3& u, const vec3& v, const double lerp)
     {
-        const auto rcpLerp = 1.0 - lerp;
+        const double rcpLerp = 1.0 - lerp;
         return vec3(u.x * rcpLerp + v.x,
             u.y * rcpLerp + v.y,
             u.z * rcpLerp + v.z);
@@ -175,9 +175,9 @@ namespace gfx
 
     inline vec3 Refract(const vec3& uv, const vec3& n, double etai_over_etat)
     {
-        auto cos_theta = fmin(Dot(-uv, n), 1.0);
-        vec3 r_out_perp = etai_over_etat * (uv + cos_theta * n);
-        vec3 r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.LengthSqr())) * n;
+        const double cosTheta = fmin(Dot(-uv, n), 1.0);
+        const vec3 r_out_perp = etai_over_etat * (uv + cosTheta * n);
+        const vec3 r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.LengthSqr())) * n;
         return r_out_perp + r_out_parallel;
     }
 

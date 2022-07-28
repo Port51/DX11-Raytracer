@@ -19,8 +19,8 @@ namespace gfx
 			return false;
 		}
 
-		const auto n0 = PerlinNoise::GetNoise3D(rec.positionWS * vec3(55.0, 1.0, 55.0), 7u);
-		const auto roughness = std::pow(Saturate(n0), 3.0) * 0.15;
+		const double n0 = PerlinNoise::GetNoise3D(rec.positionWS * vec3(55.0, 1.0, 55.0), 7u);
+		const double roughness = std::pow(Saturate(n0), 3.0) * 0.15;
 
 		attenuation = Color(1.0f) * PerlinNoise::GetNoise3D(rec.positionWS, 2u);
 
@@ -40,7 +40,7 @@ namespace gfx
 		const double reflectBias = 1.8; // makes for better screenshot...
 		const bool fresnelReflection = (SchlickApprox(cosTheta, refractionRatio) * reflectBias) > rayIn.GetRandomSeed();
 
-		//auto sch = SchlickApprox(cosTheta, refractionRatio);
+		//double sch = SchlickApprox(cosTheta, refractionRatio);
 		//emission = Color(sch, 0.0, 0.0, 0.0);
 		//return false;
 
@@ -79,7 +79,7 @@ namespace gfx
 	double IceMaterial::SchlickApprox(const double cosine, const double reflectiveIdx)
 	{
 		// Use Schlick's approximation for reflectance.
-		auto r0 = (1.0 - reflectiveIdx) / (1.0 + reflectiveIdx);
+		double r0 = (1.0 - reflectiveIdx) / (1.0 + reflectiveIdx);
 		r0 = r0 * r0;
 		return r0 + (1.0 - r0) * std::pow((1.0 - cosine), 5.0);
 	}
@@ -89,20 +89,20 @@ namespace gfx
 		Color result = Color(0.0);
 
 		const vec3 direction = Normalize(rayIn.GetDirection());
-		auto visibility = 1.0;
+		double visibility = 1.0;
 
-		const auto maxDistance = 8.0;
-		const auto stepLength = maxDistance / maxRaySteps;
-		const auto offset = static_cast<double>(passIteration % RaymarchPassCt) / static_cast<double>(RaymarchPassCt) * stepLength;
+		const double maxDistance = 8.0;
+		const double stepLength = maxDistance / maxRaySteps;
+		const double offset = static_cast<double>(passIteration % RaymarchPassCt) / static_cast<double>(RaymarchPassCt) * stepLength;
 
 		for (size_t i = 0u; i < maxRaySteps; ++i)
 		{
-			auto t = i * stepLength + offset;
-			auto sample = GetIceSample(rec.positionWS + direction * t, octaves, highQuality);
-			auto ice = sample.x;
+			double t = i * stepLength + offset;
+			vec3 sample = GetIceSample(rec.positionWS + direction * t, octaves, highQuality);
+			double ice = sample.x;
 
 			ice *= visibility;
-			auto iceVisible = ice * visibility;
+			double iceVisible = ice * visibility;
 
 			// Exponential decay for light bounces
 			result += Color(iceVisible * std::exp(t * -1.51), iceVisible * std::exp(t * -0.881), iceVisible * std::exp(t * -0.5121), iceVisible);
@@ -114,19 +114,19 @@ namespace gfx
 
 	const vec3 IceMaterial::GetIceSample(const vec3& position, const uint octaves, const bool highQuality)
 	{
-		const auto ScaleXZ = 11.0;
-		const auto ScaleY  = 4.1;
-		auto n0 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ), octaves);
-		auto n1 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) + vec3(21309.90, 3289.32, 93432.032), octaves);
+		const double ScaleXZ = 11.0;
+		const double ScaleY  = 4.1;
+		double n0 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ), octaves);
+		double n1 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) + vec3(21309.90, 3289.32, 93432.032), octaves);
 
-		auto n2 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) * 4.0, octaves - 3u);
-		auto n3 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) * 4.0 + vec3(21309.90, 3289.32, 93432.032), octaves - 3u);
+		double n2 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) * 4.0, octaves - 3u);
+		double n3 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) * 4.0 + vec3(21309.90, 3289.32, 93432.032), octaves - 3u);
 
 		const double heightSlopeQ = 10.0;
 		const double heightSlopeOffset = 0.5;
 
 		double largeHeightRatio = Saturate((n1 - n0) * heightSlopeQ + heightSlopeOffset);
-		//const auto smallHeightRatio = Saturate((n2 - n3) * heightSlopeQ + heightSlopeOffset) * (1.0 - largeHeightRatio);
+		//const double smallHeightRatio = Saturate((n2 - n3) * heightSlopeQ + heightSlopeOffset) * (1.0 - largeHeightRatio);
 		double smallHeightRatio = 0.0;
 
 		// Create a cave!
@@ -148,7 +148,7 @@ namespace gfx
 		}
 		const double largeDifferenceNoise = Saturate((1.0 - abs(n0 - n1)) * 1.8 - 0.8);
 		// Restrict small cracks to ice region
-		const auto smallDifferenceNoise = Saturate((1.0 - abs(n2 - n3)) * 1.8 - 0.8) * largeHeightRatio;
+		const double smallDifferenceNoise = Saturate((1.0 - abs(n2 - n3)) * 1.8 - 0.8) * largeHeightRatio;
 
 		const double spread = Saturate(position.y / 0.42);
 		const double cracks =

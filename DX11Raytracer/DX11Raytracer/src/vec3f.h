@@ -63,19 +63,19 @@ namespace gfx
 
         static const vec3f Random()
         {
-            return vec3f(Random::RandomDouble(), Random::RandomDouble(), Random::RandomDouble());
+            return vec3f(Random::RandomFloat(), Random::RandomFloat(), Random::RandomFloat());
         }
 
         static const vec3f Random(float min, float max)
         {
-            return vec3f(Random::RandomDouble(min, max), Random::RandomDouble(min, max), Random::RandomDouble(min, max));
+            return vec3f(Random::RandomFloat(min, max), Random::RandomFloat(min, max), Random::RandomFloat(min, max));
         }
 
         static const vec3f RandomInUnitSphere()
         {
             while (true)
             {
-                auto p = vec3f::Random(-1.f, 1.f);
+                vec3f p = vec3f::Random(-1.f, 1.f);
                 if (p.LengthSqr() >= 1.f) continue;
                 return p;
             }
@@ -92,7 +92,7 @@ namespace gfx
         {
             while (true)
             {
-                auto p = vec3f(Random::RandomDouble(-1.f, 1.f), Random::RandomDouble(-1.f, 1.f), 0.f);
+                vec3f p = vec3f(Random::RandomFloat(-1.f, 1.f), Random::RandomFloat(-1.f, 1.f), 0.f);
                 if (p.LengthSqr() >= 1.f) continue;
                 return p;
             }
@@ -162,7 +162,7 @@ namespace gfx
 
     inline vec3f Lerp(const vec3f& u, const vec3f& v, const float lerp)
     {
-        const auto rcpLerp = 1.f - lerp;
+        const float rcpLerp = 1.f - lerp;
         return vec3f(u.x * rcpLerp + v.x,
             u.y * rcpLerp + v.y,
             u.z * rcpLerp + v.z);
@@ -175,9 +175,9 @@ namespace gfx
 
     inline vec3f Refract(const vec3f& uv, const vec3f& n, float etai_over_etat)
     {
-        auto cos_theta = fmin(Dot(-uv, n), 1.f);
-        vec3f r_out_perp = etai_over_etat * (uv + cos_theta * n);
-        vec3f r_out_parallel = -sqrt(fabs(1.f - r_out_perp.LengthSqr())) * n;
+        const float cosTheta = fmin(Dot(-uv, n), 1.f);
+        const vec3f r_out_perp = etai_over_etat * (uv + cosTheta * n);
+        const vec3f r_out_parallel = -sqrt(fabs(1.f - r_out_perp.LengthSqr())) * n;
         return r_out_perp + r_out_parallel;
     }
 

@@ -28,10 +28,10 @@ namespace gfx
 
 	// Constants
 
-	const float Infinity_F = std::numeric_limits<float>::infinity();
-	const double Infinity = std::numeric_limits<double>::infinity();
-	const float PI_F = 3.1415926535897932385f;
-	const double PI = 3.1415926535897932385;
+	static const float Infinity_F = std::numeric_limits<float>::infinity();
+	static const double Infinity = std::numeric_limits<double>::infinity();
+	static const float PI_F = 3.1415926535897932385f;
+	static const double PI = 3.1415926535897932385;
 
 	// Utility Functions
 
@@ -67,13 +67,13 @@ namespace gfx
 
 	inline float Frac(const float x)
 	{
-		const auto whole = std::floor(x);
+		const float whole = std::floor(x);
 		return x - whole;
 	}
 
 	inline double Frac(const double x)
 	{
-		const auto whole = std::floor(x);
+		const double whole = std::floor(x);
 		return x - whole;
 	}
 

@@ -55,6 +55,9 @@
     <Filter Include="Header Files\Raytracing\Math">
       <UniqueIdentifier>{464c4353-4162-4502-acf0-510a0a4e6ac7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Raytracing\Math">
+      <UniqueIdentifier>{8ac957d2-a705-4471-9a30-3bb86038840e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -122,6 +125,9 @@
     </ClCompile>
     <ClCompile Include="src\GBuffer.cpp">
       <Filter>Source Files\Raytracing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PerlinNoise.cpp">
+      <Filter>Source Files\Raytracing\Math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

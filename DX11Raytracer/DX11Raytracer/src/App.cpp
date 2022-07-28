@@ -65,8 +65,8 @@ namespace gfx
         vec3 camWS = vec3(7.7, 2.05, 2.2);
         //camWS = vec3(0, 20, 0.5);
         vec3 targetWS = vec3(0, -3.0, 0);
-        const auto aperture = 0.1;
-        const auto focusDist = (camWS - targetWS).Length();
+        const double aperture = 0.1;
+        const double focusDist = (camWS - targetWS).Length();
         m_pCamera = std::make_unique<Camera>(camWS, targetWS, vec3(0, 1, 0), 45, AspectRatio, aperture, focusDist);
     }
 

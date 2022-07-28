@@ -41,7 +41,7 @@ namespace gfx
 
             std::sort(src.begin() + start, src.begin() + end, comparator);
 
-            const auto midPt = start + receiverCt / 2;
+            const size_t midPt = start + receiverCt / 2;
             m_left = std::make_shared<BVHNode>(src, start, midPt);
             m_right = std::make_shared<BVHNode>(src, midPt, end);
         }

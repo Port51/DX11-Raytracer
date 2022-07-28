@@ -17,20 +17,20 @@ namespace gfx
 
 		// Setup initial test pts to only allow possible water heights
 		const double limit = 0.35;
-		auto t0 = t_min;
+		double t0 = t_min;
 		if (r.GetPositionAfterTime(t0).y > limit)
 		{
 			t0 = (limit - r.GetOrigin().y) / r.GetDirection().y;
 		}
 
-		auto t1 = min(1000.0, t_max);
+		double t1 = min(1000.0, t_max);
 		if (r.GetPositionAfterTime(t1).y < -0.05)
 		{
 			t1 = (-0.05 - r.GetOrigin().y) / r.GetDirection().y;
 		}
 
-		auto h0 = GetRayHeightAboveSurface(r.GetPositionAfterTime(t0));
-		auto h1 = GetRayHeightAboveSurface(r.GetPositionAfterTime(t1));
+		double h0 = GetRayHeightAboveSurface(r.GetPositionAfterTime(t0));
+		double h1 = GetRayHeightAboveSurface(r.GetPositionAfterTime(t1));
 
 		if (h1 > 0.0) return false;
 
@@ -80,7 +80,7 @@ namespace gfx
 		// Ray-plane intersection
 		// t = (P0 - R0) * P / (R * P)
 		/*const vec3 normal = vec3(0.0, -1.0, 0.0);
-		const auto t = Dot(m_positionWS - r.GetOrigin(), normal) / Dot(r.GetDirection(), normal);
+		const double t = Dot(m_positionWS - r.GetOrigin(), normal) / Dot(r.GetDirection(), normal);
 		if (t >= t_min && t <= t_max)
 		{
 			rec.time = t;
@@ -108,11 +108,11 @@ namespace gfx
 	
 	double IceSurface::GetRayHeightAboveSurface(const vec3 p)
 	{
-		const auto radSqr = p.x * p.x + p.z * p.z;
-		//const auto h = min(1.0, radSqr / 300.0) * std::pow(PerlinNoise::GetNoise3D(p, 2u), 2.0) * 0.2;
+		const double radSqr = p.x * p.x + p.z * p.z;
+		//const double h = min(1.0, radSqr / 300.0) * std::pow(PerlinNoise::GetNoise3D(p, 2u), 2.0) * 0.2;
 
 		const vec3 sample = IceMaterial::GetIceSample(p, 6u, false);
-		const auto h = 
+		const double h =
 			(sample.y > 0.0 ? 0.3225 : std::sin(p.x * 5.51) * 0.025);
 			//+ (sample.z * 0.271);
 		return p.y - h;
@@ -121,9 +121,9 @@ namespace gfx
 	vec3 IceSurface::GetSurfaceNormal(const vec3 p)
 	{
 		// Lerp between waves and ice surface
-		const auto c = std::cos(p.x * 5.51) * 0.025;
-		const auto wavesNormal = -vec3(c, std::sqrt(1.0 - c * c), 0.0);
-		const auto iceNormal = vec3(0, -1, 0);
+		const double c = std::cos(p.x * 5.51) * 0.025;
+		const vec3 wavesNormal = -vec3(c, std::sqrt(1.0 - c * c), 0.0);
+		const vec3 iceNormal = vec3(0, -1, 0);
 		return Lerp(wavesNormal, iceNormal, Saturate(p.y * 100.0));
 	}
 

@@ -6,8 +6,8 @@ namespace gfx
     Camera::Camera(const vec3 positionWS, const vec3 lookAtWS, const vec3 upVec, const double vFov, const double aspectRatio, const double aperture, const double focusDist)
         : m_positionWS(positionWS)
     {
-        const auto theta = DegreesToRadians(vFov);
-        const auto halfAngle = std::tan(theta * 0.5);
+        const double theta = DegreesToRadians(vFov);
+        const double halfAngle = std::tan(theta * 0.5);
 
         m_viewportHeight = 2.0 * halfAngle;
         m_viewportWidth = aspectRatio * m_viewportHeight;

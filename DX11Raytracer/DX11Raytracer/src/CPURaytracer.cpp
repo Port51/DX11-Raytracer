@@ -46,7 +46,7 @@ namespace gfx
         {
             for (int b = -11; b < 11; b++)
             {
-                auto choice = Random::RandomDouble();
+                double choice = Random::RandomDouble();
                 vec3 center(a + 0.9 * Random::RandomDouble(), 0.2, b + 0.9 * Random::RandomDouble());
 
                 if ((center - vec3(4, 0.2, 0)).Length() > 0.9)
@@ -105,7 +105,7 @@ namespace gfx
 
         const int maxBounces = 20;
         const int samplesPerPixel = 5;
-        const double sampleScale = 1.0 / samplesPerPixel;
+        const float sampleScale = 1.0f / samplesPerPixel;
 
         const float multisampleScale0 = static_cast<float>(passIteration);
         const float multisampleScale1 = 1.0f / static_cast<float>(passIteration + 1u);
@@ -176,11 +176,11 @@ namespace gfx
         const vec3 deepColor = vec3(0.01, 0.03, 0.09);
 
         const vec3 rayDirNorm = Normalize(ray.GetDirection());
-        const auto vertical = std::abs(rayDirNorm.y);
-        const auto skyLerp = std::pow(vertical, 0.25);
-        const auto skyColor = (1.0 - skyLerp) * horizonColor + skyLerp * upColor;
+        const double vertical = std::abs(rayDirNorm.y);
+        const double skyLerp = std::pow(vertical, 0.25);
+        const vec3 skyColor = (1.0 - skyLerp) * horizonColor + skyLerp * upColor;
 
-        const auto deepWaterLerp = std::pow(vertical, 0.09);
+        const double deepWaterLerp = std::pow(vertical, 0.09);
         const vec3 deepWaterColor = (1.0 - deepWaterLerp) * horizonColor + deepWaterLerp * deepColor;
 
         const vec3 backgroundColor = (rayDirNorm.y > 0.0) ? skyColor : deepWaterColor;

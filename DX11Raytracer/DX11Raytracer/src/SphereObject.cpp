@@ -15,16 +15,16 @@ namespace gfx
 
         vec3 center = GetPositionAtTime(r.GetTime());
         vec3 oc = r.GetOrigin() - center;
-        auto a = Dot(r.GetDirection(), r.GetDirection());
-        auto halfB = Dot(oc, r.GetDirection());
-        auto c = Dot(oc, oc) - m_radius * m_radius;
+        double a = Dot(r.GetDirection(), r.GetDirection());
+        double halfB = Dot(oc, r.GetDirection());
+        double c = Dot(oc, oc) - m_radius * m_radius;
 
-        auto discriminant = halfB * halfB - a * c;
+        double discriminant = halfB * halfB - a * c;
         if (discriminant < 0) return false;
-        auto sqrtd = sqrt(discriminant);
+        double sqrtd = sqrt(discriminant);
 
         // Find the nearest root that lies in the acceptable range.
-        auto root = (-halfB - sqrtd) / a;
+        double root = (-halfB - sqrtd) / a;
         if (root < tMin || tMax < root)
         {
             root = (-halfB + sqrtd) / a;
@@ -47,7 +47,7 @@ namespace gfx
 
     const bool SphereObject::GetAABB(AABB& aabb) const
     {
-        const auto radiusVec = vec3(m_radius, m_radius, m_radius);
+        const vec3 radiusVec = vec3(m_radius, m_radius, m_radius);
         AABB box0(m_prevFramePositionWS - radiusVec, m_prevFramePositionWS + radiusVec);
         AABB box1(m_positionWS - radiusVec, m_positionWS + radiusVec);
         aabb = AABB::GetCombinedAABB(box0, box1);
@@ -56,8 +56,8 @@ namespace gfx
 
     void SphereObject::GetHitUV(const vec3& p, double& u, double& v)
     {
-        const auto theta = std::acos(-p.y);
-        const auto phi = std::atan2(-p.z, p.x) + PI;
+        const double theta = std::acos(-p.y);
+        const double phi = std::atan2(-p.z, p.x) + PI;
 
         u = phi / (2.0 * PI);
         v = theta / PI;

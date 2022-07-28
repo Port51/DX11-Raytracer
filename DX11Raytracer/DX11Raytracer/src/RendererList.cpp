@@ -24,8 +24,8 @@ namespace gfx
     const bool RendererList::Hit(const Ray& r, const double t_min, const double t_max, RayHitRecord& rec, const uint gBufferIdx) const
     {
         RayHitRecord temp;
-        auto hitAnything = false;
-        auto closestSoFar = t_max;
+        bool hitAnything = false;
+        double closestSoFar = t_max;
 
         for (const auto& renderer : m_renderers)
         {
