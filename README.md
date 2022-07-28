@@ -22,7 +22,11 @@ As more rays are processed for each pixel, the image data is updated so it refle
 
 ## Ice ray marching:
 
-To get the cracks, I used 3D difference noise, which uses two noise samples to create what looks roughly like cracks or lightning. I used ShaderToy as a way of quickly iterating on the formula, and created a small project here: https://www.shadertoy.com/view/fsyBRV
+To get the cracks, I used 3D difference noise, which uses two noise samples to create what looks roughly like cracks or lightning.
+
+![Difference noise image](DX11Raytracer/Doc/Difference-Noise-Method.jpg)
+
+I used ShaderToy as a way of quickly iterating on the formula, and created a small project here: https://www.shadertoy.com/view/fsyBRV
 
 Once a ray hits ice, the material executes the ray marching.
 
