@@ -35,7 +35,10 @@ namespace gfx
 
         vec3f& operator/=(const float t)
         {
-            return *this *= 1.f / t;
+            x /= t;
+            y /= t;
+            z /= t;
+            return *this;
         }
 
     public:
