@@ -41,7 +41,7 @@ namespace gfx
 		const double sinTheta = sqrt(1.0 - cosTheta * cosTheta);
 
 		const bool totalInternalReflection = refractionRatio * sinTheta > 1.0;
-		const double reflectivity = Lerp(1.f, 0.3f, rec.materialSubIndex); // lower reflectivity of top of ice
+		const double reflectivity = Lerp(1.f, 0.85f, rec.materialSubIndex); // lower reflectivity of top of ice
 		const double reflectionRatio = SchlickApprox(cosTheta, refractionRatio) * reflectivity;
 
 		// DEBUG VIEWs:

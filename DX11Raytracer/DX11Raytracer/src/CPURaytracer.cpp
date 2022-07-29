@@ -87,8 +87,8 @@ namespace gfx
         auto material3 = std::make_shared<MetalMaterial>(Color(1.0f, 0.2f, 0.0f, 1.0f), 0.0);
         rendererList.Add(std::make_unique<SphereObject>(vec3(0.25, 1.5, 0), 1.0, material3));
 
-        //auto material4 = std::make_shared<MetalMaterial>(Color(1.0f, 1.0f, 1.0f, 1.0f), 0.0);
-        auto material4 = std::make_shared<LambertianMaterial>(Color(0.2f, 1.0f, 0.2f, 1.0f));
+        auto material4 = std::make_shared<MetalMaterial>(Color(1.0f, 1.0f, 1.0f, 1.0f), 0.215);
+        //auto material4 = std::make_shared<LambertianMaterial>(Color(0.2f, 1.0f, 0.2f, 1.0f));
         rendererList.Add(std::make_unique<SphereObject>(vec3(6.35, 0.475, -3.05), 0.427, material4));
 
         //auto lambertMaterial = std::make_shared<LambertianMaterial>(Color(1.0f, 0.3f, 0.1f, 1.0f));
