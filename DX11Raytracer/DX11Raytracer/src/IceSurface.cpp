@@ -112,26 +112,23 @@ namespace gfx
 	void IceSurface::GetSurfaceInfo(const vec3& p, double& rayHeightAboveSurface, float& isIceSurface) const
 	{
 		const vec3 sample = IceMaterial::GetIceSample(p, 6u, false);
-		isIceSurface = static_cast<float>(Saturate(sample.y));
 
-		const double iceSurfaceY = 0.3225;
+		const double iceSurfaceY = Lerp(-1.0, 0.3225, sample.y);
 		const double waterSurfaceY = GetWaterLevel(p);
 
-		const double surfaceY = Lerp(waterSurfaceY, iceSurfaceY, static_cast<double>(isIceSurface));
-		rayHeightAboveSurface = p.y - surfaceY;
+		rayHeightAboveSurface = p.y - max(iceSurfaceY, waterSurfaceY);
+		isIceSurface = Saturate((iceSurfaceY - waterSurfaceY) * 1000.0);
 	}
 
-	vec3 IceSurface::GetSurfaceNormal(const vec3& p, const bool isIceSurface)
+	vec3 IceSurface::GetSurfaceNormal(const vec3& p, const float isIceSurface)
 	{
 		// Lerp between waves and ice surface
-		const double c = std::cos(p.x * 5.51) * 0.025;
 		const vec3 iceNormal = vec3(0, -1, 0);
-		const double lerp = Saturate(p.y * 100.0);
 
-		if (lerp < 0.999)
+		if (isIceSurface < 0.999)
 		{
 			const vec3 waterNormal = GetWaterNormal(p);
-			return Lerp(waterNormal, iceNormal, lerp);
+			return Lerp(waterNormal, iceNormal, isIceSurface);
 		}
 		return iceNormal;
 	}
@@ -148,8 +145,8 @@ namespace gfx
 
 	double IceSurface::GetWaterLevel_Detailed(const vec3& p)
 	{
-		const double n0 = PerlinNoise::GetNoise3D(p * vec3(1551.0, 1.0, 1551.0), 4u);
-		const double n1 = PerlinNoise::GetNoise3D(p * vec3(1551.0, 1.0, 1551.0) + vec3(0.4289230, 80.239, 324.032), 4u);
+		const double n0 = PerlinNoise::GetNoise3D(p * vec3(1551.0, 0.0, 251.0), 4u);
+		const double n1 = PerlinNoise::GetNoise3D(p * vec3(1551.0, 0.0, 251.0) + vec3(0.4289230, 80.239, 324.032), 4u);
 
 		return GetWaterLevel(p) + (n0 * n1) * 0.05;
 	}
