@@ -41,8 +41,8 @@ namespace gfx
 		const double sinTheta = sqrt(1.0 - cosTheta * cosTheta);
 
 		const bool totalInternalReflection = refractionRatio * sinTheta > 1.0;
-		const double reflectBias = Lerp(1.f, 0.551f, rec.materialSubIndex); // makes for better screenshot...
-		const double reflectionRatio = SchlickApprox(cosTheta, refractionRatio) * reflectBias;
+		const double reflectivity = Lerp(1.f, 0.3f, rec.materialSubIndex); // lower reflectivity of top of ice
+		const double reflectionRatio = SchlickApprox(cosTheta, refractionRatio) * reflectivity;
 
 		// DEBUG VIEWs:
 		//emission = Color(totalInternalReflection ? 1.0 : 0.0);
@@ -99,7 +99,8 @@ namespace gfx
 
 		if (result.a < visibilityStopThreshold) return result;
 
-		const vec3 direction = Normalize(rayIn.GetDirection());
+		vec3 direction = Normalize(Normalize(rayIn.GetDirection()) + rec.normalWS * 0.11);
+		direction = Refract(Normalize(rayIn.GetDirection()), -rec.normalWS, 1.f / 1.33f);
 
 		double sectionLength;
 		double stepLength;
@@ -155,7 +156,7 @@ namespace gfx
 		// Create a cave!
 		if (highQuality)
 		{
-			const vec3 caveStart = vec3(2.0, -2.25, 0.0);
+			const vec3 caveStart = vec3(2.0, -3.75, 0.0);
 			const vec3 caveRight = vec3(0.0, 0.0, 1.0);
 
 			vec3 caveOffset = vec3(position.z - caveStart.x, (position.y - caveStart.y) * 0.65, 0.0);

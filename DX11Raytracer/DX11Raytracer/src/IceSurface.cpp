@@ -128,7 +128,7 @@ namespace gfx
 		if (isIceSurface < 0.999)
 		{
 			const vec3 waterNormal = GetWaterNormal(p);
-			return Lerp(waterNormal, iceNormal, isIceSurface);
+			return Normalize(Lerp(waterNormal, iceNormal, isIceSurface));
 		}
 		return iceNormal;
 	}
@@ -145,21 +145,27 @@ namespace gfx
 
 	double IceSurface::GetWaterLevel_Detailed(const vec3& p)
 	{
-		const double n0 = PerlinNoise::GetNoise3D(p * vec3(1551.0, 0.0, 251.0), 4u);
-		const double n1 = PerlinNoise::GetNoise3D(p * vec3(1551.0, 0.0, 251.0) + vec3(0.4289230, 80.239, 324.032), 4u);
+		const double n0 = PerlinNoise::GetNoise3D(p * vec3(1251.0, 0.0, 201.0), 3u);
+		const double n1 = PerlinNoise::GetNoise3D(p * vec3(1251.0, 0.0, 201.0) + vec3(0.4289230, 80.239, 324.032), 3u);
 
-		return GetWaterLevel(p) + (n0 * n1) * 0.05;
+		return GetWaterLevel(p) + (n0 * n1) * 0.01;
 	}
 
 	vec3 IceSurface::GetWaterNormal(const vec3& p)
 	{
-		const double sampleOffset = 0.001;
+		const double sampleOffset = 0.01;
 		const double p00 = GetWaterLevel_Detailed(p);
 		const double p10 = GetWaterLevel_Detailed(p + vec3(sampleOffset, 0, 0));
 		const double p01 = GetWaterLevel_Detailed(p + vec3(0, 0, sampleOffset));
 
 		const double dx = (p10 - p00) / sampleOffset;
 		const double dz = (p01 - p00) / sampleOffset;
-		return -Normalize(vec3(dx, 1.0, dz));
+
+		// todo: set this elsewhere!
+		const vec3 displ = p - vec3(7.7, 2.05, 2.2);
+		const double normalScale = 1.0 + Dot(displ, displ) * 0.11;
+
+		// Prevent artifacts around the horizon
+		return (normalScale < 11.0) ? -Normalize(vec3(dx, normalScale, dz)) : vec3(0, -1, 0);
 	}
 }
