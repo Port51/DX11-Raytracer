@@ -51,6 +51,9 @@ namespace gfx
 		//emission = Color(sch, 0.0, 0.0, 0.0);
 		//return false;
 
+		emission = Color(rec.materialSubIndex, rec.materialSubIndex, 1.f, 1.f);
+		return false;
+
 		// Either reflect or refract
 		if (fresnelReflection)
 		//if (totalInternalReflection || fresnelReflection)
@@ -148,12 +151,10 @@ namespace gfx
 		double n2 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) * 4.0, octaves - 3u);
 		double n3 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) * 4.0 + vec3(21309.90, 3289.32, 93432.032), octaves - 3u);
 
-		const double heightSlopeQ = 10.0;
-		const double heightSlopeOffset = 0.5;
+		const double heightSlopeQ = 51.0;
+		const double heightSlopeOffset = 0.1;
 
-		double largeHeightRatio = Saturate((n1 - n0) * heightSlopeQ + heightSlopeOffset);
-		//const double smallHeightRatio = Saturate((n2 - n3) * heightSlopeQ + heightSlopeOffset) * (1.0 - largeHeightRatio);
-		double smallHeightRatio = 0.0;
+		double isIceSurface = Saturate((n1 - n0 + heightSlopeOffset) * heightSlopeQ);
 
 		// Create a cave!
 		if (highQuality)
@@ -170,11 +171,11 @@ namespace gfx
 			n1 = Lerp(n1, 0.0, isCave);
 			//n2 = Lerp(n2, 1.0, isCave);
 			//n3 = Lerp(n3, 0.0, isCave);
-			largeHeightRatio *= (1.0 - isCave);
+			isIceSurface *= (1.0 - isCave);
 		}
 		const double largeDifferenceNoise = Saturate((1.0 - abs(n0 - n1)) * 1.8 - 0.8);
 		// Restrict small cracks to ice region
-		const double smallDifferenceNoise = Saturate((1.0 - abs(n2 - n3)) * 1.8 - 0.8) * largeHeightRatio;
+		const double smallDifferenceNoise = Saturate((1.0 - abs(n2 - n3)) * 1.8 - 0.8) * isIceSurface;
 
 		const double spread = Saturate(position.y / 0.42);
 		const double cracks =
@@ -184,12 +185,12 @@ namespace gfx
 		if (highQuality)
 		{
 			const double n2 = PerlinNoise::GetNoise3D(position * vec3(131.0) + vec3(109.90, 289.32, 3432.032), octaves);
-			const double clouds = (std::pow(n2, 2.7) + n2 * 0.333) * largeHeightRatio;
-			return vec3(Saturate(cracks + clouds * 0.004251), largeHeightRatio, smallHeightRatio);
+			const double clouds = (std::pow(n2, 2.7) + n2 * 0.333) * isIceSurface;
+			return vec3(Saturate(cracks + clouds * 0.004251), isIceSurface, 0.0);
 		}
 		else
 		{
-			return vec3(Saturate(cracks), largeHeightRatio, smallHeightRatio);
+			return vec3(Saturate(cracks), isIceSurface, 0.0);
 		}
 	}
 }

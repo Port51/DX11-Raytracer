@@ -23,6 +23,7 @@ namespace gfx
 		double u; // UV coords of hit
 		double v;
 		bool isFrontFacing;
+		float materialSubIndex;
 		std::shared_ptr<Material> pMaterial;
 	};
 

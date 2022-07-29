@@ -12,8 +12,8 @@ namespace gfx
     public:
         virtual const bool Hit(const Ray& r, const double t_min, const double t_max, RayHitRecord& rec, const uint gBufferIdx) const override;
         virtual const bool GetAABB(AABB& aabb) const override;
-        static double GetRayHeightAboveSurface(const vec3 p);
-        static vec3 GetSurfaceNormal(const vec3 p);
+        void GetSurfaceInfo(const vec3 p, double& rayHeightAboveSurface, float& isIceSurface) const;
+        static vec3 GetSurfaceNormal(const vec3 p, const bool isIceSurface);
     private:
         const bool GetRayPlaneHit(double& t) const;
     public:

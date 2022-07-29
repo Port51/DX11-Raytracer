@@ -29,8 +29,10 @@ namespace gfx
 			t1 = (-0.05 - r.GetOrigin().y) / r.GetDirection().y;
 		}
 
-		double h0 = GetRayHeightAboveSurface(r.GetPositionAfterTime(t0));
-		double h1 = GetRayHeightAboveSurface(r.GetPositionAfterTime(t1));
+		double h0, h1;
+		float isIceSurface;
+		GetSurfaceInfo(r.GetPositionAfterTime(t0), h0, isIceSurface);
+		GetSurfaceInfo(r.GetPositionAfterTime(t1), h1, isIceSurface);
 
 		if (h1 > 0.0) return false;
 
@@ -43,7 +45,8 @@ namespace gfx
 
 			tmid = Lerp(t0, t1, mix);
 			const vec3& p = r.GetPositionAfterTime(tmid);
-			const double& hmid = GetRayHeightAboveSurface(p);
+			double hmid;
+			GetSurfaceInfo(p, hmid, isIceSurface);
 
 			if (hmid < 0.0)
 			{
@@ -61,12 +64,13 @@ namespace gfx
 		if (tmid >= t_min && tmid <= t_max)
 		{
 			const vec3 hitpt = r.GetPositionAfterTime(tmid);
-			const vec3 normal = GetSurfaceNormal(hitpt);
+			const vec3 normal = GetSurfaceNormal(hitpt, isIceSurface);
 			rec.time = tmid;
 			rec.isFrontFacing = Dot(r.GetDirection(), normal) < 0;
 			rec.normalWS = normal;
 			rec.positionWS = hitpt;
 			rec.pMaterial = m_pMaterial;
+			rec.materialSubIndex = isIceSurface;
 			rec.u = rec.positionWS.x;
 			rec.v = rec.positionWS.z;
 			return true;
@@ -105,19 +109,19 @@ namespace gfx
 		return true;
 	}
 	
-	double IceSurface::GetRayHeightAboveSurface(const vec3 p)
+	void IceSurface::GetSurfaceInfo(const vec3 p, double& rayHeightAboveSurface, float& isIceSurface) const
 	{
-		const double radSqr = p.x * p.x + p.z * p.z;
-		//const double h = min(1.0, radSqr / 300.0) * std::pow(PerlinNoise::GetNoise3D(p, 2u), 2.0) * 0.2;
-
 		const vec3 sample = IceMaterial::GetIceSample(p, 6u, false);
-		const double h =
-			(sample.y > 0.0 ? 0.3225 : std::sin(p.x * 5.51) * 0.025);
-			//+ (sample.z * 0.271);
-		return p.y - h;
+		isIceSurface = static_cast<float>(Saturate(sample.y));
+
+		const double iceSurfaceY = 0.3225;
+		const double waterSurfaceY = std::sin(p.x * 5.51) * 0.025;
+
+		const double surfaceY = (isIceSurface ? iceSurfaceY : waterSurfaceY);
+		rayHeightAboveSurface = p.y - surfaceY;
 	}
 
-	vec3 IceSurface::GetSurfaceNormal(const vec3 p)
+	vec3 IceSurface::GetSurfaceNormal(const vec3 p, const bool isIceSurface)
 	{
 		// Lerp between waves and ice surface
 		const double c = std::cos(p.x * 5.51) * 0.025;
