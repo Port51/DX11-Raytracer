@@ -230,14 +230,14 @@ namespace gfx
 
 		const double spread = Saturate(position.y / 0.42);
 		const double cracks =
-			std::pow(largeDifferenceNoise, 71.0 - 70.0 * spread)
-			+ std::pow(smallDifferenceNoise, 31.0) * 0.272;
+			std::pow(largeDifferenceNoise, 61.0 - 60.0 * spread)
+			+ std::pow(smallDifferenceNoise, 27.0) * 0.332;
 
 		if (highQuality)
 		{
 			const double n2 = PerlinNoise::GetNoise3D(position * vec3(131.0) + vec3(109.90, 289.32, 3432.032), octaves);
 			const double clouds = (std::pow(n2, 2.7) + n2 * 0.333) * largeHeightRatio;
-			return vec3(Saturate(cracks + clouds * 0.003251), largeHeightRatio, smallHeightRatio);
+			return vec3(Saturate(cracks + clouds * 0.004251), largeHeightRatio, smallHeightRatio);
 		}
 		else
 		{
