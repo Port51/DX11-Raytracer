@@ -130,10 +130,6 @@ namespace gfx
                     const double v = sy / (ScreenHeight - 1) * 2.0 - 1.0;
 
                     Ray r = camera.GetRay(u, v, pixelIdx, useDepthOfField);
-                    if (pixelIdx == 512 * 128 + 256)
-                    {
-                        auto vv = 0;
-                    }
                     pixelColor += (GetRayColor(r, maxBounces, gBuffer, gBufferIdx, passIteration) * sampleScale);
                 }
 
