@@ -109,29 +109,60 @@ namespace gfx
 		return true;
 	}
 	
-	void IceSurface::GetSurfaceInfo(const vec3 p, double& rayHeightAboveSurface, float& isIceSurface) const
+	void IceSurface::GetSurfaceInfo(const vec3& p, double& rayHeightAboveSurface, float& isIceSurface) const
 	{
 		const vec3 sample = IceMaterial::GetIceSample(p, 6u, false);
 		isIceSurface = static_cast<float>(Saturate(sample.y));
 
 		const double iceSurfaceY = 0.3225;
-		const double waterSurfaceY = std::sin(p.x * 5.51) * 0.025;
+		const double waterSurfaceY = GetWaterLevel(p);
 
-		const double surfaceY = (isIceSurface ? iceSurfaceY : waterSurfaceY);
+		const double surfaceY = Lerp(waterSurfaceY, iceSurfaceY, static_cast<double>(isIceSurface));
 		rayHeightAboveSurface = p.y - surfaceY;
 	}
 
-	vec3 IceSurface::GetSurfaceNormal(const vec3 p, const bool isIceSurface)
+	vec3 IceSurface::GetSurfaceNormal(const vec3& p, const bool isIceSurface)
 	{
 		// Lerp between waves and ice surface
 		const double c = std::cos(p.x * 5.51) * 0.025;
-		const vec3 wavesNormal = -vec3(c, std::sqrt(1.0 - c * c), 0.0);
 		const vec3 iceNormal = vec3(0, -1, 0);
-		return Lerp(wavesNormal, iceNormal, Saturate(p.y * 100.0));
+		const double lerp = Saturate(p.y * 100.0);
+
+		if (lerp < 0.999)
+		{
+			const vec3 waterNormal = GetWaterNormal(p);
+			return Lerp(waterNormal, iceNormal, lerp);
+		}
+		return iceNormal;
 	}
 
 	const bool IceSurface::GetRayPlaneHit(double& t) const
 	{
 		return false;
+	}
+
+	double IceSurface::GetWaterLevel(const vec3& p)
+	{
+		return std::sin(p.x * 5.51) * 0.00551;
+	}
+
+	double IceSurface::GetWaterLevel_Detailed(const vec3& p)
+	{
+		const double n0 = PerlinNoise::GetNoise3D(p * vec3(1551.0, 1.0, 1551.0), 4u);
+		const double n1 = PerlinNoise::GetNoise3D(p * vec3(1551.0, 1.0, 1551.0) + vec3(0.4289230, 80.239, 324.032), 4u);
+
+		return GetWaterLevel(p) + (n0 * n1) * 0.05;
+	}
+
+	vec3 IceSurface::GetWaterNormal(const vec3& p)
+	{
+		const double sampleOffset = 0.001;
+		const double p00 = GetWaterLevel_Detailed(p);
+		const double p10 = GetWaterLevel_Detailed(p + vec3(sampleOffset, 0, 0));
+		const double p01 = GetWaterLevel_Detailed(p + vec3(0, 0, sampleOffset));
+
+		const double dx = (p10 - p00) / sampleOffset;
+		const double dz = (p01 - p00) / sampleOffset;
+		return -Normalize(vec3(dx, 1.0, dz));
 	}
 }

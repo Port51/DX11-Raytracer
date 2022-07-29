@@ -14,8 +14,7 @@ namespace gfx
 	{
 		if (gBufferIdx == 1u)
 		{
-			// Execute raymarch pass, using previous results
-
+			// Execute raymarch pass, getting visibility from alpha of previous results
 			uint pixelIdx;
 			Color prevColor = Color(0.f, 0.f, 0.f, 1.f);
 			if (rayIn.TryGetPixelIdx(rec.u, rec.v, pixelIdx))
@@ -29,8 +28,6 @@ namespace gfx
 		const double n0 = PerlinNoise::GetNoise3D(rec.positionWS * vec3(55.0, 1.0, 55.0), 7u);
 		const double roughness = std::pow(Saturate(n0), 3.0) * 0.15;
 
-		attenuation = Color(1.0f) * static_cast<float>(PerlinNoise::GetNoise3D(rec.positionWS, 2u));
-
 		// This assumes the other medium is air - need to update if adding more complicated situations
 		const double refractionRatio = rec.isFrontFacing ? (1.0 / 1.33) : 1.33; // should be 1.33, but this looks better...
 
@@ -43,42 +40,41 @@ namespace gfx
 		const double cosTheta = fmin(Dot(rayDirNorm, rec.normalWS), 1.0);
 		const double sinTheta = sqrt(1.0 - cosTheta * cosTheta);
 
-		//const bool totalInternalReflection = refractionRatio * sinTheta > 1.0;
-		const double reflectBias = 1.8; // makes for better screenshot...
-		const bool fresnelReflection = (SchlickApprox(cosTheta, refractionRatio) * reflectBias) > rayIn.GetRandomSeed();
+		const bool totalInternalReflection = refractionRatio * sinTheta > 1.0;
+		const double reflectBias = Lerp(1.f, 0.551f, rec.materialSubIndex); // makes for better screenshot...
+		const double reflectionRatio = SchlickApprox(cosTheta, refractionRatio) * reflectBias;
 
-		//double sch = SchlickApprox(cosTheta, refractionRatio);
-		//emission = Color(sch, 0.0, 0.0, 0.0);
+		// DEBUG VIEWs:
+		//emission = Color(totalInternalReflection ? 1.0 : 0.0);
+		//emission = Color(reflectionRatio);
+		//emission = Color(rec.materialSubIndex, rec.materialSubIndex, 1.f, 1.f);
+		//emission = Color(abs(rec.normalWS.y), (double)rec.materialSubIndex, 0.0, 1.0);
 		//return false;
 
-		emission = Color(rec.materialSubIndex, rec.materialSubIndex, 1.f, 1.f);
-		return false;
-
-		// Either reflect or refract
-		if (fresnelReflection)
-		//if (totalInternalReflection || fresnelReflection)
-		{
-			const vec3 direction = Reflect(rayDirNorm, rec.normalWS) + roughness * vec3::RandomInUnitSphere();
-			scattered = Ray(rec.positionWS, direction, rayIn.GetTime(), rayIn.GetRandomSeed());
-			emission = Color(0.0, 0.0, 0.0, 0.0);
-			return true;
-		}
-		else
+		// Refraction
 		{
 			// Sample raymarched gbuffer
 			uint pixelIdx;
 			if (rayIn.TryGetPixelIdx(rec.u, rec.v, pixelIdx))
 			{
-				emission = gBuffer.IceRaymarchCache.at(pixelIdx);
+				emission = gBuffer.IceRaymarchCache.at(pixelIdx) * (1.0 - reflectionRatio);
 			}
 			else
 			{
 				// This happens when a ray bounces outside the view frustum
 				// In this case, do a low quality raymarch
-				emission = GetIceRaymarch(rayIn, rec, 1.0f, 5u, 6u, true, passIteration);
+				emission = GetIceRaymarch(rayIn, rec, 1.0f, 5u, 6u, true, passIteration) * (1.0 - reflectionRatio);
 			}
-			return false;
 		}
+
+		// Reflection
+		{
+			const vec3 direction = Reflect(rayDirNorm, rec.normalWS) + roughness * vec3::RandomInUnitSphere();
+			scattered = Ray(rec.positionWS, direction, rayIn.GetTime(), rayIn.GetRandomSeed());
+			attenuation = Color(reflectionRatio);
+		}
+
+		return true;
 	}
 
 	const bool IceMaterial::IsInGBuffer(const uint gBufferIdx) const
