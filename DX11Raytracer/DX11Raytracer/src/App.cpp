@@ -147,8 +147,8 @@ namespace gfx
             for (int i = 0; i < tileCount; ++i)
             {
                 uint tileIteration = iterationIndexForPass;
-                uint idx = (startIdx + i) % TileCount;
-                if (idx > TileCount)
+                uint idx = startIdx + i;
+                if (idx >= TileCount)
                 {
                     idx -= TileCount;
                     tileIteration++;
@@ -161,7 +161,7 @@ namespace gfx
                 renderThreads.push_back(std::thread(&CPURaytracer::RunTile, m_pCPURaytracer.get(), *m_pCamera.get(), pTargetBuffer, tx, ty, tileIteration, *m_pGBuffer.get(), gBufferIdx));
             }
 
-            for (int i = 0; i < tileCount; ++i)
+            for (int i = 0; i < renderThreads.size(); ++i)
             {
                 if (renderThreads.at(i).joinable())
                 {

@@ -18,7 +18,7 @@ namespace gfx
 	static const bool UseRaymarchSlices = false;
 	static const double RaymarchDensity = 0.1;
 	static const double MaxRaymarchDistance = 8.0;
-	static const uint32_t RaymarchPassCt = 20u;
-	static const uint32_t RaymarchStepsPerPass = 50u;
+	static const uint32_t RaymarchPassCt = 10u;
+	static const uint32_t RaymarchStepsPerPass = 50u * 2;
 	static const uint32_t RaymarchHeightFieldTraceSteps = 50u;
 }

@@ -20,9 +20,9 @@ namespace gfx
         m_lensRadius = aperture * 0.5;
     }
 
-    Ray Camera::GetRay(const double u, const double v, const uint pixelIdx) const
+    Ray Camera::GetRay(const double u, const double v, const uint pixelIdx, const bool useDepthOfField) const
     {
-        if (UseDepthOfField)
+        if (useDepthOfField)
         {
             // Offset rays by disc
             const vec3 discOffset = m_lensRadius * vec3::RandomInUnitDisk();

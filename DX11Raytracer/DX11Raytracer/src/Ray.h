@@ -25,6 +25,7 @@ namespace gfx
         vec3 m_origin;
         vec3 m_direction;
         vec3 m_rcpDirection;
+    public: // temporary
         int m_pixelIdx;
     };
 }

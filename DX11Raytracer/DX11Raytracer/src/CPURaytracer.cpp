@@ -104,8 +104,9 @@ namespace gfx
 		const int tileOffset = (tileY * TileDimensionX + tileX) * (TileSize * TileSize);
 
         const int maxBounces = 20;
-        const int samplesPerPixel = 5;
+        const int samplesPerPixel = (gBufferIdx == 0u) ? 5 : 1;
         const float sampleScale = 1.0f / samplesPerPixel;
+        const bool useDepthOfField = (gBufferIdx == 0u) ? UseDepthOfField : false;
 
         const float multisampleScale0 = static_cast<float>(passIteration);
         const float multisampleScale1 = 1.0f / static_cast<float>(passIteration + 1u);
@@ -128,7 +129,11 @@ namespace gfx
                     const double u = sx / (ScreenWidth - 1) * 2.0 - 1.0;
                     const double v = sy / (ScreenHeight - 1) * 2.0 - 1.0;
 
-                    Ray r = camera.GetRay(u, v, pixelIdx);
+                    Ray r = camera.GetRay(u, v, pixelIdx, useDepthOfField);
+                    if (pixelIdx == 512 * 128 + 256)
+                    {
+                        auto vv = 0;
+                    }
                     pixelColor += (GetRayColor(r, maxBounces, gBuffer, gBufferIdx, passIteration) * sampleScale);
                 }
 
@@ -138,11 +143,14 @@ namespace gfx
                     if (!UseRaymarchSlices)
                     {
                         // New, accurate method
-                        const float alphaMult = Saturate(1.f - buffer[pixelIdx].a);
+                        const float alphaMult = 1.f;// Saturate(1.f - buffer[pixelIdx].a);
                         buffer[pixelIdx].r += pixelColor.r * alphaMult;
                         buffer[pixelIdx].g += pixelColor.g * alphaMult;
                         buffer[pixelIdx].b += pixelColor.b * alphaMult;
-                        buffer[pixelIdx].a = Saturate(buffer[pixelIdx].a + pixelColor.a);
+                        buffer[pixelIdx].a = pixelColor.a;
+
+                        // Nice debug view for seeing individual slices
+                        //buffer[pixelIdx] = pixelColor;
                     }
                     else
                     {

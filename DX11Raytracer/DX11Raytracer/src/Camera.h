@@ -9,7 +9,7 @@ namespace gfx
     public:
         Camera(const vec3 positionWS, const vec3 lookAtWS, const vec3 upVec, const double vFov, const double aspectRatio, const double aperture, const double focusDist);
     public:
-        Ray GetRay(const double u, const double v, const uint pixelIdx) const;
+        Ray GetRay(const double u, const double v, const uint pixelIdx, const bool useDepthOfField) const;
     private:
         vec3 m_positionWS;
         vec3 m_horizontalBasis;

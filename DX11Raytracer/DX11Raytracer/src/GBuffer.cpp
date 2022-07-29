@@ -31,7 +31,7 @@ namespace gfx
                         CameraColor[idx].b = (float)x / 256;
                         CameraColor[idx].a = 0;
 
-                        IceRaymarchCache[idx] = Color(0.0);
+                        IceRaymarchCache[idx] = Color(0.f, 0.f, 0.f, 1.f);
                     }
                 }
             }

@@ -14,8 +14,15 @@ namespace gfx
 	{
 		if (gBufferIdx == 1u)
 		{
-			// Raymarch pass
-			emission = GetIceRaymarch(rayIn, rec, RaymarchStepsPerPass, 7u, true, passIteration);
+			// Execute raymarch pass, using previous results
+
+			uint pixelIdx;
+			Color prevColor = Color(0.f, 0.f, 0.f, 1.f);
+			if (rayIn.TryGetPixelIdx(rec.u, rec.v, pixelIdx))
+			{
+				prevColor = gBuffer.IceRaymarchCache.at(pixelIdx);
+			}
+			emission = GetIceRaymarch(rayIn, rec, prevColor.a, RaymarchStepsPerPass, 7u, true, passIteration);
 			return false;
 		}
 
@@ -65,7 +72,7 @@ namespace gfx
 			{
 				// This happens when a ray bounces outside the view frustum
 				// In this case, do a low quality raymarch
-				emission = GetIceRaymarch(rayIn, rec, 5u, 6u, true, passIteration);
+				emission = GetIceRaymarch(rayIn, rec, 1.0f, 5u, 6u, true, passIteration);
 			}
 			return false;
 		}
@@ -84,20 +91,22 @@ namespace gfx
 		return r0 + (1.0 - r0) * std::pow((1.0 - cosine), 5.0);
 	}
 
-	const Color IceMaterial::GetIceRaymarch(const Ray& rayIn, const RayHitRecord& rec, const uint maxRaySteps, const uint octaves, const bool highQuality, const uint passIteration) const
+	const Color IceMaterial::GetIceRaymarch(const Ray& rayIn, const RayHitRecord& rec, const float previousAlpha, const uint maxRaySteps, const uint octaves, const bool highQuality, const uint passIteration) const
 	{
-		Color result = Color(0.0);
+		Color result = Color(0.f);
+		result.a = previousAlpha;
 
 		const vec3 direction = Normalize(rayIn.GetDirection());
-		double visibility = 1.0;
+		//double visibility = previousAlpha;
 
+		double sectionLength;
 		double stepLength;
 		double offset;
 
 		if (!UseRaymarchSlices)
 		{
 			// Iterate across small section
-			const double sectionLength = MaxRaymarchDistance / RaymarchPassCt;
+			sectionLength = MaxRaymarchDistance / RaymarchPassCt;
 			stepLength = sectionLength / maxRaySteps;
 			offset = static_cast<double>(passIteration % RaymarchPassCt) * sectionLength;
 		}
@@ -109,16 +118,73 @@ namespace gfx
 			offset = static_cast<double>(passIteration % RaymarchPassCt) / static_cast<double>(RaymarchPassCt) * stepLength;
 		}
 
+		// Test distances
+		std::vector<double> prevT(maxRaySteps);
+		if (passIteration > 0)
+		{
+			const auto prevOffset = static_cast<double>((passIteration - 1) % RaymarchPassCt) * sectionLength;
+			for (size_t i = 0u; i < maxRaySteps; ++i)
+			{
+				const double t = i * stepLength + prevOffset;
+				prevT[i] = t;
+			}
+		}
+
+		static std::vector<float> visibility(1000);
+		static std::vector<vec3> prevPt(1000);
+		static std::vector<vec3> prevSpl(1000);
+
 		for (size_t i = 0u; i < maxRaySteps; ++i)
 		{
 			const double t = i * stepLength + offset;
 			const vec3 sample = GetIceSample(rec.positionWS + direction * t, octaves, highQuality);
 			double ice = sample.x * RaymarchDensity;
-			double iceVisible = ice * visibility;
+			double iceVisible = ice * result.a;
+
+			// TESTS
+			if (passIteration > 0)
+			{
+				if (std::abs(t - prevT[i] - sectionLength) > 0.001)
+				{
+					auto err = 0;
+				}
+				if (i == 0u && std::abs(t - prevT[maxRaySteps - 1] - stepLength) > 0.001)
+				{
+					auto err = 0;
+				}
+			}
 
 			// Exponential decay for light bounces
-			result += Color(iceVisible * std::exp(t * -1.51), iceVisible * std::exp(t * -0.881), iceVisible * std::exp(t * -0.5121), iceVisible);
-			visibility *= (1.0 - ice);
+			result += Color(iceVisible * std::exp(t * -1.51), iceVisible * std::exp(t * -0.881), iceVisible * std::exp(t * -0.5121), 0.0);
+			result.a *= (1.f - ice);
+			//visibility *= (1.0 - ice);
+
+			if (rayIn.m_pixelIdx == 512 * 128 + 256)
+			{
+				//visibility[RaymarchStepsPerPass * passIteration + i] = result.a;
+				visibility[RaymarchStepsPerPass * passIteration + i] = t;
+				prevPt[RaymarchStepsPerPass * passIteration + i] = rec.positionWS + direction * t;
+				prevSpl[RaymarchStepsPerPass * passIteration + i] = sample;
+
+				auto v = t;
+				static vec3 staticDir;
+				static bool hasStaticDir = false;
+				if (!hasStaticDir)
+					staticDir = rayIn.GetDirection();
+
+				auto d = Dot(rayIn.GetDirection(), staticDir);
+				if (d < 0.999)
+				{
+					auto dd = 0;
+				}
+				//std::cout << "HI\n";
+			}
+		}
+
+		//if (passIteration == RaymarchPassCt - 1u && rayIn.m_pixelIdx == 512 * 128 + 256)
+		if (rayIn.m_pixelIdx == 512 * 128 + 256)
+		{
+			auto bbb = 0;
 		}
 
 		return result;

@@ -75,7 +75,6 @@ namespace gfx
 		{
 			return false;
 		}
-
 		
 		// Ray-plane intersection
 		// t = (P0 - R0) * P / (R * P)
