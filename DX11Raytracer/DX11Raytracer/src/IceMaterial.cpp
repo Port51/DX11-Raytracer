@@ -93,8 +93,12 @@ namespace gfx
 
 	const Color IceMaterial::GetIceRaymarch(const Ray& rayIn, const RayHitRecord& rec, const float previousAlpha, const uint maxRaySteps, const uint octaves, const bool highQuality, const uint passIteration) const
 	{
+		const float visibilityStopThreshold = 0.001f;
+
 		Color result = Color(0.f);
 		result.a = previousAlpha;
+
+		if (result.a < visibilityStopThreshold) return result;
 
 		const vec3 direction = Normalize(rayIn.GetDirection());
 
@@ -127,6 +131,8 @@ namespace gfx
 			// Exponential decay for light bounces
 			result += Color(iceVisible * std::exp(t * -1.51), iceVisible * std::exp(t * -0.881), iceVisible * std::exp(t * -0.5121), 0.0);
 			result.a *= (1.f - ice);
+
+			if (result.a < visibilityStopThreshold) return result;
 		}
 
 		return result;
