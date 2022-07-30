@@ -16,33 +16,48 @@ namespace gfx
 {
 	CPURaytracer::CPURaytracer()
 	{
-        CreateRandomScene();
-
-        //m_pRenderObjects.emplace_back(std::make_unique<SphereObject>(vec3(0, 0, -1), 0.5, std::make_shared<Lambertian>(Color(1.0, 0.4, 0.4, 1.0))));
-        //m_pRenderObjects.emplace_back(std::make_unique<SphereObject>(vec3(1, 0, -1), 0.5, std::make_shared<Metal>(Color(1.0, 0.4, 0.4, 1.0), 0.0)));
-        //m_pRenderObjects.emplace_back(std::make_unique<SphereObject>(vec3(-1, 0, -1), 0.5, std::make_shared<Metal>(Color(1.0, 1.0, 1.0, 1.0), 0.5)));
-        //m_pRenderObjects.emplace_back(std::make_unique<SphereObject>(vec3(-1, 0, -1), -0.5, std::make_shared<Dielectric>(1.5)));
-        //m_pRenderObjects.emplace_back(std::make_unique<SphereObject>(vec3(-0.35, 0, -0.5), 0.27, std::make_shared<Dielectric>(1.5)));
-
-        // Ground
-        //m_pRenderObjects.emplace_back(std::make_unique<SphereObject>(vec3(0, -100.5, -1), 100, std::make_shared<Lambertian>(Color(0.1, 0.8, 0.2, 1.0))));
+        switch (SceneSelection)
+        {
+            case 0u:
+                CreateIceScene();
+                break;
+            case 1u:
+                CreateSphereScene();
+                break;
+        }
     }
 
-    void CPURaytracer::CreateRandomScene()
+    void CPURaytracer::CreateIceScene()
     {
         RendererList rendererList;
 
-        /*auto groundMaterial0 = std::make_shared<LambertianMaterial>(std::make_shared<CheckeredTexture>(Color(0.5, 0.5, 0.5, 0.5), Color(0.25, 0.25, 1.0, 0.5)));
-        rendererList.Add(std::make_unique<SphereObject>(vec3(0, 0, 0), 1.0, groundMaterial0));
-        rendererList.Add(std::make_unique<SphereObject>(vec3(0, -1001, 0), 1000, groundMaterial0));
+        auto material1 = std::make_shared<MetalMaterial>(Color(0.5f, 0.5f, 1.0f, 1.0f), 0.0);
+        rendererList.Add(std::make_unique<SphereObject>(vec3(0.25, 1.5, -2.45), 1.0, material1));
+
+        auto material2 = std::make_shared<MetalMaterial>(Color(1.0f), 0.0);
+        rendererList.Add(std::make_unique<SphereObject>(vec3(0.25, 1.5, 4.05), 1.0, material2));
+
+        auto material3 = std::make_shared<MetalMaterial>(Color(1.0f, 0.2f, 0.0f, 1.0f), 0.0);
+        rendererList.Add(std::make_unique<SphereObject>(vec3(0.25, 1.5, 0), 1.0, material3));
+
+        auto material4 = std::make_shared<MetalMaterial>(Color(1.0f, 1.0f, 1.0f, 1.0f), 0.215);
+        rendererList.Add(std::make_unique<SphereObject>(vec3(6.35, 0.475, -3.05), 0.427, material4));
+
+        // Volumetric ice
+        auto iceMaterial = std::make_shared<IceMaterial>();
+        rendererList.Add(std::make_unique<IceSurface>(vec3(0, 0, 0), iceMaterial));
+
         m_pRendererList = std::make_unique<BVHNode>(rendererList);
-        return;*/
+    }
 
-        auto groundMaterial = std::make_shared<LambertianMaterial>(std::make_shared<CheckeredTexture>(Color(0.5, 0.5, 0.5, 0.5), Color(0.25, 0.25, 1.0, 0.5)));
-        auto grassMaterial = std::make_shared<LambertianMaterial>(Color(0.2, 0.8, 0.2, 1.0));
-        //rendererList.Add(std::make_unique<SphereObject>(vec3(0, -1000, 0), 1000, grassMaterial));
+    void CPURaytracer::CreateSphereScene()
+    {
+        RendererList rendererList;
 
-        /*for (int a = -11; a < 11; a++)
+        auto mirrorMaterial = std::make_shared<MetalMaterial>(Color(1.0f), 0.05);
+        rendererList.Add(std::make_unique<SphereObject>(vec3(0.0, 1.5, 0.0), 1.5, mirrorMaterial));
+
+        for (int a = -11; a < 11; a++)
         {
             for (int b = -11; b < 11; b++)
             {
@@ -74,31 +89,11 @@ namespace gfx
                     }
                 }
             }
-        }*/
+        }
 
-        //auto material1 = std::make_shared<DielectricMaterial>(1.5);
-        auto material1 = std::make_shared<MetalMaterial>(Color(0.5f, 0.5f, 1.0f, 1.0f), 0.0);
-        rendererList.Add(std::make_unique<SphereObject>(vec3(0.25, 1.5, -2.45), 1.0, material1));
-
-        //auto material2 = std::make_shared<LambertianMaterial>(Color(0.4f, 0.2f, 0.1f, 1.0f));
-        auto material2 = std::make_shared<MetalMaterial>(Color(1.0f), 0.0);
-        rendererList.Add(std::make_unique<SphereObject>(vec3(0.25, 1.5, 4.05), 1.0, material2));
-
-        auto material3 = std::make_shared<MetalMaterial>(Color(1.0f, 0.2f, 0.0f, 1.0f), 0.0);
-        rendererList.Add(std::make_unique<SphereObject>(vec3(0.25, 1.5, 0), 1.0, material3));
-
-        auto material4 = std::make_shared<MetalMaterial>(Color(1.0f, 1.0f, 1.0f, 1.0f), 0.215);
-        //auto material4 = std::make_shared<LambertianMaterial>(Color(0.2f, 1.0f, 0.2f, 1.0f));
-        rendererList.Add(std::make_unique<SphereObject>(vec3(6.35, 0.475, -3.05), 0.427, material4));
-
-        //auto lambertMaterial = std::make_shared<LambertianMaterial>(Color(1.0f, 0.3f, 0.1f, 1.0f));
-        //rendererList.Add(std::make_unique<SphereObject>(vec3(-8.0, 0.55, 13.5), 0.42, lambertMaterial));
-        //rendererList.Add(std::make_unique<SphereObject>(vec3(-7.5, 0.55, 14.5), 0.42, lambertMaterial));
-        //rendererList.Add(std::make_unique<SphereObject>(vec3(-7.0, 0.55, 15.5), 0.42, lambertMaterial));
-
-        // Volumetric ice
-        auto iceMaterial = std::make_shared<IceMaterial>();
-        rendererList.Add(std::make_unique<IceSurface>(vec3(0, 0, 0), iceMaterial));
+        auto groundMaterial = std::make_shared<LambertianMaterial>(std::make_shared<CheckeredTexture>(Color(0.5, 0.5, 0.5, 0.5), Color(0.25, 0.25, 1.0, 0.5)));
+        auto grassMaterial = std::make_shared<LambertianMaterial>(Color(0.2, 0.8, 0.2, 1.0));
+        rendererList.Add(std::make_unique<SphereObject>(vec3(0, -1000, 0), 1000, grassMaterial));
 
         m_pRendererList = std::make_unique<BVHNode>(rendererList);
     }

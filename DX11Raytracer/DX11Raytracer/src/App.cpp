@@ -76,7 +76,7 @@ namespace gfx
 	int App::Run()
 	{
         uint nextTileIndex = 0u;
-        uint iterationIndex = 0u;
+        uint iterationIndex = (RenderIce) ? 0u : RaymarchPassCt;
 
         // Render loop
         while (true)
