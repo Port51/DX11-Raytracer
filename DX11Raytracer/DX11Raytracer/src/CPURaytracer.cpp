@@ -11,6 +11,8 @@
 #include "Camera.h"
 #include "CheckeredTexture.h"
 #include "GBuffer.h"
+#include "Skybox.h"
+#include "BVHNode.h"
 
 namespace gfx
 {
@@ -26,6 +28,9 @@ namespace gfx
                 break;
         }
     }
+
+    CPURaytracer::~CPURaytracer()
+    {}
 
     void CPURaytracer::CreateIceScene()
     {
@@ -48,6 +53,11 @@ namespace gfx
         rendererList.Add(std::make_unique<IceSurface>(vec3(0, 0, 0), iceMaterial));
 
         m_pRendererList = std::make_unique<BVHNode>(rendererList);
+
+        m_pSkybox = std::make_unique<Skybox>(
+            Color(0.35f, 0.75f, 0.925f),
+            Color(1.0f, 0.75f, 0.6f),
+            Color(0.01f, 0.03f, 0.09f));
     }
 
     void CPURaytracer::CreateSphereScene()
@@ -171,7 +181,7 @@ namespace gfx
 
     const Color CPURaytracer::GetRayColor(Ray& ray, const int depth, const GBuffer& gBuffer, const uint gBufferIdx, const uint passIteration) const
     {
-        if (depth <= 0.0) return Color(0.0);
+        if (depth <= 0) return Color(0.0);
 
         RayHitRecord rhr;
         if (m_pRendererList->Hit(ray, 0.001, Infinity, rhr, gBufferIdx))
@@ -189,21 +199,7 @@ namespace gfx
         }
 
         // Sky background
-        const vec3 upColor = vec3(0.35, 0.75, 0.925);
-        const vec3 horizonColor = vec3(1.0, 0.75, 0.6);
-        const vec3 deepColor = vec3(0.01, 0.03, 0.09);
-
-        const vec3 rayDirNorm = Normalize(ray.GetDirection());
-        const double vertical = std::abs(rayDirNorm.y);
-        const double skyLerp = std::pow(vertical, 0.25);
-        const vec3 skyColor = (1.0 - skyLerp) * horizonColor + skyLerp * upColor;
-
-        const double deepWaterLerp = std::pow(vertical, 0.09);
-        const vec3 deepWaterColor = (1.0 - deepWaterLerp) * horizonColor + deepWaterLerp * deepColor;
-
-        const vec3 backgroundColor = (rayDirNorm.y > 0.0) ? skyColor : deepWaterColor;
-
-        return Color((float)backgroundColor.x, (float)backgroundColor.y, (float)backgroundColor.z, 0.f);
+        return m_pSkybox->GetColor(ray.GetDirection());
     }
 
     /*const bool CPURaytracer::HitSphere(const Ray& ray, vec3& hitPoint) const

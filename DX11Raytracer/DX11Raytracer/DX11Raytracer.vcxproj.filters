@@ -129,6 +129,9 @@
     <ClCompile Include="src\PerlinNoise.cpp">
       <Filter>Source Files\Raytracing\Math</Filter>
     </ClCompile>
+    <ClCompile Include="src\Skybox.cpp">
+      <Filter>Source Files\Raytracing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DX11Include.h">
@@ -225,6 +228,9 @@
       <Filter>Header Files\Application</Filter>
     </ClInclude>
     <ClInclude Include="src\vec3f.h">
+      <Filter>Header Files\Raytracing</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Skybox.h">
       <Filter>Header Files\Raytracing</Filter>
     </ClInclude>
   </ItemGroup>

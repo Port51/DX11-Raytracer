@@ -1,7 +1,6 @@
 #pragma once
 #include "CommonHeader.h"
 #include "RendererList.h"
-#include "BVHNode.h"
 #include <vector>
 
 namespace gfx
@@ -11,12 +10,14 @@ namespace gfx
 	class SphereObject;
 	class Camera;
 	class GBuffer;
+	class BVHNode;
+	class Skybox;
 
 	class CPURaytracer
 	{
 	public:
 		CPURaytracer();
-		~CPURaytracer() = default;
+		~CPURaytracer();
 	public:
 		void RunTile(const Camera& camera, Color* const buffer, const uint tileX, const uint tileY, const uint passIteration, const GBuffer& gBuffer, const uint gBufferIdx) const;
 	private:
@@ -26,5 +27,6 @@ namespace gfx
 		//const bool HitSphere(const Ray& ray, vec3& hitPoint) const;
 	private:
 		std::unique_ptr<BVHNode> m_pRendererList;
+		std::unique_ptr<Skybox> m_pSkybox;
 	};
 }

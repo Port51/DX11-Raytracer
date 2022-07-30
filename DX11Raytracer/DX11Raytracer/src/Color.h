@@ -18,6 +18,10 @@ namespace gfx
 			: r(v), g(v), b(v), a(v)
 		{}
 
+		Color(const float r, const float g, const float b)
+			: r(r), g(g), b(b), a(1.f)
+		{}
+
 		Color(const float r, const float g, const float b, const float a)
 			: r(r), g(g), b(b), a(a)
 		{}

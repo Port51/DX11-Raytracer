@@ -134,6 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Skybox.cpp" />
     <ClCompile Include="src\PerlinNoise.cpp" />
     <ClCompile Include="src\CheckeredTexture.cpp" />
     <ClCompile Include="src\GBuffer.cpp" />
@@ -159,6 +160,7 @@
     <ClCompile Include="src\IceMaterial.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Skybox.h" />
     <ClInclude Include="src\GBuffer.h" />
     <ClInclude Include="src\ivec3.h" />
     <ClInclude Include="src\PerlinNoise.h" />
