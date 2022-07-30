@@ -21,9 +21,7 @@ namespace gfx
         // This assumes the other medium is air - need to update if adding more complicated situations
         const double refractionRatio = rec.isFrontFacing ? (1.0 / m_indexOfRefraction) : m_indexOfRefraction;
 
-        const vec3 rayDirNorm = Normalize(rayIn.GetDirection());
-
-        const double cosTheta = fmin(Dot(-rayDirNorm, rec.normalWS), 1.0);
+        const double cosTheta = fmin(Dot(-rayIn.GetDirection(), rec.normalWS), 1.0);
         const double sinTheta = sqrt(1.0 - cosTheta * cosTheta);
 
         const bool totalInternalReflection = refractionRatio * sinTheta > 1.0;
@@ -32,9 +30,9 @@ namespace gfx
         // Either reflect or refract
         vec3 direction;
         if (totalInternalReflection || fresnelReflection)
-            direction = Reflect(rayDirNorm, rec.normalWS);
+            direction = Reflect(rayIn.GetDirection(), rec.normalWS);
         else
-            direction = Refract(rayDirNorm, rec.normalWS, refractionRatio);
+            direction = Refract(rayIn.GetDirection(), rec.normalWS, refractionRatio);
 
         scattered = Ray(rayIn, rec.positionWS, direction);
         return true;

@@ -35,9 +35,7 @@ namespace gfx
 		if (lambertScatterDirWS.IsNearlyZero())
 			lambertScatterDirWS = rec.normalWS;
 
-		const vec3 rayDirNorm = Normalize(rayIn.GetDirection());
-
-		const double cosTheta = fmin(Dot(rayDirNorm, rec.normalWS), 1.0);
+		const double cosTheta = fmin(Dot(rayIn.GetDirection(), rec.normalWS), 1.0);
 		const double sinTheta = sqrt(1.0 - cosTheta * cosTheta);
 
 		const bool totalInternalReflection = refractionRatio * sinTheta > 1.0;
@@ -69,7 +67,7 @@ namespace gfx
 
 		// Reflection
 		{
-			const vec3 direction = Reflect(rayDirNorm, rec.normalWS) + roughness * vec3::RandomInUnitSphere();
+			const vec3 direction = Reflect(rayIn.GetDirection(), rec.normalWS) + roughness * vec3::RandomInUnitSphere();
 			scattered = Ray(rayIn, rec.positionWS, direction);
 			attenuation = Color(reflectionRatio);
 		}
@@ -99,7 +97,7 @@ namespace gfx
 
 		if (result.a < visibilityStopThreshold) return result;
 
-		const vec3 direction = Refract(Normalize(rayIn.GetDirection()), -rec.normalWS, 1.f / 1.33f);
+		const vec3 direction = Refract(rayIn.GetDirection(), -rec.normalWS, 1.f / 1.33f);
 
 		double sectionLength;
 		double stepLength;
