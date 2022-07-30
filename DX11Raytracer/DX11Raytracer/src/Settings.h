@@ -14,9 +14,9 @@ namespace gfx
 	static const bool UseThreading = true;
 	static const bool UseDepthOfField = true;
 
-	static const unsigned int SceneSelection = 1u;
+	static const unsigned int SceneSelection = 0u;
 
-	static const bool RenderIce = false;
+	static const bool RenderIce = true;
 	static const bool UseHQNoise = true;
 	static const bool UseRaymarchSlices = false;
 	static const double RaymarchDensity = 0.1;

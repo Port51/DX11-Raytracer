@@ -129,7 +129,8 @@ namespace gfx
 			double iceVisible = ice * result.a;
 
 			// Exponential decay for light bounces
-			result += Color(iceVisible * std::exp(t * -1.51), iceVisible * std::exp(t * -0.881), iceVisible * std::exp(t * -0.5121), 0.0);
+			const double depthScale = 0.91;
+			result += Color(iceVisible * std::exp(t * -1.51 * depthScale), iceVisible * std::exp(t * -0.881 * depthScale), iceVisible * std::exp(t * -0.5121 * depthScale), 0.0);
 			result.a *= (1.f - ice);
 
 			if (result.a < visibilityStopThreshold) return result;
@@ -145,44 +146,41 @@ namespace gfx
 		double n0 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ), octaves);
 		double n1 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) + vec3(21309.90, 3289.32, 93432.032), octaves);
 
-		double n2 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) * 4.0, octaves - 3u);
-		double n3 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) * 4.0 + vec3(21309.90, 3289.32, 93432.032), octaves - 3u);
+		double n2 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) * 4.0, octaves - 1u);
+		double n3 = PerlinNoise::GetNoise3D(position * vec3(ScaleXZ, ScaleY, ScaleXZ) * 4.0 + vec3(21309.90, 3289.32, 93432.032), octaves - 1u);
 
 		const double heightSlopeQ = 51.0;
 		const double heightSlopeOffset = 0.1;
 
-		double isIceSurface = Saturate((n1 - n0 + heightSlopeOffset) * heightSlopeQ);
-
 		// Create a cave!
+		double isCave = 0.0;
 		if (highQuality)
 		{
-			const vec3 caveStart = vec3(2.0, -3.75, 0.0);
+			const vec3 caveStart = vec3(2.0, -3.35, 0.0);
 			const vec3 caveRight = vec3(0.0, 0.0, 1.0);
 
 			vec3 caveOffset = vec3(position.z - caveStart.x, (position.y - caveStart.y) * 0.65, 0.0);
 			const double caveSdf = caveOffset.Length();
 
-			double isCave = Saturate(1.0 - caveSdf * 0.551);// * (largeHeightRatio > 0.0);
-			//isCave = 1.0;
+			isCave = Saturate(1.0 - caveSdf * 0.551);// * (largeHeightRatio > 0.0);
 			n0 = Lerp(n0, 1.0, isCave);
 			n1 = Lerp(n1, 0.0, isCave);
-			//n2 = Lerp(n2, 1.0, isCave);
-			//n3 = Lerp(n3, 0.0, isCave);
-			isIceSurface *= (1.0 - isCave);
 		}
-		const double largeDifferenceNoise = Saturate((1.0 - abs(n0 - n1)) * 1.8 - 0.8);
+		const double isIceSurface = Saturate((n1 - n0 + heightSlopeOffset) * heightSlopeQ);
+
+		const double largeDifferenceNoise = Saturate((1.0 - abs(n0 - n1)) * 1.8 - 0.8);// * (1.0 + isCave * 1.0);
 		// Restrict small cracks to ice region
 		const double smallDifferenceNoise = Saturate((1.0 - abs(n2 - n3)) * 1.8 - 0.8) * isIceSurface;
 
 		const double spread = Saturate(position.y / 0.42);
 		const double cracks =
-			std::pow(largeDifferenceNoise, 61.0 - 60.0 * spread)
+			std::pow(largeDifferenceNoise, max(1.0, 61.0 - 60.0 * spread - isCave * 60.0))
 			+ std::pow(smallDifferenceNoise, 27.0) * 0.332;
 
 		if (highQuality)
 		{
-			const double n2 = PerlinNoise::GetNoise3D(position * vec3(131.0) + vec3(109.90, 289.32, 3432.032), octaves);
-			const double clouds = (std::pow(n2, 2.7) + n2 * 0.333) * isIceSurface;
+			const double n4 = PerlinNoise::GetNoise3D(position * vec3(131.0) + vec3(109.90, 1289.32, 3432.032), octaves - 1u);
+			const double clouds = (std::pow(n4, 2.7) + n4 * 0.333) * isIceSurface;
 			return vec3(Saturate(cracks + clouds * 0.004251), isIceSurface, 0.0);
 		}
 		else
