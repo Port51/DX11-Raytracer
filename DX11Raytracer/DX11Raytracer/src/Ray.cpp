@@ -6,13 +6,23 @@ namespace gfx
 	Ray::Ray()
     {}
 
+    Ray::Ray(const Ray & parent, const vec3& origin, const vec3 & direction)
+        : m_origin(origin), m_direction(Normalize(direction)), m_time(parent.m_time), m_randomSeed(parent.m_randomSeed), m_pixelIdx(-1)
+    {
+        SetRcpDirection();
+    }
+
     Ray::Ray(const vec3 & origin, const vec3 & direction, const double time, const double randomSeed)
-        : m_origin(origin), m_direction(direction), m_rcpDirection(vec3(1.0 / direction.x, 1.0 / direction.y, 1.0 / direction.z)), m_time(time), m_randomSeed(randomSeed), m_pixelIdx(-1)
-    {}
+        : m_origin(origin), m_direction(Normalize(direction)), m_time(time), m_randomSeed(randomSeed), m_pixelIdx(-1)
+    {
+        SetRcpDirection();
+    }
 
     Ray::Ray(const vec3& origin, const vec3& direction, const double time, const double randomSeed, const int pixelIdx)
-        : m_origin(origin), m_direction(direction), m_rcpDirection(vec3(1.0 / direction.x, 1.0 / direction.y, 1.0 / direction.z)), m_time(time), m_randomSeed(randomSeed), m_pixelIdx(pixelIdx)
-    {}
+        : m_origin(origin), m_direction(Normalize(direction)), m_time(time), m_randomSeed(randomSeed), m_pixelIdx(pixelIdx)
+    {
+        SetRcpDirection();
+    }
 
     const double Ray::GetTime() const
     {
@@ -63,6 +73,11 @@ namespace gfx
         pixelIdx = y * ScreenWidth + x;
         return true;
         */
+    }
+
+    void Ray::SetRcpDirection()
+    {
+        m_rcpDirection = vec3(1.0 / m_direction.x, 1.0 / m_direction.y, 1.0 / m_direction.z);
     }
 
 }

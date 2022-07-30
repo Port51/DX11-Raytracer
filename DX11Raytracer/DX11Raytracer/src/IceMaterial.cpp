@@ -70,7 +70,7 @@ namespace gfx
 		// Reflection
 		{
 			const vec3 direction = Reflect(rayDirNorm, rec.normalWS) + roughness * vec3::RandomInUnitSphere();
-			scattered = Ray(rec.positionWS, direction, rayIn.GetTime(), rayIn.GetRandomSeed());
+			scattered = Ray(rayIn, rec.positionWS, direction);
 			attenuation = Color(reflectionRatio);
 		}
 

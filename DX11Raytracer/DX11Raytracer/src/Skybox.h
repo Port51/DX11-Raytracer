@@ -10,7 +10,8 @@ namespace gfx
         ~Skybox() = default;
 
     public:
-        const Color GetColor(const vec3& direction);
+        const Color& GetColor(const vec3& direction);
+        const Color& GetFogColor();
 
     private:
         Color m_upwardColor;

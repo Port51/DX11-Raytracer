@@ -102,4 +102,13 @@ namespace gfx
 	{
 		return (1 / t) * v;
 	}
+
+	inline Color Lerp(const Color& u, const Color& v, const float lerp)
+	{
+		const float rcpLerp = 1.f - lerp;
+		return Color(u.r * rcpLerp + lerp * v.r,
+			u.g * rcpLerp + lerp * v.g,
+			u.b * rcpLerp + lerp * v.b,
+			u.a * rcpLerp + lerp * v.a);
+	}
 }

@@ -56,7 +56,7 @@ namespace gfx
 
         m_pSkybox = std::make_unique<Skybox>(
             Color(0.35f, 0.75f, 0.925f),
-            Color(1.0f, 0.75f, 0.6f),
+            Color(0.9f, 0.775f, 1.0f),
             Color(0.01f, 0.03f, 0.09f));
     }
 
@@ -186,6 +186,9 @@ namespace gfx
         RayHitRecord rhr;
         if (m_pRendererList->Hit(ray, 0.001, Infinity, rhr, gBufferIdx))
         {
+            // Calculate fog factor
+            float fogFactor = (gBufferIdx == 0u) ? Saturate(1.f - std::exp(rhr.time * rhr.time * -0.000177f)) : 0.f;
+
             // Do more bounces!
             // Bounces and attenuation color are determined by the material we just hit
             Color attenuationColor;
@@ -193,12 +196,19 @@ namespace gfx
             Ray bounceRay;
             if (rhr.pMaterial->Scatter(ray, rhr, attenuationColor, emittedColor, bounceRay, gBuffer, gBufferIdx, passIteration))
             {
-                return emittedColor + attenuationColor * GetRayColor(bounceRay, depth - 1, gBuffer, gBufferIdx, passIteration);
+                // Apply fog to result
+                //return emittedColor + attenuationColor * GetRayColor(bounceRay, depth - 1, gBuffer, gBufferIdx, passIteration);
+                //return Color(fogFactor); // debug view
+                return Lerp(emittedColor + attenuationColor * GetRayColor(bounceRay, depth - 1, gBuffer, gBufferIdx, passIteration), m_pSkybox->GetFogColor(), fogFactor);
             }
-            return emittedColor;
+
+            // Apply fog to result
+            //return emittedColor;
+            //return Color(fogFactor); // debug view
+            return Lerp(emittedColor, m_pSkybox->GetFogColor(), fogFactor);
         }
 
-        // Sky background
+        // Hit sky
         return m_pSkybox->GetColor(ray.GetDirection());
     }
 

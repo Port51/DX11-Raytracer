@@ -166,9 +166,9 @@ namespace gfx
     inline vec3 Lerp(const vec3& u, const vec3& v, const double lerp)
     {
         const double rcpLerp = 1.0 - lerp;
-        return vec3(u.x * rcpLerp + v.x,
-            u.y * rcpLerp + v.y,
-            u.z * rcpLerp + v.z);
+        return vec3(u.x * rcpLerp + lerp * v.x,
+            u.y * rcpLerp + lerp * v.y,
+            u.z * rcpLerp + lerp * v.z);
     }
 
     inline vec3 Reflect(const vec3& v, const vec3& n)
