@@ -2,22 +2,25 @@
 
 This is a personal project based on the "Ray Tracing in One Weekend" series (https://raytracing.github.io/).
 
+## Renders:
 ![Ice scene render](DX11Raytracer/Doc/Ice-Scene-0.jpg)
 
+![Sphere scene render](DX11Raytracer/Doc/Sphere-Scene-0.jpg)
+
 ## Features:
-* Multi-threaded approach using tiles
+* Multi-threaded CPU rendering
 * Volumetric ice using ray marching
 * Infinite 3D perlin noise generator using modified PCG-3D and xxHash32 algorithms
 * Bounding Volume Hierarchy (BVH) using AABBs
 * Depth of field
 * Motion blur
-* Lambert, metal, and dielectric material types
+* Lambert, metal, dielectric, and ice material types
 * Exponential fog
 * Output displayed using DirectX 11 window
-* Results accumulate over time so you can watch the quality increase with more iterations
+* Results accumulate over time so you can watch the quality increase as iterations are calculated
 
 ## Realtime display using tiles:
-One major goal was to show the final image as it was being calculated over time. To do that, I used multiple threads (hardware concurrency minus one) and had each thread process a 16x16 tile each frame. At the end of each frame, the updated image is applied to the frame buffer through a full screen pass.
+One major goal was to show the final image being calculated over time. To do that, I used multiple threads (hardware concurrency minus one) and had each thread process a 16x16 tile each frame. At the end of each frame, the updated image is applied to the frame buffer through a full screen pass.
 
 I chose 16x16 tiles, so as to make it easier to port it to compute shaders later on.
 
