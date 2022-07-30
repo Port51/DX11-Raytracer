@@ -160,6 +160,7 @@
     <ClCompile Include="src\IceMaterial.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\MathUtils.h" />
     <ClInclude Include="src\Skybox.h" />
     <ClInclude Include="src\GBuffer.h" />
     <ClInclude Include="src\ivec3.h" />

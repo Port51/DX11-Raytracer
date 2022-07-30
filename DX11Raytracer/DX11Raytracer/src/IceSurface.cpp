@@ -23,7 +23,7 @@ namespace gfx
 			t0 = (limit - r.GetOrigin().y) / r.GetDirection().y;
 		}
 
-		double t1 = min(1000.0, t_max);
+		double t1 = std::min(1000.0, t_max);
 		if (r.GetPositionAfterTime(t1).y < -0.05)
 		{
 			t1 = (-0.05 - r.GetOrigin().y) / r.GetDirection().y;
@@ -41,7 +41,7 @@ namespace gfx
 		for (uint i = 0u; i < RaymarchHeightFieldTraceSteps; ++i)
 		{
 			double mix = 0.5;
-			//mix = 0.25 + 0.5 * h0 / max(h0 - h1, 0.0001); // bias based on which height is most positive/negative
+			//mix = 0.25 + 0.5 * h0 / std::max(h0 - h1, 0.0001); // bias based on which height is most positive/negative
 
 			tmid = Lerp(t0, t1, mix);
 			const vec3& p = r.GetPositionAfterTime(tmid);
@@ -116,7 +116,7 @@ namespace gfx
 		const double iceSurfaceY = Lerp(-1.0, 0.3225, sample.y);
 		const double waterSurfaceY = GetWaterLevel(p);
 
-		rayHeightAboveSurface = p.y - max(iceSurfaceY, waterSurfaceY);
+		rayHeightAboveSurface = p.y - std::max(iceSurfaceY, waterSurfaceY);
 		isIceSurface = Saturate((iceSurfaceY - waterSurfaceY) * 1000.0);
 	}
 

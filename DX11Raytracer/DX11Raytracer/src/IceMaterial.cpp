@@ -170,7 +170,7 @@ namespace gfx
 
 		const double spread = Saturate(position.y / 0.42);
 		const double cracks =
-			std::pow(largeDifferenceNoise, max(1.0, 61.0 - 60.0 * spread - isCave * 60.0))
+			std::pow(largeDifferenceNoise, std::max(1.0, 61.0 - 60.0 * spread - isCave * 60.0))
 			+ std::pow(smallDifferenceNoise, 27.0) * 0.332;
 
 		if (highQuality)

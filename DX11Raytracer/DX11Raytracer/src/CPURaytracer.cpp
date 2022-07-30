@@ -160,9 +160,9 @@ namespace gfx
                     else
                     {
                         // Old "comb" method
-                        buffer[pixelIdx].r = max(buffer[pixelIdx].r, pixelColor.r);
-                        buffer[pixelIdx].g = max(buffer[pixelIdx].g, pixelColor.g);
-                        buffer[pixelIdx].b = max(buffer[pixelIdx].b, pixelColor.b);
+                        buffer[pixelIdx].r = std::max(buffer[pixelIdx].r, pixelColor.r);
+                        buffer[pixelIdx].g = std::max(buffer[pixelIdx].g, pixelColor.g);
+                        buffer[pixelIdx].b = std::max(buffer[pixelIdx].b, pixelColor.b);
                     }
                 }
                 else
@@ -171,7 +171,7 @@ namespace gfx
                     buffer[pixelIdx].r = (buffer[pixelIdx].r * multisampleScale0 + pixelColor.r) * multisampleScale1;
                     buffer[pixelIdx].g = (buffer[pixelIdx].g * multisampleScale0 + pixelColor.g) * multisampleScale1;
                     buffer[pixelIdx].b = (buffer[pixelIdx].b * multisampleScale0 + pixelColor.b) * multisampleScale1;
-                    buffer[pixelIdx].a = min(buffer[pixelIdx].a, pixelColor.a);
+                    buffer[pixelIdx].a = std::min(buffer[pixelIdx].a, pixelColor.a);
                 }
                 
             }
@@ -187,7 +187,7 @@ namespace gfx
         if (m_pRendererList->Hit(ray, 0.001, Infinity, rhr, gBufferIdx))
         {
             // Calculate fog factor
-            float fogFactor = (gBufferIdx == 0u) ? Saturate(1.f - std::exp(rhr.time * rhr.time * -0.000177f)) : 0.f;
+            const float fogFactor = (gBufferIdx == 0u) ? Saturate(1.f - std::exp(rhr.time * rhr.time * -0.000177f)) : 0.f;
 
             // Do more bounces!
             // Bounces and attenuation color are determined by the material we just hit
@@ -197,54 +197,14 @@ namespace gfx
             if (rhr.pMaterial->Scatter(ray, rhr, attenuationColor, emittedColor, bounceRay, gBuffer, gBufferIdx, passIteration))
             {
                 // Apply fog to result
-                //return emittedColor + attenuationColor * GetRayColor(bounceRay, depth - 1, gBuffer, gBufferIdx, passIteration);
-                //return Color(fogFactor); // debug view
                 return Lerp(emittedColor + attenuationColor * GetRayColor(bounceRay, depth - 1, gBuffer, gBufferIdx, passIteration), m_pSkybox->GetFogColor(), fogFactor);
             }
 
             // Apply fog to result
-            //return emittedColor;
-            //return Color(fogFactor); // debug view
             return Lerp(emittedColor, m_pSkybox->GetFogColor(), fogFactor);
         }
 
         // Hit sky
-        return m_pSkybox->GetColor(ray.GetDirection());
+        return (gBufferIdx == 0u) ? m_pSkybox->GetColor(ray.GetDirection()) : Color(0.f);
     }
-
-    /*const bool CPURaytracer::HitSphere(const Ray& ray, vec3& hitPoint) const
-    {
-        // todo: move this
-        vec3 spherePos = vec3(0, 0, 1);
-        double rad = 0.5;
-
-        // Test if in SphereObject
-        vec3 displ = spherePos - ray.GetOrigin();
-        double dSqr = Dot(displ, displ);
-        bool inSphere = (dSqr <= rad * rad);
-
-        double tPlane = Dot(displ, ray.GetDirection()); // projection of displ onto dir, note that |dir| == 1
-
-        if (tPlane > 0)
-        {
-            // Find collision pt on plane and test against radius
-            vec3 planeCollisionPt = ray.GetOrigin() + ray.GetDirection() * tPlane;
-            vec3 collisionDispl = spherePos - planeCollisionPt;
-            double cdSqr = Dot(collisionDispl, collisionDispl);
-
-            // Alt version w/ pythagorean
-            //cdSqr = dSqr - tPlane * tPlane;
-
-            if (cdSqr <= rad * rad)
-            {
-                // Now move forward or backwards to find collision point
-                double offset = std::sqrt(rad * rad - cdSqr);
-                double tSurface = tPlane + (inSphere) ? offset : -offset;
-
-                hitPoint = ray.GetOrigin() + ray.GetDirection() * tSurface;
-                return true;
-            }
-        }
-        return false;
-    }*/
 }

@@ -233,6 +233,9 @@
     <ClInclude Include="src\Skybox.h">
       <Filter>Header Files\Raytracing</Filter>
     </ClInclude>
+    <ClInclude Include="src\MathUtils.h">
+      <Filter>Header Files\Raytracing\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\FullScreenPS.hlsl">

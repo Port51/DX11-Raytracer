@@ -23,18 +23,18 @@ namespace gfx
 
         const double tx1 = (m_minimum.x - rayOrigin.x) * rayRcpDir.x;
         const double tx2 = (m_maximum.x - rayOrigin.x) * rayRcpDir.x;
-        double tmin = min(tx1, tx2);
-        double tmax = max(tx1, tx2);
+        double tmin = std::min(tx1, tx2);
+        double tmax = std::max(tx1, tx2);
 
         const double ty1 = (m_minimum.y - rayOrigin.y) * rayRcpDir.y;
         const double ty2 = (m_maximum.y - rayOrigin.y) * rayRcpDir.y;
-        tmin = max(tmin, min(ty1, ty2));
-        tmax = min(tmax, max(ty1, ty2));
+        tmin = std::max(tmin, std::min(ty1, ty2));
+        tmax = std::min(tmax, std::max(ty1, ty2));
 
         const double tz1 = (m_minimum.z - rayOrigin.z) * rayRcpDir.z;
         const double tz2 = (m_maximum.z - rayOrigin.z) * rayRcpDir.z;
-        tmin = max(tmin, min(tz1, tz2));
-        tmax = min(tmax, max(tz1, tz2));
+        tmin = std::max(tmin, std::min(tz1, tz2));
+        tmax = std::min(tmax, std::max(tz1, tz2));
 
         return (tmax >= tmin);
     }
@@ -42,14 +42,14 @@ namespace gfx
     AABB AABB::GetCombinedAABB(const AABB& box0, const AABB& box1)
     {
         const vec3 minBounds(
-            min(box0.GetMinimum().x, box1.GetMinimum().x),
-            min(box0.GetMinimum().y, box1.GetMinimum().y),
-            min(box0.GetMinimum().z, box1.GetMinimum().z));
+            std::min(box0.GetMinimum().x, box1.GetMinimum().x),
+            std::min(box0.GetMinimum().y, box1.GetMinimum().y),
+            std::min(box0.GetMinimum().z, box1.GetMinimum().z));
 
         const vec3 maxBounds(
-            max(box0.GetMaximum().x, box1.GetMaximum().x),
-            max(box0.GetMaximum().y, box1.GetMaximum().y),
-            max(box0.GetMaximum().z, box1.GetMaximum().z));
+            std::max(box0.GetMaximum().x, box1.GetMaximum().x),
+            std::max(box0.GetMaximum().y, box1.GetMaximum().y),
+            std::max(box0.GetMaximum().z, box1.GetMaximum().z));
 
         return AABB(minBounds, maxBounds);
     }

@@ -191,12 +191,12 @@ namespace gfx
 
     inline vec3f MinVec3(const vec3f& a, const vec3f& b)
     {
-        return vec3f(min(a.x, b.x), min(a.y, b.y), min(a.z, b.z));
+        return vec3f(std::min(a.x, b.x), std::min(a.y, b.y), std::min(a.z, b.z));
     }
 
     inline vec3f MaxVec3(const vec3f& a, const vec3f& b)
     {
-        return vec3f(max(a.x, b.x), max(a.y, b.y), max(a.z, b.z));
+        return vec3f(std::max(a.x, b.x), std::max(a.y, b.y), std::max(a.z, b.z));
     }
 
     inline vec3f SCurve(const vec3f& v)
