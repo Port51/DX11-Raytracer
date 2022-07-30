@@ -2,6 +2,8 @@
 
 This is a personal project based on the "Ray Tracing in One Weekend" series (https://raytracing.github.io/).
 
+![Ice scene render](DX11Raytracer/Doc/Ice-Scene-0.jpg)
+
 ## Features:
 * Multi-threaded approach using tiles
 * Volumetric ice using ray marching
