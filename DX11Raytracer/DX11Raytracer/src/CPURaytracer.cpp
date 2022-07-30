@@ -101,11 +101,16 @@ namespace gfx
             }
         }
 
-        auto groundMaterial = std::make_shared<LambertianMaterial>(std::make_shared<CheckeredTexture>(Color(0.5f, 0.5f, 0.5f, 0.5f), Color(0.25f, 0.25f, 1.0f, 0.5f)));
-        auto grassMaterial = std::make_shared<LambertianMaterial>(Color(0.2f, 0.8f, 0.2f, 1.0f));
-        rendererList.Add(std::make_unique<SphereObject>(vec3f(0.f, -1000.f, 0.f), 1000.f, grassMaterial));
+        auto groundMaterial = std::make_shared<LambertianMaterial>(std::make_shared<CheckeredTexture>(Color(0.2f, 0.8f, 0.2f), Color(0.15f, 0.6f, 0.15f)));
+        //auto grassMaterial = std::make_shared<LambertianMaterial>(Color(0.2f, 0.8f, 0.2f));
+        rendererList.Add(std::make_unique<SphereObject>(vec3f(0.f, -10000.f, 0.f), 10000.f, groundMaterial));
 
         m_pRendererList = std::make_unique<BVHNode>(rendererList);
+
+        m_pSkybox = std::make_unique<Skybox>(
+            Color(0.35f, 0.75f, 1.0f),
+            Color(0.7f, 0.3f, 0.2f),
+            Color(0.7f, 0.3f, 0.2f));
     }
 
 	void CPURaytracer::RunTile(const Camera& camera, Color* const buffer, const uint tileX, const uint tileY, const uint passIteration, const GBuffer& gBuffer, const uint gBufferIdx) const
