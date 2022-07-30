@@ -149,7 +149,7 @@ namespace gfx
 
 	double IceSurface::GetWaterLevel(const vec3& p)
 	{
-		return std::sin(p.x * 5.51) * 0.00551;
+		return std::sin(p.x * 5.51) * 0.01551;
 	}
 
 	double IceSurface::GetWaterLevel_Detailed(const vec3& p)

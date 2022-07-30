@@ -161,14 +161,13 @@ namespace gfx
 			vec3 caveOffset = vec3(position.z - caveStart.x, (position.y - caveStart.y) * 0.65, 0.0);
 			const double caveSdf = caveOffset.Length();
 
-			isCave = Saturate(1.0 - caveSdf * 0.551);// * (largeHeightRatio > 0.0);
+			isCave = Saturate(1.0 - caveSdf * 0.551);
 			n0 = Lerp(n0, 1.0, isCave);
 			n1 = Lerp(n1, 0.0, isCave);
 		}
 		const double isIceSurface = Saturate((n1 - n0 + heightSlopeOffset) * heightSlopeQ);
 
-		const double largeDifferenceNoise = Saturate((1.0 - abs(n0 - n1)) * 1.8 - 0.8);// * (1.0 + isCave * 1.0);
-		// Restrict small cracks to ice region
+		const double largeDifferenceNoise = Saturate((1.0 - abs(n0 - n1)) * 1.8 - 0.8);
 		const double smallDifferenceNoise = Saturate((1.0 - abs(n2 - n3)) * 1.8 - 0.8) * isIceSurface;
 
 		const double spread = Saturate(position.y / 0.42);
