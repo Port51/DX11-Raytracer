@@ -122,11 +122,20 @@ namespace gfx
 
 	vec3 IceSurface::GetSurfaceNormal(const vec3& p, const float isIceSurface)
 	{
-		// Lerp between waves and ice surface
-		const vec3 iceNormal = vec3(0, -1, 0);
+		// Ice normals
+		const double n0 = PerlinNoise::GetNoise3D(p * vec3(1001.0, 0.0, 1001.0), 3u);
+		const double n1 = PerlinNoise::GetNoise3D(p * vec3(1001.0, 0.0, 1001.0) + vec3(0.4289230, 80.239, 324.032), 3u);
+
+		// todo: set this elsewhere!
+		const vec3 displ = p - vec3(7.7, 2.05, 2.2);
+		const double normalScale = 12.0 + Dot(displ, displ) * 0.11;
+
+		// Prevent artifacts around the horizon
+		const vec3 iceNormal = (normalScale < 50.0) ? Normalize(vec3(n0 * 2.0 - 1.0, -normalScale, n1 * 2.0 - 1.0)) : vec3(0, -1, 0);
 
 		if (isIceSurface < 0.999)
 		{
+			// Lerp to water normals
 			const vec3 waterNormal = GetWaterNormal(p);
 			return Normalize(Lerp(waterNormal, iceNormal, isIceSurface));
 		}

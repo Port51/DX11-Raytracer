@@ -99,8 +99,7 @@ namespace gfx
 
 		if (result.a < visibilityStopThreshold) return result;
 
-		vec3 direction = Normalize(Normalize(rayIn.GetDirection()) + rec.normalWS * 0.11);
-		direction = Refract(Normalize(rayIn.GetDirection()), -rec.normalWS, 1.f / 1.33f);
+		const vec3 direction = Refract(Normalize(rayIn.GetDirection()), -rec.normalWS, 1.f / 1.33f);
 
 		double sectionLength;
 		double stepLength;
