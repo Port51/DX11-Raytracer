@@ -9,10 +9,10 @@ namespace gfx
     public:
         SolidColorTexture() = default;
         SolidColorTexture(const Color c);
-        SolidColorTexture(const double red, const double green, const double blue);
+        SolidColorTexture(const f32 red, const f32 green, const f32 blue);
 
     public:
-        virtual Color GetColor(const double u, const double v, const vec3& p) const override;
+        virtual Color GetColor(const f32 u, const f32 v, const vec3f& p) const override;
 
     private:
         const Color m_color;

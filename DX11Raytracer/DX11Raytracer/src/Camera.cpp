@@ -3,13 +3,13 @@
 
 namespace gfx
 {
-    Camera::Camera(const vec3 positionWS, const vec3 lookAtWS, const vec3 upVec, const double vFov, const double aspectRatio, const double aperture, const double focusDist)
+    Camera::Camera(const vec3f positionWS, const vec3f lookAtWS, const vec3f upVec, const f32 vFov, const f32 aspectRatio, const f32 aperture, const f32 focusDist)
         : m_positionWS(positionWS)
     {
-        const double theta = DegreesToRadians(vFov);
-        const double halfAngle = std::tan(theta * 0.5);
+        const f32 theta = DegreesToRadians(vFov);
+        const f32 halfAngle = std::tan(theta * 0.5f);
 
-        m_viewportHeight = 2.0 * halfAngle;
+        m_viewportHeight = 2.0f * halfAngle;
         m_viewportWidth = aspectRatio * m_viewportHeight;
 
         m_forwardBasis = Normalize(lookAtWS - positionWS);
@@ -17,24 +17,24 @@ namespace gfx
         m_verticalBasis = Cross(m_forwardBasis, m_horizontalBasis); // viewportHeight * v * focusDist;
         m_focusDist = focusDist;
 
-        m_lensRadius = aperture * 0.5;
+        m_lensRadius = aperture * 0.5f;
     }
 
-    Ray Camera::GetRay(const double u, const double v, const uint pixelIdx, const bool useDepthOfField) const
+    Ray Camera::GetRay(const f32 u, const f32 v, const uint pixelIdx, const bool useDepthOfField) const
     {
         if (useDepthOfField)
         {
             // Offset rays by disc
-            const vec3 discOffset = m_lensRadius * vec3::RandomInUnitDisk();
-            const vec3 rayOffset = m_horizontalBasis * discOffset.x + m_verticalBasis * discOffset.y;
-            const vec3 rayDir = (m_forwardBasis + m_horizontalBasis * (m_viewportWidth * u) + m_verticalBasis * (m_viewportHeight * v)) * m_focusDist - rayOffset;
-            return Ray(m_positionWS + rayOffset, rayDir, Random::RandomDouble(), Random::RandomDouble(), pixelIdx);
+            const vec3f discOffset = m_lensRadius * vec3f::RandomInUnitDisk();
+            const vec3f rayOffset = m_horizontalBasis * discOffset.x + m_verticalBasis * discOffset.y;
+            const vec3f rayDir = (m_forwardBasis + m_horizontalBasis * (m_viewportWidth * u) + m_verticalBasis * (m_viewportHeight * v)) * m_focusDist - rayOffset;
+            return Ray(m_positionWS + rayOffset, rayDir, Random::RandomFloat(), Random::RandomFloat(), pixelIdx);
         }
         else
         {
             // Normal ray with no DOF
-            const vec3 rayDir = m_forwardBasis + m_horizontalBasis * (m_viewportWidth * u) + m_verticalBasis * (m_viewportHeight * v);
-            return Ray(m_positionWS, rayDir, Random::RandomDouble(), Random::RandomDouble(), pixelIdx);
+            const vec3f rayDir = m_forwardBasis + m_horizontalBasis * (m_viewportWidth * u) + m_verticalBasis * (m_viewportHeight * v);
+            return Ray(m_positionWS, rayDir, Random::RandomFloat(), Random::RandomFloat(), pixelIdx);
         }
     }
 }

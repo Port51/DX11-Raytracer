@@ -8,16 +8,16 @@ namespace gfx
     {
     public:
         AABB();
-        AABB(const vec3& a, const vec3& b);
+        AABB(const vec3f& a, const vec3f& b);
     public:
-        void Set(const vec3& a, const vec3& b);
-        const vec3 GetMinimum() const;
-        const vec3 GetMaximum() const;
-        const bool Hit(const Ray& r, const double t_min, const double t_max) const;
+        void Set(const vec3f& a, const vec3f& b);
+        const vec3f GetMinimum() const;
+        const vec3f GetMaximum() const;
+        const bool Hit(const Ray& r, const f32 t_min, const f32 t_max) const;
 
         static AABB GetCombinedAABB(const AABB& box0, const AABB& box1);
     private:
-        vec3 m_minimum;
-        vec3 m_maximum;
+        vec3f m_minimum;
+        vec3f m_maximum;
     };
 }

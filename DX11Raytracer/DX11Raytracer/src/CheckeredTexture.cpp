@@ -7,12 +7,12 @@ namespace gfx
         : m_even(even), m_odd(odd)
     {}
 
-    Color CheckeredTexture::GetColor(const double u, const double v, const vec3 & p) const
+    Color CheckeredTexture::GetColor(const f32 u, const f32 v, const vec3f & p) const
     {
-        const double scale = 2.0;
-        const vec3 frac = vec3(Frac(p.x * scale), Frac(p.y * scale), Frac(p.z * scale)) - 0.5;
+        const f32 scale = 2.0;
+        const vec3f frac = vec3f(Frac(p.x * scale), Frac(p.y * scale), Frac(p.z * scale)) - 0.5;
 
-        const double checker = frac.x * frac.y * frac.z;
+        const f32 checker = frac.x * frac.y * frac.z;
         return (checker < 0.0) ? m_odd : m_even;
     }
 }

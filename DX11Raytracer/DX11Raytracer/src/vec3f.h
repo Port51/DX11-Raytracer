@@ -11,8 +11,9 @@ namespace gfx
     {
     public:
         vec3f() : x(0.f), y(0.f), z(0.f) {}
-        vec3f(const float value) : x(value), y(value), z(value) {}
-        vec3f(const float x, const float y, const float z) : x(x), y(y), z(z) {}
+        vec3f(const f32 value) : x(value), y(value), z(value) {}
+        vec3f(const f32 x, const f32 y, const f32 z) : x(x), y(y), z(z) {}
+        vec3f(const u32 x, const u32 y, const u32 z) : x(static_cast<f32>(x)), y(static_cast<f32>(y)), z(static_cast<f32>(z)) {}
 
     public:
         vec3f operator-() const { return vec3f(-x, -y, -z); }
@@ -25,7 +26,7 @@ namespace gfx
             return *this;
         }
 
-        vec3f& operator*=(const float t)
+        vec3f& operator*=(const f32 t)
         {
             x *= t;
             y *= t;
@@ -33,7 +34,7 @@ namespace gfx
             return *this;
         }
 
-        vec3f& operator/=(const float t)
+        vec3f& operator/=(const f32 t)
         {
             x /= t;
             y /= t;
@@ -42,7 +43,7 @@ namespace gfx
         }
 
     public:
-        const float Dot(const vec3f& other) const
+        const f32 Dot(const vec3f& other) const
         {
             return x * other.x
                 + y * other.y
@@ -54,12 +55,12 @@ namespace gfx
             return Dot(*this) < 1e-5 * 1e-5;
         }
 
-        const float Length() const
+        const f32 Length() const
         {
             return sqrt(LengthSqr());
         }
 
-        const float LengthSqr() const
+        const f32 LengthSqr() const
         {
             return x * x + y * y + z * z;
         }
@@ -69,7 +70,7 @@ namespace gfx
             return vec3f(Random::RandomFloat(), Random::RandomFloat(), Random::RandomFloat());
         }
 
-        static const vec3f Random(float min, float max)
+        static const vec3f Random(f32 min, f32 max)
         {
             return vec3f(Random::RandomFloat(min, max), Random::RandomFloat(min, max), Random::RandomFloat(min, max));
         }
@@ -102,9 +103,9 @@ namespace gfx
         }
 
     public:
-        float x;
-        float y;
-        float z;
+        f32 x;
+        f32 y;
+        f32 z;
     };
 
     // vec3f Utility Functions
@@ -129,17 +130,17 @@ namespace gfx
         return vec3f(u.x * v.x, u.y * v.y, u.z * v.z);
     }
 
-    inline vec3f operator*(float t, const vec3f& v)
+    inline vec3f operator*(f32 t, const vec3f& v)
     {
         return vec3f(t * v.x, t * v.y, t * v.z);
     }
 
-    inline vec3f operator*(const vec3f& v, float t)
+    inline vec3f operator*(const vec3f& v, f32 t)
     {
         return t * v;
     }
 
-    inline vec3f operator/(vec3f v, float t)
+    inline vec3f operator/(vec3f v, f32 t)
     {
         return (1.f / t) * v;
     }
@@ -149,7 +150,7 @@ namespace gfx
         return vec3f(u.x / v.x, u.y / v.y, u.z / v.z);
     }
 
-    inline float Dot(const vec3f& u, const vec3f& v)
+    inline f32 Dot(const vec3f& u, const vec3f& v)
     {
         return u.x * v.x
             + u.y * v.y
@@ -163,9 +164,9 @@ namespace gfx
             u.x * v.y - u.y * v.x);
     }
 
-    inline vec3f Lerp(const vec3f& u, const vec3f& v, const float lerp)
+    inline vec3f Lerp(const vec3f& u, const vec3f& v, const f32 lerp)
     {
-        const float rcpLerp = 1.f - lerp;
+        const f32 rcpLerp = 1.f - lerp;
         return vec3f(u.x * rcpLerp + lerp * v.x,
             u.y * rcpLerp + lerp * v.y,
             u.z * rcpLerp + lerp * v.z);
@@ -176,9 +177,9 @@ namespace gfx
         return v - 2.f * Dot(v, n) * n;
     }
 
-    inline vec3f Refract(const vec3f& uv, const vec3f& n, float etai_over_etat)
+    inline vec3f Refract(const vec3f& uv, const vec3f& n, f32 etai_over_etat)
     {
-        const float cosTheta = fmin(Dot(-uv, n), 1.f);
+        const f32 cosTheta = fmin(Dot(-uv, n), 1.f);
         const vec3f r_out_perp = etai_over_etat * (uv + cosTheta * n);
         const vec3f r_out_parallel = -sqrt(fabs(1.f - r_out_perp.LengthSqr())) * n;
         return r_out_perp + r_out_parallel;

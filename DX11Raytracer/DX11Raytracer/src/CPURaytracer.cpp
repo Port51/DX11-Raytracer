@@ -36,21 +36,21 @@ namespace gfx
     {
         RendererList rendererList;
 
-        auto material1 = std::make_shared<MetalMaterial>(Color(0.5f, 0.5f, 1.0f, 1.0f), 0.0);
-        rendererList.Add(std::make_unique<SphereObject>(vec3(0.25, 1.5, -2.45), 1.0, material1));
+        auto material1 = std::make_shared<MetalMaterial>(Color(0.5f, 0.5f, 1.0f, 1.0f), 0.0f);
+        rendererList.Add(std::make_unique<SphereObject>(vec3f(0.25f, 1.5f, -2.45f), 1.0f, material1));
 
-        auto material2 = std::make_shared<MetalMaterial>(Color(1.0f), 0.0);
-        rendererList.Add(std::make_unique<SphereObject>(vec3(0.25, 1.5, 4.05), 1.0, material2));
+        auto material2 = std::make_shared<MetalMaterial>(Color(1.0f), 0.0f);
+        rendererList.Add(std::make_unique<SphereObject>(vec3f(0.25f, 1.5f, 4.05f), 1.0f, material2));
 
-        auto material3 = std::make_shared<MetalMaterial>(Color(1.0f, 0.2f, 0.0f, 1.0f), 0.0);
-        rendererList.Add(std::make_unique<SphereObject>(vec3(0.25, 1.5, 0), 1.0, material3));
+        auto material3 = std::make_shared<MetalMaterial>(Color(1.0f, 0.2f, 0.0f, 1.0f), 0.0f);
+        rendererList.Add(std::make_unique<SphereObject>(vec3f(0.25f, 1.5f, 0.f), 1.0f, material3));
 
-        auto material4 = std::make_shared<MetalMaterial>(Color(1.0f, 1.0f, 1.0f, 1.0f), 0.215);
-        rendererList.Add(std::make_unique<SphereObject>(vec3(6.35, 0.475, -3.05), 0.427, material4));
+        auto material4 = std::make_shared<MetalMaterial>(Color(1.0f, 1.0f, 1.0f, 1.0f), 0.215f);
+        rendererList.Add(std::make_unique<SphereObject>(vec3f(6.35f, 0.475f, -3.05f), 0.427f, material4));
 
         // Volumetric ice
         auto iceMaterial = std::make_shared<IceMaterial>();
-        rendererList.Add(std::make_unique<IceSurface>(vec3(0, 0, 0), iceMaterial));
+        rendererList.Add(std::make_unique<IceSurface>(vec3f(0.f, 0.f, 0.f), iceMaterial));
 
         m_pRendererList = std::make_unique<BVHNode>(rendererList);
 
@@ -64,46 +64,46 @@ namespace gfx
     {
         RendererList rendererList;
 
-        auto mirrorMaterial = std::make_shared<MetalMaterial>(Color(1.0f), 0.05);
-        rendererList.Add(std::make_unique<SphereObject>(vec3(0.0, 1.5, 0.0), 1.5, mirrorMaterial));
+        auto mirrorMaterial = std::make_shared<MetalMaterial>(Color(1.0f), 0.05f);
+        rendererList.Add(std::make_unique<SphereObject>(vec3f(0.0f, 1.5f, 0.0f), 1.5f, mirrorMaterial));
 
         for (int a = -11; a < 11; a++)
         {
             for (int b = -11; b < 11; b++)
             {
-                double choice = Random::RandomDouble();
-                vec3 center(a + 0.9 * Random::RandomDouble(), 0.2, b + 0.9 * Random::RandomDouble());
+                f32 choice = Random::RandomFloat();
+                vec3f center(a + 0.9f * Random::RandomFloat(), 0.2f, b + 0.9f * Random::RandomFloat());
 
-                if ((center - vec3(4, 0.2, 0)).Length() > 0.9)
+                if ((center - vec3f(4.f, 0.2f, 0.f)).Length() > 0.9f)
                 {
                     if (choice < 0.8)
                     {
                         // diffuse
                         auto albedo = Color::Random() * Color::Random();
                         auto material = std::make_shared<LambertianMaterial>(albedo);
-                        rendererList.Add(std::make_unique<SphereObject>(center, 0.2, material));
+                        rendererList.Add(std::make_unique<SphereObject>(center, 0.2f, material));
                     }
                     else if (choice < 0.95)
                     {
                         // metal
-                        auto albedo = Color::Random(0.5, 1);
-                        auto fuzz = Random::RandomDouble(0, 0.5);
+                        auto albedo = Color::Random(0.5f, 1.f);
+                        auto fuzz = Random::RandomFloat(0.f, 0.5f);
                         auto material = std::make_shared<MetalMaterial>(albedo, fuzz);
-                        rendererList.Add(std::make_unique<SphereObject>(center, 0.2, material));
+                        rendererList.Add(std::make_unique<SphereObject>(center, 0.2f, material));
                     }
                     else
                     {
                         // glass
-                        auto material = std::make_shared<DielectricMaterial>(1.5);
-                        rendererList.Add(std::make_unique<SphereObject>(center, 0.2, material));
+                        auto material = std::make_shared<DielectricMaterial>(1.5f);
+                        rendererList.Add(std::make_unique<SphereObject>(center, 0.2f, material));
                     }
                 }
             }
         }
 
-        auto groundMaterial = std::make_shared<LambertianMaterial>(std::make_shared<CheckeredTexture>(Color(0.5, 0.5, 0.5, 0.5), Color(0.25, 0.25, 1.0, 0.5)));
-        auto grassMaterial = std::make_shared<LambertianMaterial>(Color(0.2, 0.8, 0.2, 1.0));
-        rendererList.Add(std::make_unique<SphereObject>(vec3(0, -1000, 0), 1000, grassMaterial));
+        auto groundMaterial = std::make_shared<LambertianMaterial>(std::make_shared<CheckeredTexture>(Color(0.5f, 0.5f, 0.5f, 0.5f), Color(0.25f, 0.25f, 1.0f, 0.5f)));
+        auto grassMaterial = std::make_shared<LambertianMaterial>(Color(0.2f, 0.8f, 0.2f, 1.0f));
+        rendererList.Add(std::make_unique<SphereObject>(vec3f(0.f, -1000.f, 0.f), 1000.f, grassMaterial));
 
         m_pRendererList = std::make_unique<BVHNode>(rendererList);
     }
@@ -114,11 +114,11 @@ namespace gfx
 
         const int maxBounces = 20;
         const int samplesPerPixel = (gBufferIdx == 0u) ? 5 : 1;
-        const float sampleScale = 1.0f / samplesPerPixel;
+        const f32 sampleScale = 1.0f / samplesPerPixel;
         const bool useDepthOfField = (gBufferIdx == 0u) ? UseDepthOfField : false;
 
-        const float multisampleScale0 = static_cast<float>(passIteration);
-        const float multisampleScale1 = 1.0f / static_cast<float>(passIteration + 1u);
+        const f32 multisampleScale0 = static_cast<f32>(passIteration);
+        const f32 multisampleScale1 = 1.0f / static_cast<f32>(passIteration + 1u);
 
         for (uint lx = 0u; lx < TileSize; ++lx)
         {
@@ -133,10 +133,10 @@ namespace gfx
                 {
                     // NDC coords
                     // Randomness creates AA, but shouldn't be used for ice volumetrics
-                    const double sx = static_cast<double>(x) + ((gBufferIdx != 1u) ? Random::RandomDouble(-0.5, 0.5) : 0.0);
-                    const double sy = static_cast<double>(y) + ((gBufferIdx != 1u) ? Random::RandomDouble(-0.5, 0.5) : 0.0);
-                    const double u = sx / (ScreenWidth - 1) * 2.0 - 1.0;
-                    const double v = sy / (ScreenHeight - 1) * 2.0 - 1.0;
+                    const f32 sx = static_cast<f32>(x) + ((gBufferIdx != 1u) ? Random::RandomFloat(-0.5f, 0.5f) : 0.0f);
+                    const f32 sy = static_cast<f32>(y) + ((gBufferIdx != 1u) ? Random::RandomFloat(-0.5f, 0.5f) : 0.0f);
+                    const f32 u = sx / (ScreenWidth - 1) * 2.0f - 1.0f;
+                    const f32 v = sy / (ScreenHeight - 1) * 2.0f - 1.0f;
 
                     Ray r = camera.GetRay(u, v, pixelIdx, useDepthOfField);
                     pixelColor += (GetRayColor(r, maxBounces, gBuffer, gBufferIdx, passIteration) * sampleScale);
@@ -148,7 +148,7 @@ namespace gfx
                     if (!UseRaymarchSlices)
                     {
                         // New, accurate method
-                        const float alphaMult = 1.f;// Saturate(1.f - buffer[pixelIdx].a);
+                        const f32 alphaMult = 1.f;// Saturate(1.f - buffer[pixelIdx].a);
                         buffer[pixelIdx].r += pixelColor.r * alphaMult;
                         buffer[pixelIdx].g += pixelColor.g * alphaMult;
                         buffer[pixelIdx].b += pixelColor.b * alphaMult;
@@ -181,13 +181,13 @@ namespace gfx
 
     const Color CPURaytracer::GetRayColor(Ray& ray, const int depth, const GBuffer& gBuffer, const uint gBufferIdx, const uint passIteration) const
     {
-        if (depth <= 0) return Color(0.0);
+        if (depth <= 0.f) return Color(0.0f);
 
         RayHitRecord rhr;
-        if (m_pRendererList->Hit(ray, 0.001, Infinity, rhr, gBufferIdx))
+        if (m_pRendererList->Hit(ray, 0.001f, Infinity, rhr, gBufferIdx))
         {
             // Calculate fog factor
-            const float fogFactor = (gBufferIdx == 0u) ? Saturate(1.f - std::exp(rhr.time * rhr.time * -0.000177f)) : 0.f;
+            const f32 fogFactor = (gBufferIdx == 0u) ? Saturate(1.f - std::exp(rhr.time * rhr.time * -0.000177f)) : 0.f;
 
             // Do more bounces!
             // Bounces and attenuation color are determined by the material we just hit

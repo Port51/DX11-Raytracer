@@ -16,8 +16,8 @@ namespace gfx
 
     const bool LambertianMaterial::Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Color& emission, Ray& scattered, const GBuffer& gBuffer, const uint gBufferIdx, const uint passIteration) const
     {
-        //vec3 scatterDirWS = rec.normalWS + Normalize(vec3::RandomInUnitSphere()); // normalize to use Lambertian distribution
-        vec3 scatterDirWS = vec3::RandomInHemisphere(rec.normalWS); // normalize to use Lambertian distribution
+        //vec3f scatterDirWS = rec.normalWS + Normalize(vec3f::RandomInUnitSphere()); // normalize to use Lambertian distribution
+        vec3f scatterDirWS = vec3f::RandomInHemisphere(rec.normalWS); // normalize to use Lambertian distribution
                                                                           // Catch degenerate scatter direction
         if (scatterDirWS.IsNearlyZero())
             scatterDirWS = rec.normalWS;

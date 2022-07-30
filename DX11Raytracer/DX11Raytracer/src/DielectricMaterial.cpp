@@ -3,7 +3,7 @@
 
 namespace gfx
 {
-	DielectricMaterial::DielectricMaterial(const double indexOfRefraction)
+	DielectricMaterial::DielectricMaterial(const f32 indexOfRefraction)
         : m_indexOfRefraction(indexOfRefraction)
     {}
 
@@ -15,20 +15,20 @@ namespace gfx
         // n0 and n1 are refractive indices of materials
         // angles are relative to normals
 
-        attenuation = Color(1.0, 1.0, 1.0, 1.0);
-        emission = Color(0.0, 0.0, 0.0, 0.0);
+        attenuation = Color(1.0f, 1.0f, 1.0f, 1.0f);
+        emission = Color(0.0f, 0.0f, 0.0f, 0.0f);
 
         // This assumes the other medium is air - need to update if adding more complicated situations
-        const double refractionRatio = rec.isFrontFacing ? (1.0 / m_indexOfRefraction) : m_indexOfRefraction;
+        const f32 refractionRatio = rec.isFrontFacing ? (1.0f / m_indexOfRefraction) : m_indexOfRefraction;
 
-        const double cosTheta = fmin(Dot(-rayIn.GetDirection(), rec.normalWS), 1.0);
-        const double sinTheta = sqrt(1.0 - cosTheta * cosTheta);
+        const f32 cosTheta = fmin(Dot(-rayIn.GetDirection(), rec.normalWS), 1.0f);
+        const f32 sinTheta = sqrt(1.0f - cosTheta * cosTheta);
 
-        const bool totalInternalReflection = refractionRatio * sinTheta > 1.0;
+        const bool totalInternalReflection = refractionRatio * sinTheta > 1.0f;
         const bool fresnelReflection = SchlickApprox(cosTheta, refractionRatio) > rayIn.GetRandomSeed();
 
         // Either reflect or refract
-        vec3 direction;
+        vec3f direction;
         if (totalInternalReflection || fresnelReflection)
             direction = Reflect(rayIn.GetDirection(), rec.normalWS);
         else
@@ -43,11 +43,11 @@ namespace gfx
         return (gBufferIdx != 1u);
     }
 
-    double DielectricMaterial::SchlickApprox(const double cosine, const double reflectiveIdx)
+    f32 DielectricMaterial::SchlickApprox(const f32 cosine, const f32 reflectiveIdx)
     {
         // Use Schlick's approximation for reflectance.
-        double r0 = (1.0 - reflectiveIdx) / (1.0 + reflectiveIdx);
+        f32 r0 = (1.0f - reflectiveIdx) / (1.0f + reflectiveIdx);
         r0 = r0 * r0;
-        return r0 + (1.0 - r0) * std::pow((1.0 - cosine), 5.0);
+        return r0 + (1.0f - r0) * std::pow((1.0f - cosine), 5.0f);
     }
 }

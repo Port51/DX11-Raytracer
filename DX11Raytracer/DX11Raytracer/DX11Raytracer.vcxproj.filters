@@ -155,9 +155,6 @@
     <ClInclude Include="src\CPURaytracer.h">
       <Filter>Header Files\Raytracing</Filter>
     </ClInclude>
-    <ClInclude Include="src\vec3.h">
-      <Filter>Header Files\Raytracing</Filter>
-    </ClInclude>
     <ClInclude Include="src\Ray.h">
       <Filter>Header Files\Raytracing</Filter>
     </ClInclude>

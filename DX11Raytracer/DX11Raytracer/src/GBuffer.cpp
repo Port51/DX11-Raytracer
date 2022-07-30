@@ -5,8 +5,8 @@ namespace gfx
 {
     GBuffer::GBuffer(const int screenWidth, const int screenHeight)
     {
-        CameraColor.resize(screenWidth * screenHeight);
-        IceRaymarchCache.resize(screenWidth * screenHeight);
+        CameraColor.resize(static_cast<size_t>(screenWidth * screenHeight));
+        IceRaymarchCache.resize(static_cast<size_t>(screenWidth * screenHeight));
 
         // Setup some test data to make sure tiles work correctly
         for (int tx = 0; tx < TileDimensionX; ++tx)
@@ -19,8 +19,8 @@ namespace gfx
                     {
                         int x = TileSize * tx + lx;
                         int y = TileSize * ty + ly;
-                        float v0 = (float)lx / TileSize;
-                        float v1 = (float)ly / TileSize;
+                        f32 v0 = (f32)lx / TileSize;
+                        f32 v1 = (f32)ly / TileSize;
 
                         int tileOffset = (TileSize * TileSize) * (ty * TileDimensionX + tx);
                         int pixelOffset = ly * TileSize + lx;
@@ -28,7 +28,7 @@ namespace gfx
 
                         CameraColor[idx].r = v0;
                         CameraColor[idx].g = v1;
-                        CameraColor[idx].b = (float)x / 256;
+                        CameraColor[idx].b = (f32)x / 256;
                         CameraColor[idx].a = 0;
 
                         IceRaymarchCache[idx] = Color(0.f, 0.f, 0.f, 1.f);

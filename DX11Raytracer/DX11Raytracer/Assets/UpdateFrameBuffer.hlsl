@@ -3,8 +3,8 @@ RWTexture2D<float4> Framebuffer : register(u0);
 
 /*cbuffer Dither_CB : register(b0)
 {
-    float _ShadowDither;
-    float _MidDither;
+    f32 _ShadowDither;
+    f32 _MidDither;
     float2 padding;
 };*/
 

@@ -6,6 +6,6 @@ namespace gfx
     class Texture
     {
     public:
-        virtual Color GetColor(const double u, const double v, const vec3& p) const = 0;
+        virtual Color GetColor(const f32 u, const f32 v, const vec3f& p) const = 0;
     };
 }

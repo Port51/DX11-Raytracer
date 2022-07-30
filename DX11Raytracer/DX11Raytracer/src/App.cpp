@@ -62,12 +62,12 @@ namespace gfx
         m_pFullScreenBlit = std::make_unique<FullScreenBlit>(*m_pGfx);
         m_pCPURaytracer = std::make_unique<CPURaytracer>();
 
-        vec3 camWS = vec3(7.7, 2.05, 2.2);
-        //camWS = vec3(0, 20, 0.5);
-        vec3 targetWS = vec3(0, -3.0, 0);
-        const double aperture = 0.1;
-        const double focusDist = (camWS - targetWS).Length();
-        m_pCamera = std::make_unique<Camera>(camWS, targetWS, vec3(0, 1, 0), 45, AspectRatio, aperture, focusDist);
+        vec3f camWS = vec3f(7.7f, 2.05f, 2.2f);
+        //camWS = vec3f(0, 20, 0.5);
+        vec3f targetWS = vec3f(0.f, -3.0f, 0.f);
+        const f32 aperture = 0.1f;
+        const f32 focusDist = (camWS - targetWS).Length();
+        m_pCamera = std::make_unique<Camera>(camWS, targetWS, vec3f(0.f, 1.f, 0.f), 45.f, AspectRatio, aperture, focusDist);
     }
 
     App::~App()
@@ -193,7 +193,7 @@ namespace gfx
         D3D11_MAPPED_SUBRESOURCE mappedSubresource;
         m_pGfx->m_pDeviceContext->Map(m_pImageBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
 
-        float* sd = reinterpret_cast<float*>(mappedSubresource.pData);
+        f32* sd = reinterpret_cast<f32*>(mappedSubresource.pData);
         memcpy(sd, buffer.data(), sizeof(buffer.at(0)) * buffer.size()); // todo: only map what's changed
 
         m_pGfx->m_pDeviceContext->Unmap(m_pImageBuffer.Get(), 0);

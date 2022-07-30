@@ -12,7 +12,7 @@ namespace gfx
 		Graphics(const int screenWidth, const int screenHeight, const char* windowTitle);
 		~Graphics();
 	public:
-		void ClearRenderTarget(const float r, const float g, const float b, const float a) const;
+		void ClearRenderTarget(const f32 r, const f32 g, const f32 b, const f32 a) const;
 		void SetViewport(const int x, const int y, const int width, const int height) const;
 		ID3D11DeviceContext1& GetContext() const;
 	public:

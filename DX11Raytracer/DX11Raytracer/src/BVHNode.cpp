@@ -25,14 +25,14 @@ namespace gfx
         else
         {
             // Find extents of centers, which will be used as an estimate for where to create a split
-            vec3 minPosition = src.at(start)->GetCurrentPosition();
-            vec3 maxPosition = minPosition;
+            vec3f minPosition = src.at(start)->GetCurrentPosition();
+            vec3f maxPosition = minPosition;
             for (size_t i = 1, ct = src.size(); i < ct; ++i)
             {
                 minPosition = MinVec3(minPosition, src.at(i)->GetCurrentPosition());
                 maxPosition = MinVec3(maxPosition, src.at(i)->GetCurrentPosition());
             }
-            const vec3 range = maxPosition - minPosition;
+            const vec3f range = maxPosition - minPosition;
 
             // Choose split most likely to be evenly divided
             const auto comparator = (range.x > range.y && range.x > range.z) ? CompareAABB_X
@@ -62,7 +62,7 @@ namespace gfx
         return true;
     }
 
-    const bool BVHNode::Hit(const Ray& r, const double t_min, const double t_max, RayHitRecord& rec, const uint gBufferIdx) const
+    const bool BVHNode::Hit(const Ray& r, const f32 t_min, const f32 t_max, RayHitRecord& rec, const uint gBufferIdx) const
     {
         if (!m_aabb.Hit(r, t_min, t_max))
             return false;

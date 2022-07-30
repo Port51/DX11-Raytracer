@@ -21,11 +21,11 @@ namespace gfx
         return m_renderers;
     }
 
-    const bool RendererList::Hit(const Ray& r, const double t_min, const double t_max, RayHitRecord& rec, const uint gBufferIdx) const
+    const bool RendererList::Hit(const Ray& r, const f32 t_min, const f32 t_max, RayHitRecord& rec, const uint gBufferIdx) const
     {
         RayHitRecord temp;
         bool hitAnything = false;
-        double closestSoFar = t_max;
+        f32 closestSoFar = t_max;
 
         for (const auto& renderer : m_renderers)
         {

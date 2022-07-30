@@ -11,7 +11,7 @@ namespace gfx
         CheckeredTexture(const Color even, const Color odd);
 
     public:
-        virtual Color GetColor(const double u, const double v, const vec3& p) const override;
+        virtual Color GetColor(const f32 u, const f32 v, const vec3f& p) const override;
 
     private:
         const Color m_odd;

@@ -7,28 +7,28 @@ namespace gfx
     {
     public:
         Ray();
-        Ray(const Ray& parent, const vec3& origin, const vec3& direction);
-        Ray(const vec3& origin, const vec3& direction, const double time, const double randomSeed);
-        Ray(const vec3& origin, const vec3& direction, const double time, const double randomSeed, const int pixelIdx);
+        Ray(const Ray& parent, const vec3f& origin, const vec3f& direction);
+        Ray(const vec3f& origin, const vec3f& direction, const f32 time, const f32 randomSeed);
+        Ray(const vec3f& origin, const vec3f& direction, const f32 time, const f32 randomSeed, const int pixelIdx);
 
     public:
-        const double GetTime() const;
-        const double GetRandomSeed() const;
-        const vec3& GetOrigin() const;
-        const vec3& GetDirection() const;
-        const vec3& GetRcpDirection() const;
-        const vec3 GetPositionAfterTime(const double t) const;
-        const bool TryGetPixelIdx(const double u, const double v, uint& pixelIdx) const;
+        const f32 GetTime() const;
+        const f32 GetRandomSeed() const;
+        const vec3f& GetOrigin() const;
+        const vec3f& GetDirection() const;
+        const vec3f& GetRcpDirection() const;
+        const vec3f GetPositionAfterTime(const f32 t) const;
+        const bool TryGetPixelIdx(const f32 u, const f32 v, uint& pixelIdx) const;
 
     private:
         void SetRcpDirection();
 
     private:
-        double m_time;
-        double m_randomSeed;
-        vec3 m_origin;
-        vec3 m_direction;
-        vec3 m_rcpDirection;
+        f32 m_time;
+        f32 m_randomSeed;
+        vec3f m_origin;
+        vec3f m_direction;
+        vec3f m_rcpDirection;
     public: // temporary
         int m_pixelIdx;
     };

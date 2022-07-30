@@ -6,18 +6,18 @@ namespace gfx
 		: m_upwardColor(upwardColor), m_horizonColor(horizonColor), m_downwardColor(downwardColor)
 	{}
 
-	const Color& Skybox::GetColor(const vec3 & direction)
+	const Color& Skybox::GetColor(const vec3f & direction)
 	{
-		const vec3 directionNorm = Normalize(direction);
-		const double vertical = std::abs(directionNorm.y);
+		const vec3f directionNorm = Normalize(direction);
+		const f32 vertical = std::abs(directionNorm.y);
 
-		const double upwardLerp = std::pow(vertical, 0.25);
+		const f32 upwardLerp = std::pow(vertical, 0.25f);
 		const Color upwardColor = Lerp(m_horizonColor, m_upwardColor, upwardLerp);
 
-		const double downwardLerp = std::pow(vertical, 0.09);
+		const f32 downwardLerp = std::pow(vertical, 0.09f);
 		const Color downwardColor = Lerp(m_horizonColor, m_downwardColor, downwardLerp);
 
-		return (directionNorm.y > 0.0) ? upwardColor : downwardColor;
+		return (directionNorm.y > 0.0f) ? upwardColor : downwardColor;
 	}
 
 	const Color& Skybox::GetFogColor()

@@ -1,36 +1,27 @@
 #pragma once
-
+#include "CommonHeader.h"
 #include <random>
 
-class Random
+namespace gfx
 {
-public:
-	static double RandomDouble()
+	class Random
 	{
-		static std::uniform_real_distribution<double> distribution(0.0, 1.0);
-		static std::mt19937 generator;
-		return distribution(generator);
-	}
+	public:
+		static f32 RandomFloat()
+		{
+			static std::uniform_real_distribution<f32> distribution(0.0f, 1.0f);
+			static std::mt19937 generator;
+			return distribution(generator);
+		}
 
-	static double RandomDouble(const double min, const double max)
-	{
-		return RandomDouble() * (max - min) + min;
-	}
+		static f32 RandomFloat(const f32 min, const f32 max)
+		{
+			return RandomFloat() * (max - min) + min;
+		}
 
-	static float RandomFloat()
-	{
-		static std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
-		static std::mt19937 generator;
-		return distribution(generator);
-	}
-
-	static float RandomFloat(const float min, const float max)
-	{
-		return RandomFloat() * (max - min) + min;
-	}
-	
-	static int RandomInt(const int min, const int max)
-	{
-		return static_cast<int>(RandomDouble(static_cast<double>(min), static_cast<double>(max + 1)));
-	}
-};
+		static int RandomInt(const int min, const int max)
+		{
+			return static_cast<int>(RandomFloat(static_cast<f32>(min), static_cast<f32>(max + 1)));
+		}
+	};
+}

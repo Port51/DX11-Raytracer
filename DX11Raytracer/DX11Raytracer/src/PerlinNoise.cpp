@@ -3,29 +3,29 @@
 
 namespace gfx
 {
-    const double PerlinNoise::GetNoise3D(const vec3& pd, const uint octaveCt)
+    const f32 PerlinNoise::GetNoise3D(const vec3f& pd, const uint octaveCt)
     {
-        vec3f p = vec3f(static_cast<float>(pd.x) + 1000000.0f, static_cast<float>(pd.y) + 1000000.0f, static_cast<float>(pd.z) + 1000000.0f);
+        vec3f p = vec3f(static_cast<f32>(pd.x) + 1000000.0f, static_cast<f32>(pd.y) + 1000000.0f, static_cast<f32>(pd.z) + 1000000.0f);
         const uvec3 u = uvec3(p.x, p.y, p.z);
 
-        float noise = 0.0;
-        float scale = 1.0;
+        f32 noise = 0.0;
+        f32 scale = 1.0;
         uint pitch = 64u;
         for (uint i = 0; i < octaveCt; ++i)
         {
             const uvec3 u2 = u - (u % uvec3(pitch));
 
             // Bilinear sampling
-            const vec3f lerp = SCurve((p - vec3f(u2.x, u2.y, u2.z)) / static_cast<float>(pitch));
+            const vec3f lerp = SCurve((p - vec3f(u2.x, u2.y, u2.z)) / static_cast<f32>(pitch));
 
-            const float s000 = Hash1DToNoise(Hash3D(u2.x, u2.y, u2.z));
-            const float s100 = Hash1DToNoise(Hash3D(u2.x + pitch, u2.y, u2.z));
-            const float s010 = Hash1DToNoise(Hash3D(u2.x, u2.y + pitch, u2.z));
-            const float s110 = Hash1DToNoise(Hash3D(u2.x + pitch, u2.y + pitch, u2.z));
-            const float s001 = Hash1DToNoise(Hash3D(u2.x, u2.y, u2.z + pitch));
-            const float s101 = Hash1DToNoise(Hash3D(u2.x + pitch, u2.y, u2.z + pitch));
-            const float s011 = Hash1DToNoise(Hash3D(u2.x, u2.y + pitch, u2.z + pitch));
-            const float s111 = Hash1DToNoise(Hash3D(u2.x + pitch, u2.y + pitch, u2.z + pitch));
+            const f32 s000 = Hash1DToNoise(Hash3D(u2.x, u2.y, u2.z));
+            const f32 s100 = Hash1DToNoise(Hash3D(u2.x + pitch, u2.y, u2.z));
+            const f32 s010 = Hash1DToNoise(Hash3D(u2.x, u2.y + pitch, u2.z));
+            const f32 s110 = Hash1DToNoise(Hash3D(u2.x + pitch, u2.y + pitch, u2.z));
+            const f32 s001 = Hash1DToNoise(Hash3D(u2.x, u2.y, u2.z + pitch));
+            const f32 s101 = Hash1DToNoise(Hash3D(u2.x + pitch, u2.y, u2.z + pitch));
+            const f32 s011 = Hash1DToNoise(Hash3D(u2.x, u2.y + pitch, u2.z + pitch));
+            const f32 s111 = Hash1DToNoise(Hash3D(u2.x + pitch, u2.y + pitch, u2.z + pitch));
 
             noise += scale * Lerp(
                 Lerp(Lerp(s000, s100, lerp.x), Lerp(s010, s110, lerp.x), lerp.y),
@@ -35,13 +35,13 @@ namespace gfx
             pitch /= 2u;
         }
 
-        return static_cast<double>(noise);
+        return static_cast<f32>(noise);
     }
 
     // Hash without Sine
     // https://www.shadertoy.com/view/4djSRW
 
-    const float PerlinNoise::HashWithoutSine11(float p)
+    const f32 PerlinNoise::HashWithoutSine11(f32 p)
     {
         p = Frac(p * 0.1031f);
         p *= p + 33.33f;
@@ -84,7 +84,7 @@ namespace gfx
     }
 
     // Modified from http://www.jcgt.org/published/0009/03/02/
-    // Uses fewer instructions and doesn't copy a vec3
+    // Uses fewer instructions and doesn't copy a vec3f
     const uint PerlinNoise::PCG_3D_to_1D(uint x, uint y, uint z)
     {
         x = x * 1664525u + 1013904223u;
@@ -155,15 +155,15 @@ namespace gfx
 
     // Turns a hashed uvec3 into a noise value
 
-    inline const float PerlinNoise::Hash3DToNoise(const uvec3& hash)
+    inline const f32 PerlinNoise::Hash3DToNoise(const uvec3& hash)
     {
-        return (static_cast<float>(hash.y % 65536u) / 65536.0f);
+        return (static_cast<f32>(hash.y % 65536u) / 65536.0f);
     }
 
     // Turns a hashed uint into a noise value
 
-    inline const float PerlinNoise::Hash1DToNoise(const uint hash)
+    inline const f32 PerlinNoise::Hash1DToNoise(const uint hash)
     {
-        return (static_cast<float>(hash % 65536u) / 65536.0f);
+        return (static_cast<f32>(hash % 65536u) / 65536.0f);
     }
 }

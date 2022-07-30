@@ -85,9 +85,9 @@ namespace gfx
         DestroyWindow(m_pWindow);
     }
 
-    void Graphics::ClearRenderTarget(const float r, const float g, const float b, const float a) const
+    void Graphics::ClearRenderTarget(const f32 r, const f32 g, const f32 b, const f32 a) const
     {
-        static float colorArray[4];
+        static f32 colorArray[4];
         colorArray[0] = r;
         colorArray[1] = g;
         colorArray[2] = b;

@@ -4,23 +4,23 @@
 
 namespace gfx
 {
-	RayReceiver::RayReceiver(const vec3 positionWS) : m_positionWS(positionWS)
+	RayReceiver::RayReceiver(const vec3f positionWS) : m_positionWS(positionWS)
 	{
-		m_prevFramePositionWS = m_positionWS + vec3(0, 0.001, 0); // testing motion blur...
+		m_prevFramePositionWS = m_positionWS + vec3f(0.f, 0.001f, 0.f); // testing motion blur...
 	}
 
-	const vec3& RayReceiver::GetCurrentPosition() const
+	const vec3f& RayReceiver::GetCurrentPosition() const
 	{
 		return m_positionWS;
 	}
 
-	const vec3& RayReceiver::GetPreviousFramePosition() const
+	const vec3f& RayReceiver::GetPreviousFramePosition() const
 	{
 		return m_prevFramePositionWS;
 	}
 
-	const vec3 RayReceiver::GetPositionAtTime(const double time) const
+	const vec3f RayReceiver::GetPositionAtTime(const f32 time) const
 	{
-		return m_positionWS * time + m_prevFramePositionWS * (1.0 - time);
+		return m_positionWS * time + m_prevFramePositionWS * (1.0f - time);
 	}
 }

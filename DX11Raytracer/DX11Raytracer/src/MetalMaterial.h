@@ -9,8 +9,8 @@ namespace gfx
     class MetalMaterial : public Material
     {
     public:
-        MetalMaterial(const Color& a, const double roughness);
-        MetalMaterial(std::shared_ptr<Texture> texture, const double roughness);
+        MetalMaterial(const Color& a, const f32 roughness);
+        MetalMaterial(std::shared_ptr<Texture> texture, const f32 roughness);
 
     public:
         virtual const bool Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Color& emission, Ray& scattered, const GBuffer& gBuffer, const uint gBufferIdx, const uint passIteration) const override;
@@ -18,6 +18,6 @@ namespace gfx
 
     private:
         std::shared_ptr<Texture> m_albedoTexture;
-        double m_roughness;
+        f32 m_roughness;
     };
 }

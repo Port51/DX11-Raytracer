@@ -5,18 +5,18 @@
 namespace gfx
 {
 
-	MetalMaterial::MetalMaterial(const Color& a, const double roughness)
+	MetalMaterial::MetalMaterial(const Color& a, const f32 roughness)
         : m_albedoTexture(std::move(std::make_shared<SolidColorTexture>(a))), m_roughness(roughness)
     {}
 
-    MetalMaterial::MetalMaterial(std::shared_ptr<Texture> texture, const double roughness)
+    MetalMaterial::MetalMaterial(std::shared_ptr<Texture> texture, const f32 roughness)
         : m_albedoTexture(std::move(texture)), m_roughness(roughness)
     {}
 
     const bool MetalMaterial::Scatter(const Ray& rayIn, const RayHitRecord& rec, Color& attenuation, Color& emission, Ray& scattered, const GBuffer& gBuffer, const uint gBufferIdx, const uint passIteration) const
     {
-        vec3 reflectedDir = Reflect(rayIn.GetDirection(), rec.normalWS);
-        scattered = Ray(rayIn, rec.positionWS, reflectedDir + m_roughness * vec3::RandomInUnitSphere());
+        vec3f reflectedDir = Reflect(rayIn.GetDirection(), rec.normalWS);
+        scattered = Ray(rayIn, rec.positionWS, reflectedDir + m_roughness * vec3f::RandomInUnitSphere());
         attenuation = m_albedoTexture->GetColor(rec.u, rec.v, rec.positionWS);
         emission = Color(0.0, 0.0, 0.0, 0.0);
         return (Dot(scattered.GetDirection(), rec.normalWS) > 0);
