@@ -1,6 +1,6 @@
-# Multi-Threaded Ray Tracer and Ray Marcher
+# Multi-Threaded Ray Tracer and Volumetric Ray Marcher
 
-This is a personal project based on the "Ray Tracing in One Weekend" series (https://raytracing.github.io/).
+This is a personal project based on the "Ray Tracing in One Weekend" series (https://raytracing.github.io/). I expanded on the series to add multi-threading, ray marched volumetrics, and to show the image iterations over time.
 
 ## Renders:
 ![Ice scene render](DX11Raytracer/Doc/Ice-Scene-0.jpg)
@@ -41,7 +41,7 @@ Immediately after adding ray marching, processing time went through the roof. Ho
 
 To mitigate this, I replaced the image buffer with a G-Buffer class containing separate buffers for the final image and ice volumetrics. The ice volumetrics are calculated for a set number of passes (20 right now), and are then sampled during the final image calculation.
 
-When a ray hits ice, if it has not bounced yet, it samples from the G-Buffer instead of executing the expensive ray marching. If the ray has bounced before, it instead runs the ray marching with much lower quality settings.
+This works great for rays that have not bounced yet, but what about rays that bounce off spheres and enter the ice from a different direction or at an off-screen point? For those, I run the ray marching again, using lower quality settings. As you can see from the reflections on the spheres, the reduced quality is not very noticeable.
 
 ## 3D Perlin noise:
 The goal here was to have 3D noise with no repetition for any X, Y, and Z positions greater than (-1000000, -1000000, -1000000). I first tried using a cache of random numbers, but found it tricky to avoid repetition while getting enough detail.
@@ -51,7 +51,6 @@ So instead, I looked to 3D hash functions for creating random noise. https://www
 I ended up making a setting for choosing PCG3D (best quality) or xxHash32 (better balance of quality and speed).
 
 ## References:
-* https://raytracing.github.io/books/RayTracingInOneWeekend.html
-* https://raytracing.github.io/books/RayTracingTheNextWeek.html
-* Noise formulas from: https://www.shadertoy.com/view/XlGcRh
-* Noise evaluation: https://www.jcgt.org/published/0009/03/02/
+1. Peter Shirley. 2020. _"Ray Tracing in One Weekend"_. (2020). https://raytracing.github.io/books/RayTracingInOneWeekend.html
+2. Peter Shirley. 2020. _"Ray Tracing: The Next Week"_. (2020). https://raytracing.github.io/books/RayTracingTheNextWeek.html
+3. Mark Jarzynski and Marc Olano. 2020. _"Hash Functions for GPU Rendering, Journal of Computer Graphics Techniques (JCGT), vol. 9, no. 3, 21-38"_. (2020). https://www.jcgt.org/published/0009/03/02/
