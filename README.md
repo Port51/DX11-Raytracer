@@ -3,6 +3,9 @@
 This is a personal project based on the "Ray Tracing in One Weekend" series (https://raytracing.github.io/). I expanded on the series to add multi-threading, ray marched volumetrics, and to show the image iterations over time.
 
 ## Renders:
+
+![Ice scene gif](DX11Raytracer/Doc/Ice-Scene-Animated-0.gif)
+
 ![Ice scene render](DX11Raytracer/Doc/Ice-Scene-0.jpg)
 
 ![Sphere scene render](DX11Raytracer/Doc/Sphere-Scene-0.jpg)
@@ -28,13 +31,11 @@ As more rays are processed for each pixel, the image data is updated so it refle
 
 ## Ice ray marching:
 
-To get the cracks, I used 3D difference noise, which uses two noise samples to create what looks roughly like cracks or lightning.
+To get the cracks, I used 3D difference noise, which is a very efficient method of creating cracks or lightning. Here's a small ShaderToy project I made to figure out nice-looking ice settings: https://www.shadertoy.com/view/fsyBRV
+
+The basic idea of difference noise is this process:
 
 ![Difference noise image](DX11Raytracer/Doc/Difference-Noise-Method.jpg)
-
-I used ShaderToy as a way of quickly iterating on the formula, and created a small project here: https://www.shadertoy.com/view/fsyBRV
-
-Once a ray hits ice, the material executes the ray marching.
 
 ## G-Buffer: (in a ray tracer!)
 Immediately after adding ray marching, processing time went through the roof. However, I noticed that the ice needed far fewer iterations to look good than the ray traced spheres.
